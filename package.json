@@ -3,11 +3,14 @@
   "scripts": {
     "dev": "nodemon -w app.js app.js",
     "build": "next build",
-    "start": "next start"
+    "start": "cross-env NODE_ENV=production node app.js"
   },
   "dependencies": {
+    "cross-env": "^5.1.4",
+    "dat.gui": "^0.7.2",
     "express": "^4.16.3",
     "next": "6.0.0",
+    "p2": "^0.7.1",
     "react": "16.3.2",
     "react-dom": "16.3.2",
     "socket.io": "^2.1.0",

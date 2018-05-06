@@ -1,6 +1,8 @@
 import react from 'react'
 import styled from 'styled-components'
 import io from 'socket.io-client'
+import p2 from 'p2'
+import Nav from '../components/nav'
 
 const Container = styled.div`
     display: flex;
@@ -15,8 +17,7 @@ export default class Index extends react.Component{
                 scaleX = 50,
                 scaleY = -50,
                 boxes = new Map,
-                debug = false,
-                gui = new dat.GUI();
+                debug = false;
 
                 const socket = io()
                 
@@ -37,43 +38,7 @@ export default class Index extends react.Component{
                     gravity: [0, -1]
                 });
                 
-                const names = ["x", "y"]
-                
-                const worldGravity = Object.assign({}, world.gravity)
-                const gravityFolder = gui.addFolder("gravity")
-                
-                Object.keys(worldGravity).forEach( key => {
-                    const controller = gravityFolder.add(worldGravity, key, -10, 10).name(names[key.valueOf()]).listen();
-                    controller.onChange(value => {
-                        world.gravity[key.valueOf()] = value
-                    })
-                });
-
-                function toggleFullScreen() {
-            
-                    console.log("toggleFS")
-                    
-                  var doc = window.document;
-                  var docEl = doc.documentElement;
-                
-                  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-                  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-                
-                  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                    requestFullScreen.call(docEl);
-                        screen.orientation.lock('portrait')
-                  }
-                  else {
-                    cancelFullScreen.call(doc);
-                  }
-                }
-                
-                const fs = {}
-                fs.toggleFullScreen = toggleFullScreen
-                
-                gui.add(fs, "toggleFullScreen")
-                
-                window.addEventListener('deviceorientation', event => handleOrientation(event, worldGravity));
+                window.addEventListener('deviceorientation', event => handleOrientation(event));
         
                 // Add a plane
                 planeBody = new p2.Body();
@@ -193,7 +158,7 @@ export default class Index extends react.Component{
                 angle = angle || 0;
                 this.boxShape = new p2.Rectangle(2, 1);
                 this.boxBody = new p2.Body({
-                    mass: 1,
+                    mass: 4,
                     position: [x, y],
                     angle: angle,
                     angularVelocity: 1
@@ -375,7 +340,7 @@ export default class Index extends react.Component{
             //Update loop
             setInterval(toServer, 50);
             
-            function handleOrientation(event, worldGravity){
+            function handleOrientation(event){
                 var x = event.gamma;  // In degree in the range [-180,180]
                 var y = event.beta; // In degree in the range [-90,90]
         
@@ -389,11 +354,8 @@ export default class Index extends react.Component{
                 //x += 90;
                 //y += 90;	
                 
-                worldGravity["0"] = x/7
-                worldGravity["1"] = -y/8
-                
-                world.gravity[0] = worldGravity["0"]
-                world.gravity[1] = worldGravity["1"]
+                world.gravity[0] = x/7
+                world.gravity[1] = -y/7
             }
         
             
@@ -407,6 +369,7 @@ export default class Index extends react.Component{
     render() {
         return (
                 <Container>
+                <Nav></Nav>
                     <canvas id="myCanvas" width="960" height="1500"/>
                 </Container>
             )

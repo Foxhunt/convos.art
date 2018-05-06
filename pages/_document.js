@@ -1,6 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet, injectGlobal } from 'styled-components'
-import io from 'socket.io-client' 
 
 injectGlobal`
   html, body {
@@ -24,8 +23,6 @@ export default class MyDocument extends Document {
         <Head>
           <title>Test</title>
           {this.props.styleTags}
-          <script src="static/dat.gui.min.js"/>
-          <script src="static/p2.js"/>
         </Head>
         <body>
           <Main />
