@@ -6,19 +6,19 @@
     "start": "cross-env NODE_ENV=production node app.js"
   },
   "dependencies": {
-    "cross-env": "^5.1.4",
+    "cross-env": "^5.1.5",
     "dat.gui": "^0.7.2",
     "express": "^4.16.3",
-    "next": "6.0.0",
+    "next": "^6.0.1",
     "p2": "^0.7.1",
-    "react": "16.3.2",
-    "react-dom": "16.3.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
     "styled-components": "^3.2.6"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.5.1",
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.4"
   }
 }
