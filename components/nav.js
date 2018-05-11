@@ -21,9 +21,6 @@ export default class NavBar extends react.Component{
     render() {
         return(
                 <Ul>
-                    <Link prefetch href='one'><li>one</li></Link>
-                    <Link prefetch href='two'><li>two</li></Link>
-                    <Link prefetch href='three'><li>three</li></Link>
                 </Ul>
         )
     }
