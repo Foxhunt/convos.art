@@ -2,9 +2,7 @@ import io from 'socket.io-client'
 import p2 from 'p2'
 
 export default () => {
-            var canvas, ctx, w, h, box, world, mouseBody, planeBody, leftWallBody, rightWallBody, mouseConstraint, id,
-                scaleX = 50,
-                scaleY = -50,
+            var canvas, ctx, w, h, box, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, id,
                 boxes = new Map,
                 debug = false;
 
@@ -30,6 +28,9 @@ export default () => {
                 // Add a plane
                 planeBody = new p2.Body();
                 planeBody.addShape(new p2.Plane());
+
+                roofBody = new p2.Body();
+                roofBody.addShape(new p2.Plane());
         
                 //wand links
                 leftWallBody = new p2.Body();
@@ -41,17 +42,21 @@ export default () => {
         
                 // planes hinzufügen
                 world.addBody(planeBody);
+                world.addBody(roofBody);
                 world.addBody(rightWallBody);
                 world.addBody(leftWallBody);
         
                 // positionen und rotationen setzten
-                planeBody.position[1] = -15;
+                planeBody.position[1] = -h/2;
+
+                roofBody.position[1] = h/2;
+                roofBody.angle = Math.PI;
         
-                leftWallBody.position[0] = -9.6;
+                leftWallBody.position[0] = -w/2;
                 leftWallBody.angle = -(Math.PI / 2);
         
         
-                rightWallBody.position[0] = 9.6;
+                rightWallBody.position[0] = w/2;
                 rightWallBody.angle = Math.PI / 2;
         
         
@@ -143,7 +148,7 @@ export default () => {
                 x = x || 0;
                 y = y || 5;
                 angle = angle || 0;
-                this.boxShape = new p2.Rectangle(2, 1);
+                this.boxShape = new p2.Rectangle(100, 50);
                 this.boxBody = new p2.Body({
                     mass: 4,
                     position: [x, y],
@@ -213,8 +218,8 @@ export default () => {
                     var y = Event.clientY - rect.top;
                 }
         
-                x = (x - w / 2) / scaleX;
-                y = (y - h / 2) / scaleY;
+                x = (x - w / 2);
+                y = (y - h / 2)*-1;
         
                 return [x, y];
             }
@@ -244,6 +249,11 @@ export default () => {
                 ctx.moveTo(-w, y);
                 ctx.lineTo(w, y);
                 ctx.stroke();
+
+                y = roofBody.position[1]
+                ctx.moveTo(-w, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
             }
         
             //Boden wände
@@ -266,7 +276,9 @@ export default () => {
                 // Transform the canvas
                 ctx.save();
                 ctx.translate(w / 2, h / 2); // Translate to the center
-                ctx.scale(scaleX, scaleY);
+                ctx.scale(1, -1);
+
+                ctx.lineWidth=1;
         
                 // Draw all bodies
                 boxes.forEach(drawBox);
