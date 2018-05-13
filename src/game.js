@@ -146,7 +146,7 @@ export default () => {
             // neue Box mit id erstellen.
             function Box(id, x, y, angle) {
                 x = x || 0;
-                y = y || 5;
+                y = y || 0;
                 angle = angle || 0;
                 this.boxShape = new p2.Rectangle(100, 50);
                 this.boxBody = new p2.Body({
@@ -204,12 +204,9 @@ export default () => {
         
             // Convert a canvas coordiante to physics coordinate
             function getPhysicsCoord(Event) {
-        
                 Event.preventDefault();
-        
-        
                 var rect = canvas.getBoundingClientRect();
-        
+
                 if (Event.touches) {
                     var x = Event.touches[0].clientX - rect.left;
                     var y = Event.touches[0].clientY - rect.top;
@@ -217,10 +214,8 @@ export default () => {
                     var x = Event.clientX - rect.left;
                     var y = Event.clientY - rect.top;
                 }
-        
-                x = (x - w / 2);
-                y = (y - h / 2)*-1;
-        
+                x = (x - rect.width/2)*(w/rect.width);
+                y = (y - rect.height/2)*-(h/rect.height);
                 return [x, y];
             }
         
