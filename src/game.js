@@ -145,17 +145,19 @@ export default () => {
         
             // neue Box mit id erstellen.
             function Box(id, x, y, angle) {
-                x = x || 0;
-                y = y || 0;
-                angle = angle || 0;
-                this.boxShape = new p2.Rectangle(100, 50);
+                x = x || 0
+                y = y || 0
+                angle = angle || 0
+                let width = 100
+                let height = 50
+                this.id = id;
+                this.boxShape = new p2.Box({width, height});
                 this.boxBody = new p2.Body({
                     mass: 4,
                     position: [x, y],
                     angle: angle,
                     angularVelocity: 1
                 });
-                this.id = id;
                 this.boxBody.addShape(this.boxShape);
                 this.lastUpdate = Date.now();
                 world.addBody(this.boxBody);
@@ -270,6 +272,7 @@ export default () => {
             function render() {
                 // Transform the canvas
                 ctx.save();
+                //ctx.clearRect(0, 0, w, h);
                 ctx.translate(w / 2, h / 2); // Translate to the center
                 ctx.scale(1, -1);
 
