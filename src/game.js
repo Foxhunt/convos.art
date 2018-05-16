@@ -235,6 +235,7 @@ export default () => {
                 ctx.rect(-box.boxShape.width / 2, -box.boxShape.height / 2, box.boxShape.width, box.boxShape.height);
                 
                 ctx.fillStyle = "blue";
+                ctx.lineWidth = 1;
                 ctx.fill();
                 ctx.stroke();
                 ctx.restore();
@@ -276,7 +277,7 @@ export default () => {
                 ctx.translate(w / 2, h / 2); // Translate to the center
                 ctx.scale(1, -1);
 
-                ctx.lineWidth=1;
+                ctx.lineWidth = 4;
         
                 // Draw all bodies
                 boxes.forEach(drawBox);
