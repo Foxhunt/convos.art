@@ -1,7 +1,9 @@
 import react from 'react'
 import styled from 'styled-components'
 
-const Container = styled.div`
+import GuiOverlay from '../components/guiOverlay'
+
+const Background = styled.div`
     display: flex;
     background-color: #00ff00;
     justify-content: center;
@@ -30,9 +32,10 @@ export default class Index extends react.Component{
 
     render() {
         return (
-                <Container>
+                <Background>
                     <Canvas id="myCanvas" width="1920" height="1080"/>
-                </Container>
+                    <GuiOverlay />
+                </Background>
             )
     }
 }
