@@ -4,7 +4,7 @@ import p2 from 'p2'
 import Box from './Box'
 
 export default () => {
-            var canvas, ctx, w, h, box, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, id,
+            var canvas, ctx, w, h, ownBox, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
                 boxes = new Map,
                 debug = false;
 
@@ -87,31 +87,31 @@ export default () => {
         
         
                 //Neuen client und seine Box anlegen
-                socket.on('new', newBox => {
-                    console.log("new! : " + newBox.id)
-                    let box = new Box(newBox.id)
+                socket.on('new', ({id}) => {
+                    console.log("new! : " + id)
+                    let box = new Box({id})
                     box.addToWorld(world)
-                    boxes.set(newBox.id, box);
+                    boxes.set(id, box);
                 });
         
                 //Box eines Clients löschen der das Spiel verlassen hat
-                socket.on('leave', box => {
+                socket.on('leave', ({id}) => {
                     // Box löschen
-                    world.removeBody(boxes.get(box.id).body);
-                    boxes.delete(box.id);
-                    console.log("left! : " + box.id);
+                    world.removeBody(boxes.get(id).body);
+                    boxes.delete(id);
+                    console.log("left! : " + id);
                 });
         
                 //Box Informationen vom Server erhalten
-                socket.on('toClient', boxUpdate => {
+                socket.on('toClient', ({id, x, y, angle, velocity}) => {
                     // betroffene box ermitteln
-                    let box = boxes.get(boxUpdate.id);
+                    let box = boxes.get(id);
                     //erhaltenen Informationen verarbeiten
                     if (box) {
-                        box.body.position[0] = boxUpdate.x;
-                        box.body.position[1] = boxUpdate.y;
-                        box.body.angle = boxUpdate.angle;
-                        box.body.velocity = boxUpdate.velocity;
+                        box.body.position[0] = x;
+                        box.body.position[1] = y;
+                        box.body.angle = angle;
+                        box.body.velocity = velocity;
                     }
                 });
         
@@ -122,28 +122,23 @@ export default () => {
                 //Und beim client ausgeführt wird.
                 socket.on('connect', () => {
                     //get and set client ID
-                    id = socket.id;
-                    box = new Box(id);
-                    box.addToWorld(world)
+                    ownId = socket.id;
+                    ownBox = new Box({ownId, own: true});
+                    ownBox.addToWorld(world)
 
                     // Add a box
-                    boxes.set(id, box);
+                    boxes.set(ownId, ownBox);
         
                     //Vom Server die bereits verbundenen clients abrufen
                     socket.emit('init', initBoxes => {
         
                         console.log(initBoxes.length + " Boxen initialisiert");
         
-                        initBoxes.forEach(newBox => {
-                            if (newBox.id !== id) {
-                                let box = new Box(
-                                    newBox.id,
-                                    newBox.x,
-                                    newBox.y,
-                                    newBox.angle
-                                );
+                        initBoxes.forEach(({id, x, y, angle}) => {
+                            if (id !== ownId) {
+                                let box = new Box({id, x, y, angle})
                                 box.addToWorld(world)
-                                boxes.set(box.id, box);
+                                boxes.set(box.id, box)
                             }
                         });
                     }); // ende emit init
@@ -157,7 +152,7 @@ export default () => {
                 var position = getPhysicsCoord(event);
         
                 // Check if the cursor is inside the box
-                var hitBodies = world.hitTest(position, [box.body]);
+                var hitBodies = world.hitTest(position, [ownBox.body]);
         
                 if (hitBodies.length) {
         
@@ -167,7 +162,7 @@ export default () => {
         
                     // Create a RevoluteConstraint.
                     // This constraint lets the bodies rotate around a common point
-                    mouseConstraint = new p2.RevoluteConstraint(mouseBody, box.body, {
+                    mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBox.body, {
                         worldPivot: position,
                         collideConnected: false
                     });
@@ -208,25 +203,7 @@ export default () => {
                 return [x, y];
             }
         
-            //Boxes malen
-            function drawBox(box) {
-                ctx.beginPath();
-                var x = box.body.interpolatedPosition[0],
-                    y = box.body.interpolatedPosition[1];
-                ctx.save();
-                ctx.translate(x, y); // Translate to the center of the box
-                ctx.rotate(box.body.interpolatedAngle); // Rotate to the box body frame
-                if (box.id === id) {
-                    ctx.strokeStyle = "red";
-                }
-                ctx.rect(-box.shape.width / 2, -box.shape.height / 2, box.shape.width, box.shape.height);
-                
-                ctx.fillStyle = "blue";
-                ctx.lineWidth = 1;
-                ctx.fill();
-                ctx.stroke();
-                ctx.restore();
-            }
+            
         
             //Boden malen
             function drawPlane() {
@@ -267,7 +244,9 @@ export default () => {
                 ctx.lineWidth = 4;
         
                 // Draw all bodies
-                boxes.forEach(drawBox);
+                for (let box of boxes.values()){
+                    box.draw(ctx)
+                }
                 drawPlane();
                 drawWalls();
         
@@ -312,12 +291,12 @@ export default () => {
         
             //Box informationen an server senden
             function toServer() {
-                if (box) {
+                if (ownBox) {
                     socket.emit('toServer', {
-                        x: box.body.interpolatedPosition[0],
-                        y: box.body.interpolatedPosition[1],
-                        angle: box.body.interpolatedAngle,
-                        velocity: box.body.velocity
+                        x: ownBox.body.interpolatedPosition[0],
+                        y: ownBox.body.interpolatedPosition[1],
+                        angle: ownBox.body.interpolatedAngle,
+                        velocity: ownBox.body.velocity
                     });
                 }
             }
