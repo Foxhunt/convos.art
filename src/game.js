@@ -91,7 +91,7 @@ export default () => {
                     console.log("new! : " + newBox.id)
                     let box = new Box(newBox.id)
                     box.addToWorld(world)
-                    boxes.set(newBox.id, new Box(newBox.id));
+                    boxes.set(newBox.id, box);
                 });
         
                 //Box eines Clients löschen der das Spiel verlassen hat
