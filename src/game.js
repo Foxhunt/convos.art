@@ -10,9 +10,6 @@ export default () => {
 
                 const socket = io()
                 
-            init();
-                
-            function init() {
                 canvas = document.getElementById("myCanvas");
                 w = canvas.width;
                 h = canvas.height;
@@ -143,7 +140,6 @@ export default () => {
                         });
                     }); // ende emit init
                 }); // ende onConnect
-            } //ende init
         
             //event handler für User Interaktion
             function coursorDown(event) {
