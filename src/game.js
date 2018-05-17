@@ -1,6 +1,8 @@
 import io from 'socket.io-client'
 import p2 from 'p2'
 
+import Box from './Box'
+
 export default () => {
             var canvas, ctx, w, h, box, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, id,
                 boxes = new Map,
@@ -85,15 +87,17 @@ export default () => {
         
         
                 //Neuen client und seine Box anlegen
-                socket.on('new', box => {
-                    console.log("new! : " + box.id)
-                    boxes.set(box.id, new Box(box.id));
+                socket.on('new', newBox => {
+                    console.log("new! : " + newBox.id)
+                    let box = new Box(newBox.id)
+                    box.addToWorld(world)
+                    boxes.set(newBox.id, new Box(newBox.id));
                 });
         
                 //Box eines Clients löschen der das Spiel verlassen hat
                 socket.on('leave', box => {
                     // Box löschen
-                    world.removeBody(boxes.get(box.id).boxBody);
+                    world.removeBody(boxes.get(box.id).body);
                     boxes.delete(box.id);
                     console.log("left! : " + box.id);
                 });
@@ -104,10 +108,10 @@ export default () => {
                     let box = boxes.get(boxUpdate.id);
                     //erhaltenen Informationen verarbeiten
                     if (box) {
-                        box.boxBody.position[0] = boxUpdate.x;
-                        box.boxBody.position[1] = boxUpdate.y;
-                        box.boxBody.angle = boxUpdate.angle;
-                        box.boxBody.velocity = boxUpdate.velocity;
+                        box.body.position[0] = boxUpdate.x;
+                        box.body.position[1] = boxUpdate.y;
+                        box.body.angle = boxUpdate.angle;
+                        box.body.velocity = boxUpdate.velocity;
                     }
                 });
         
@@ -120,48 +124,31 @@ export default () => {
                     //get and set client ID
                     id = socket.id;
                     box = new Box(id);
+                    box.addToWorld(world)
+
                     // Add a box
                     boxes.set(id, box);
         
                     //Vom Server die bereits verbundenen clients abrufen
-                    socket.emit('init', _boxes => {
+                    socket.emit('init', initBoxes => {
         
-                        console.log(_boxes.length + " Boxen initialisiert");
+                        console.log(initBoxes.length + " Boxen initialisiert");
         
-                        _boxes.forEach(_box => {
-                            if (_box.id !== id) {
+                        initBoxes.forEach(newBox => {
+                            if (newBox.id !== id) {
                                 let box = new Box(
-                                    _box.id,
-                                    _box.x,
-                                    _box.y,
-                                    _box.angle
+                                    newBox.id,
+                                    newBox.x,
+                                    newBox.y,
+                                    newBox.angle
                                 );
+                                box.addToWorld(world)
                                 boxes.set(box.id, box);
                             }
                         });
                     }); // ende emit init
                 }); // ende onConnect
             } //ende init
-        
-            // neue Box mit id erstellen.
-            function Box(id, x, y, angle) {
-                x = x || 0
-                y = y || 0
-                angle = angle || 0
-                let width = 100
-                let height = 50
-                this.id = id;
-                this.boxShape = new p2.Box({width, height});
-                this.boxBody = new p2.Body({
-                    mass: 4,
-                    position: [x, y],
-                    angle: angle,
-                    angularVelocity: 1
-                });
-                this.boxBody.addShape(this.boxShape);
-                this.lastUpdate = Date.now();
-                world.addBody(this.boxBody);
-            }
         
             //event handler für User Interaktion
             function coursorDown(event) {
@@ -170,7 +157,7 @@ export default () => {
                 var position = getPhysicsCoord(event);
         
                 // Check if the cursor is inside the box
-                var hitBodies = world.hitTest(position, [box.boxBody]);
+                var hitBodies = world.hitTest(position, [box.body]);
         
                 if (hitBodies.length) {
         
@@ -180,7 +167,7 @@ export default () => {
         
                     // Create a RevoluteConstraint.
                     // This constraint lets the bodies rotate around a common point
-                    mouseConstraint = new p2.RevoluteConstraint(mouseBody, box.boxBody, {
+                    mouseConstraint = new p2.RevoluteConstraint(mouseBody, box.body, {
                         worldPivot: position,
                         collideConnected: false
                     });
@@ -224,15 +211,15 @@ export default () => {
             //Boxes malen
             function drawBox(box) {
                 ctx.beginPath();
-                var x = box.boxBody.interpolatedPosition[0],
-                    y = box.boxBody.interpolatedPosition[1];
+                var x = box.body.interpolatedPosition[0],
+                    y = box.body.interpolatedPosition[1];
                 ctx.save();
                 ctx.translate(x, y); // Translate to the center of the box
-                ctx.rotate(box.boxBody.interpolatedAngle); // Rotate to the box body frame
+                ctx.rotate(box.body.interpolatedAngle); // Rotate to the box body frame
                 if (box.id === id) {
                     ctx.strokeStyle = "red";
                 }
-                ctx.rect(-box.boxShape.width / 2, -box.boxShape.height / 2, box.boxShape.width, box.boxShape.height);
+                ctx.rect(-box.shape.width / 2, -box.shape.height / 2, box.shape.width, box.shape.height);
                 
                 ctx.fillStyle = "blue";
                 ctx.lineWidth = 1;
@@ -327,10 +314,10 @@ export default () => {
             function toServer() {
                 if (box) {
                     socket.emit('toServer', {
-                        x: box.boxBody.interpolatedPosition[0],
-                        y: box.boxBody.interpolatedPosition[1],
-                        angle: box.boxBody.interpolatedAngle,
-                        velocity: box.boxBody.velocity
+                        x: box.body.interpolatedPosition[0],
+                        y: box.body.interpolatedPosition[1],
+                        angle: box.body.interpolatedAngle,
+                        velocity: box.body.velocity
                     });
                 }
             }
