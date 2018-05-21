@@ -1,5 +1,6 @@
 import react from 'react'
 import styled from 'styled-components'
+import { withRouter } from 'next/router'
 
 import GuiOverlay from '../components/GuiOverlay'
 
@@ -22,11 +23,12 @@ max-height: 100vh;
 max-width: 177.78vh;
 `
 
-export default class Room extends react.Component{
+class Room extends react.Component{
 
     async componentDidMount () {
         import("../src/game").then(main => {
-            main.default()
+            console.log(this.props.router)
+            main.default(this.props.router.query.roomId)
         })
     }
 
@@ -39,3 +41,5 @@ export default class Room extends react.Component{
         )
     }
 }
+
+export default withRouter(Room)

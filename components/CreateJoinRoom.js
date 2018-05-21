@@ -23,13 +23,13 @@ export default class CreateJoinRoom extends react.Component{
         super(props)
 
         this.state = {
-            roomName: ''
+            roomId: ''
         }
     }
 
     handleInput(event){
         this.setState({
-            roomName: event.target.value
+            roomId: event.target.value
         })
     }
     
@@ -44,8 +44,9 @@ export default class CreateJoinRoom extends react.Component{
                 </label>
                 <ButtonContainer>
                     <Link 
-                        href={`/room?name=${this.state.roomName}`}
-                        as={`/room/${this.state.roomName}`}>
+                        prefetch
+                        href={`/room?roomId=${this.state.roomId}`}
+                        as={`/room/${this.state.roomId}`}>
                         <button>Join//Create</button>
                     </Link>
                 </ButtonContainer>

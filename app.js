@@ -7,7 +7,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
 
-var boxes = new Map();
+var rooms = new Map();
 
 //Socket konfg
 //###########
@@ -17,19 +17,25 @@ io.set('heartbeat timeout', 10000);
 //client verbindet sich
 io.on('connection', socket => {
 
-	//id zuweisen
-	let id = socket.id;
+	const roomId = socket.handshake.query.roomId
 
-	let box = new Box(id);
+	const boxes = getBoxesOfRoom(roomId)
+
+	//id zuweisen
+	const id = socket.id;
+
+	const box = new Box(id);
+
+	socket.join(roomId)
 
 	//neuen client anlegen
 	boxes.set(id, box);
 
 	//über client benachrichtigen
-	console.log(`Client ${id} connected. (${boxes.size})`);
+	console.log(`${id} joined ${roomId}. (${boxes.size})`);
 
 	//clients über neuen client informieren
-	socket.broadcast.emit('new', {
+	socket.broadcast.to(roomId).emit('new', {
 		id: id
 	});
 
@@ -56,7 +62,7 @@ io.on('connection', socket => {
 
 	//Box Informationen an clients senden
 	function toClients() {
-		socket.broadcast.emit('toClient', {
+		socket.broadcast.to(roomId).emit('toClient', {
 			id: box.id,
 			x: box.x,
 			y: box.y,
@@ -69,12 +75,22 @@ io.on('connection', socket => {
 	//so dass Sie den client entfernen können (leave event)
 	socket.on('disconnect', () => {
 		boxes.delete(id);
-		socket.broadcast.emit('leave', {
+		socket.broadcast.to(roomId).emit('leave', {
 			id: id
 		});
 		console.log(`Client ${id} disconnected. (${boxes.size})`);
 	});
 });
+
+function getBoxesOfRoom(roomId){
+	if(rooms.has(roomId)){
+		return rooms.get(roomId)
+	}else{
+		const newRoom = new Map()
+		rooms.set(roomId, newRoom)
+		return newRoom
+	}
+}
 
 //Box constructor Server Version
 function Box(id, x, y, angle, velocity) {
@@ -86,6 +102,12 @@ function Box(id, x, y, angle, velocity) {
 }
 
 nextApp.prepare().then(() => {
+
+	app.get('/room/:roomId', (req, res) => {
+		const queryParams = {roomId: req.params.roomId}
+		nextApp.render(req, res, '/room', queryParams)
+	})
+
 	app.get('*', (req, res) => {
 		return nextHandler(req, res)
 	})

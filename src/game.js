@@ -3,13 +3,13 @@ import p2 from 'p2'
 
 import Box from './Box'
 
-export default () => {
+export default roomId => {
             var canvas, ctx, w, h, ownBox, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
                 boxes = new Map,
                 debug = false;
 
-                const socket = io()
-                
+                const socket = io({ query: { roomId } })
+
                 canvas = document.getElementById("myCanvas");
                 w = canvas.width;
                 h = canvas.height;
@@ -118,6 +118,9 @@ export default () => {
                 //die vom Server an den Client zurück gegeben wird.
                 //Und beim client ausgeführt wird.
                 socket.on('connect', () => {
+
+                    console.log(`connected as ${socket.id}`)
+
                     //get and set client ID
                     ownId = socket.id;
                     ownBox = new Box({ownId, own: true});
