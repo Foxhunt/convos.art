@@ -1,12 +1,12 @@
 import react from 'react'
-import styled from 'styled-components'
 
 import Room from '../components/Room'
+import CreateJoinRoom from '../components/CreateJoinRoom'
 
 export default class Index extends react.Component{
     render() {
         return (
-            <Room />
+            <CreateJoinRoom />
         )
     }
 }
