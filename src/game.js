@@ -244,7 +244,8 @@ export default roomId => {
         
                 // Draw all bodies
                 for (let box of boxes.values()){
-                    box.draw(ctx)
+
+                    box.render(ctx)
                 }
                 drawPlane();
                 drawWalls();

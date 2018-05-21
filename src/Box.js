@@ -4,19 +4,65 @@ export default class Box {
     constructor({id, x = 0, y = 0, angle = 0, own = false}){
         this.id = id
         this.isOwnBox = own
-        this.shape = new p2.Box({width: 100, height: 50});
+        this.shape = new p2.Box({width: 100, height: 50})
         this.body = new p2.Body({
             mass: 4,
             position: [x, y],
             angle: angle,
             angularVelocity: 1
-        });
-        this.body.addShape(this.shape);
+        })
+        this.body.addShape(this.shape)
+
+        this.vertices = [[], [], [], []]
+        for(let i = 0; i < this.shape.vertices.length; i++){
+            this.vertices[i][0] = this.shape.vertices[i][0]
+            this.vertices[i][1] = this.shape.vertices[i][1]
+        }
+        this.height = this.shape.height
+        this.width = this.shape.width
     }
 
     addToWorld(world){
-        world.addBody(this.body);
+        world.addBody(this.body)
     }
+
+    render(ctx){
+        this.adjustSize()
+        this.draw(ctx)
+    }
+
+    adjustSize(){
+        const factor = this.calculateSizeFactor()
+
+        this.shape.width = factor * this.width
+        this.shape.height = factor * this.height
+
+        this.shape.vertices.forEach((vertex, index, array) => {
+            array[index][0] = factor * this.vertices[index][0]
+            array[index][1] = factor * this.vertices[index][1]
+        })
+        
+        this.updateShape()
+    }
+
+    calculateSizeFactor(){
+        const max = 2
+        let factor = (this.body.velocity[0] + this.body.velocity[1]) * 0.005
+        
+        factor = Math.abs(factor)
+        factor = factor < 1 ? 1 : factor
+        factor = factor > max ? max : factor
+
+        return factor
+    }
+
+    updateShape(){
+        this.shape.updateTriangles()
+        this.shape.updateCenterOfMass()
+        this.shape.updateBoundingRadius()
+        this.shape.updateArea()
+    }
+
 
     draw(ctx){
         ctx.beginPath()
