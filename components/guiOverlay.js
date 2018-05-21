@@ -20,8 +20,8 @@ const Circle = styled.div`
 
     border-radius: 50%;
 
-    width: ${circleSize}vh;
-    height: ${circleSize}vh;
+    width: ${circleSize}%;
+    height: ${circleSize*(16/9)}%;
 
     background-color: #ffffff;
 `
@@ -36,8 +36,25 @@ const ButtonRightBot = styled(Circle)`
     left: 100%
 `
 
-export default ({width, height}) =>
+export default () =>
     <GUI>
             <ButtonRight /> 
-            <ButtonRightBot /> 
+            <ButtonRightBot
+                onClick={toggleFullScreen}
+             /> 
     </GUI>
+
+function toggleFullScreen() {
+  var doc = window.document
+  var docEl = doc.documentElement
+
+  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
+  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen
+
+  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    requestFullScreen.call(docEl)
+  }
+  else {
+    cancelFullScreen.call(doc)
+  }
+}
