@@ -2,7 +2,7 @@ import react from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 
-const Container = styled.div`
+const Container = styled.form`
     height: 20vh;
 
     display: flex;
@@ -26,12 +26,6 @@ export default class CreateJoinRoom extends react.Component{
             roomId: ''
         }
     }
-
-    handleInput(event){
-        this.setState({
-            roomId: event.target.value
-        })
-    }
     
     render(){
         return (
@@ -40,6 +34,7 @@ export default class CreateJoinRoom extends react.Component{
                     {'Room '}
                     <input
                     type='text'
+                    value={this.state.roomId}
                     onChange={event => this.handleInput(event)}/>
                 </label>
                 <ButtonContainer>
@@ -52,5 +47,11 @@ export default class CreateJoinRoom extends react.Component{
                 </ButtonContainer>
             </Container>
         )
+    }
+
+    handleInput(event){
+        this.setState({
+            roomId: event.target.value.toLowerCase()
+        })
     }
 }
