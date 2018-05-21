@@ -32,7 +32,7 @@ class Room extends react.Component{
         }
 
         this.showGuiTimeout = null
-        this.mouseDown = false
+        this.CursorDown = false
     }
 
     async componentDidMount () {
@@ -49,41 +49,36 @@ class Room extends react.Component{
                     id="myCanvas"
                     width="1920"
                     height="1080"
-                    onMouseDown={() => this.onMouseDown()}
-                    onMouseMove={() => this.onMouseMove()}
-                    onMouseUp={() => this.onMouseUp()}
-                    onTouchStart={() => this.hideGui()}
-                    onTouchMove={() => this.hideGui()}
+                    onMouseDown={() => this.onCursorDown()}
+                    onMouseMove={() => this.onCursorMove()}
+                    onMouseUp={() => this.onCursorUp()}
+                    onTouchStart={() => this.onCursorDown()}
+                    onTouchMove={() => this.onCursorMove()}
+                    onTouchEnd={() => this.onCursorUp()}
                     />
-                {this.state.showGui && <GuiOverlay />}
+                <GuiOverlay show={this.state.showGui} />
             </Background>
         )
     }
 
-    onMouseDown(){
-        this.mouseDown = true
+    onCursorDown(){
+        this.CursorDown = true
         this.hideGui()
     }
 
-    onMouseUp(){
-        this.mouseDown = false
+    onCursorUp(){
+        this.CursorDown = false
+        this.hideGui()
     }
 
-    onMouseMove(){
-        if(this.mouseDown){
+    onCursorMove(){
+        if(this.CursorDown){
             this.hideGui()
         }
     }
 
     hideGui(){
-        this.setState({showGui: false})
-        if(this.showGuiTimeout){
-            clearTimeout(this.showGuiTimeout)
-        }
-        this.showGuiTimeout = setTimeout(() => {
-            this.setState({showGui: true})
-            this.showGuiTimeout = null
-        }, 200)
+        this.setState({showGui: !this.CursorDown})
     }
 
 }
