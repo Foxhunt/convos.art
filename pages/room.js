@@ -1,7 +1,7 @@
 import react from 'react'
 import styled from 'styled-components'
 
-import GuiOverlay from './GuiOverlay'
+import GuiOverlay from '../components/GuiOverlay'
 
 const Background = styled.div`
 display: flex;
@@ -26,7 +26,7 @@ export default class Room extends react.Component{
 
     async componentDidMount () {
         import("../src/game").then(main => {
-            window.onload = main.default
+            main.default()
         })
     }
 
@@ -37,6 +37,5 @@ export default class Room extends react.Component{
                 <GuiOverlay />
             </Background>
         )
-            
     }
 }
