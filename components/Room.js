@@ -1,7 +1,7 @@
 import react from 'react'
 import styled from 'styled-components'
 
-import GuiOverlay from '../components/guiOverlay'
+import GuiOverlay from './GuiOverlay'
 
 const Background = styled.div`
 display: flex;
