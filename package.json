@@ -1,5 +1,5 @@
 {
-  "name": "Convos",
+  "name": "convos",
   "scripts": {
     "dev": "nodemon -w app.js app.js",
     "build": "next build",
