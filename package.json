@@ -1,9 +1,10 @@
 {
-  "name": "create-next-example-app",
+  "name": "Convos",
   "scripts": {
     "dev": "nodemon -w app.js app.js",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production node app.js"
+    "start": "cross-env NODE_ENV=production node app.js",
+		"deploy": "now & now ln & now rm Convos -sy"
   },
   "dependencies": {
     "cross-env": "^5.1.5",
@@ -20,5 +21,14 @@
   "devDependencies": {
     "babel-plugin-styled-components": "^1.5.1",
     "nodemon": "^1.17.4"
-  }
+  },
+  "now": {
+		"alias": "Convos",
+		"scale": {
+			"bru1": {
+				"min": 1,
+				"max": 1
+			}
+		}
+	}
 }
