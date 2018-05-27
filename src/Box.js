@@ -1,16 +1,24 @@
 import p2 from 'p2'
 
+const PARTICLES = Math.pow(2, 0)
+const BRUSH = Math.pow(2, 1)
+const PLANES = Math.pow(2, 2)
+
 export default class Box {
     constructor({id, x = 0, y = 0, angle = 0, own = false}){
         this.id = id
         this.isOwnBox = own
         this.shape = new p2.Box({width: 100, height: 50})
         this.body = new p2.Body({
-            mass: 4,
+            mass: 50,
             position: [x, y],
             angle: angle,
             angularVelocity: 1
         })
+
+        this.shape.collisionGroup = BRUSH
+        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+
         this.body.addShape(this.shape)
 
         this.vertices = [[], [], [], []]
@@ -62,7 +70,6 @@ export default class Box {
         this.shape.updateBoundingRadius()
         this.shape.updateArea()
     }
-
 
     draw(ctx){
         ctx.beginPath()
