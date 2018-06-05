@@ -1,14 +1,11 @@
 import io from 'socket.io-client'
 import p2 from 'p2'
 
-import Box from './Box'
-
-const PARTICLES = Math.pow(2, 0)
-const BRUSH = Math.pow(2, 1)
-const PLANES = Math.pow(2, 2)
+import Brush from './Brush'
+import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default roomId => {
-			var canvas, ctx, w, h, ownBox, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
+			var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
 				boxes = new Map,
 				debug = false;
 
@@ -101,7 +98,7 @@ export default roomId => {
 				//Neuen client und seine Box anlegen
 				socket.on('new', ({id}) => {
 					console.log("new! : " + id)
-					let box = new Box({id})
+					let box = new Brush({id})
 					box.addToWorld(world)
 					boxes.set(id, box);
 				});
@@ -138,11 +135,11 @@ export default roomId => {
 
 					//get and set client ID
 					ownId = socket.id;
-					ownBox = new Box({ownId, own: true});
-					ownBox.addToWorld(world)
+					ownBrush = new Brush({ownId, own: true});
+					ownBrush.addToWorld(world)
 
 					// Add a box
-					boxes.set(ownId, ownBox);
+					boxes.set(ownId, ownBrush);
 		
 					//Vom Server die bereits verbundenen clients abrufen
 					socket.emit('init', initBoxes => {
@@ -151,7 +148,7 @@ export default roomId => {
 		
 						initBoxes.forEach(({id, x, y, angle}) => {
 							if (id !== ownId) {
-								let box = new Box({id, x, y, angle})
+								let box = new Brush({id, x, y, angle})
 								box.addToWorld(world)
 								boxes.set(box.id, box)
 							}
@@ -166,7 +163,7 @@ export default roomId => {
 				var position = getPhysicsCoord(event);
 		
 				// Check if the cursor is inside the box
-				var hitBodies = world.hitTest(position, [ownBox.body]);
+				var hitBodies = world.hitTest(position, [ownBrush.body]);
 		
 				if (hitBodies.length) {
 		
@@ -176,7 +173,7 @@ export default roomId => {
 		
 					// Create a RevoluteConstraint.
 					// This constraint lets the bodies rotate around a common point
-					mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBox.body, {
+					mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBrush.body, {
 						worldPivot: position,
 						collideConnected: false
 					});
@@ -263,7 +260,7 @@ export default roomId => {
 			function spawnParticle(x, y){
 				const pShape = new p2.Particle({radius: 3})
 				const pBody = new p2.Body({
-					mass: 4,
+					mass: 50,
 					position: [x, y],
 					velocity: [
 						140 * Math.cos(Math.PI * Math.random()),
@@ -279,7 +276,7 @@ export default roomId => {
 
 				particles.push(pBody)
 
-				if(particles.length > 600){
+				if(particles.length > 100){
 					world.removeBody(particles.shift())
 				}
 			}
@@ -310,8 +307,6 @@ export default roomId => {
 				ctx.translate(w / 2, h / 2) // Translate to the center
 				ctx.scale(1, -1)
 
-				ctx.lineWidth = 4
-		
 				// Draw all bodies
 				for (let box of boxes.values()){
 					box.render(ctx)
@@ -362,12 +357,12 @@ export default roomId => {
 		
 			//Box informationen an server senden
 			function toServer() {
-				if (ownBox) {
+				if (ownBrush) {
 					socket.emit('toServer', {
-						x: ownBox.body.interpolatedPosition[0],
-						y: ownBox.body.interpolatedPosition[1],
-						angle: ownBox.body.interpolatedAngle,
-						velocity: ownBox.body.velocity
+						x: ownBrush.body.interpolatedPosition[0],
+						y: ownBrush.body.interpolatedPosition[1],
+						angle: ownBrush.body.interpolatedAngle,
+						velocity: ownBrush.body.velocity
 					});
 				}
 			}

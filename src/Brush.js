@@ -1,33 +1,44 @@
 import p2 from 'p2'
+import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
-const PARTICLES = Math.pow(2, 0)
-const BRUSH = Math.pow(2, 1)
-const PLANES = Math.pow(2, 2)
-
-export default class Box {
+export default class Brush {
     constructor({id, x = 0, y = 0, angle = 0, own = false}){
         this.id = id
         this.isOwnBox = own
-        this.shape = new p2.Box({width: 100, height: 50})
+        this.shape = null
         this.body = new p2.Body({
-            mass: 50,
+            mass: 100,
             position: [x, y],
             angle: angle,
             angularVelocity: 1
         })
 
+        this.setShape("CIRCLE")
+
         this.shape.collisionGroup = BRUSH
         this.shape.collisionMask = BRUSH | PLANES | PARTICLES
 
-        this.body.addShape(this.shape)
-
-        this.vertices = [[], [], [], []]
+        /* this.vertices = [[], [], [], []]
         for(let i = 0; i < this.shape.vertices.length; i++){
             this.vertices[i][0] = this.shape.vertices[i][0]
             this.vertices[i][1] = this.shape.vertices[i][1]
-        }
+        } */
+
         this.height = this.shape.height
         this.width = this.shape.width
+    }
+
+    setShape(shape){
+        this.body.removeShape(this.shape)
+        switch (shape) {
+            case "CIRCLE": this.shape = new p2.Circle({radius: 50})
+            break
+            case "BOX": this.shape = new p2.Box({width: 100, height: 50}) 
+            break
+            case "SQUARE": this.shape = new p2.Box({width: 50, height: 50}) 
+            break
+        }
+        this.body.addShape(this.shape)
     }
 
     addToWorld(world){
@@ -42,13 +53,15 @@ export default class Box {
     adjustSize(){
         const factor = this.calculateSizeFactor()
 
-        this.shape.width = factor * this.width
+        /* this.shape.width = factor * this.width
         this.shape.height = factor * this.height
 
         this.shape.vertices.forEach((vertex, index, array) => {
             array[index][0] = factor * this.vertices[index][0]
             array[index][1] = factor * this.vertices[index][1]
-        })
+        }) */
+
+        this.shape.radius = 50 * factor
         
         this.updateShape()
     }
@@ -64,11 +77,18 @@ export default class Box {
         return factor
     }
 
-    updateShape(){
-        this.shape.updateTriangles()
-        this.shape.updateCenterOfMass()
-        this.shape.updateBoundingRadius()
-        this.shape.updateArea()
+    updateShape() {
+        if (this.shape.updateTriangles)
+            this.shape.updateTriangles()
+
+        if (this.shape.updateCenterOfMass)
+            this.shape.updateCenterOfMass()
+
+        if (this.shape.updateBoundingRadius)
+            this.shape.updateBoundingRadius()
+
+        if (this.shape.updateArea)
+            this.shape.updateArea()
     }
 
     draw(ctx){
@@ -81,9 +101,10 @@ export default class Box {
         if (this.isOwnBox) {
             ctx.strokeStyle = "red"
         }
-        ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+        ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
+        //ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
         ctx.fillStyle = "blue"
-        ctx.lineWidth = 1
+        ctx.lineWidth = 4
         ctx.fill()
         ctx.stroke()
         ctx.restore()
