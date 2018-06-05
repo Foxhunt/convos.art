@@ -4,7 +4,7 @@
     "dev": "nodemon -w app.js app.js",
     "build": "next build",
     "start": "cross-env NODE_ENV=production node app.js",
-    "deploy": "now & now ln & now rm Convos -sy"
+    "deploy": "now & now ln & now rm convos -sy"
   },
   "dependencies": {
     "cross-env": "^5.1.6",
@@ -24,7 +24,7 @@
     "nodemon": "^1.17.5"
   },
   "now": {
-    "alias": "Convos",
+    "alias": "convos",
     "scale": {
       "bru1": {
         "min": 1,
