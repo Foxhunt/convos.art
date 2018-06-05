@@ -54,11 +54,11 @@ class Room extends react.Component{
                     onTouchStart={() => this.onCursorDown()}
                     onTouchMove={() => this.onCursorMove()}
                     onTouchEnd={() => this.onCursorUp()}
-                    />
+                />
                 <GuiOverlay 
                     show={this.state.showGui}
                     brush={this.brush}
-                    />
+                />
             </Background>
         )
     }

@@ -24,11 +24,11 @@ const GUI = styled.div`
 
 	transition: opacity 0.5s ease-in-out;
 
-	opacity: ${({show}) => show ? 1 : 0 };
+	opacity: ${({show}) => show ? 0.9 : 0 };
 `
 
-const OprionsDrawer = styled.div`
-	pointer-events: auto;
+const OptionsDrawer = styled.div`
+	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
 
 	position: absolute;
 	left: ${({show}) => show ? 67 : 100 }%;
@@ -93,7 +93,8 @@ export default class GuiOverlay extends react.Component{
 					clickable={this.props.show}
 					move={this.state.showOptions}
 					onClick={()=>this.toggleOptionsDrawer()} />
-				<OprionsDrawer
+				<OptionsDrawer
+					clickable={this.props.show}
 					show={this.state.showOptions}>
 					<Button
 						onClick={() => this.props.brush.setShape("CIRCLE")}>
@@ -127,7 +128,7 @@ export default class GuiOverlay extends react.Component{
 								this.strokeStyle = color.hex
 							}
 					}/>
-				</OprionsDrawer>
+				</OptionsDrawer>
 				<ButtonRightBot
 					clickable={this.props.show}
 					onClick={toggleFullScreen} />
