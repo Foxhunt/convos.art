@@ -1,4 +1,14 @@
 import styled from 'styled-components'
+import react from 'react'
+
+const Button = styled.div`
+	width: 100%;
+	height: 5%;
+
+	background-color: #aaaaaa;
+
+	border: 3px solid #000000;
+`
 
 const GUI = styled.div`
 	position: absolute;
@@ -8,17 +18,35 @@ const GUI = styled.div`
 	width: 100vw;
 	height: 56.25vw;
 
-	max-height: 100vh;
 	max-width: 177.78vh;
+	max-height: 100vh;
 
 	transition: opacity 0.5s ease-in-out;
 
-	opacity: ${(props) => props.show ? 1 : 0 };
+	opacity: ${({show}) => show ? 1 : 0 };
 `
-const circleSize = 13
+
+const OprionsDrawer = styled.div`
+	pointer-events: auto;
+
+	position: absolute;
+	right: ${({show}) => show ? 0 : -33 }%;
+
+	transition: right 0.5s ease-in-out;
+
+	width: 33vw;
+	height: 56.25vw;
+
+	max-width: calc(177.78vh / 3);
+	max-height: 100vh;
+
+	background-color: #00ffff;
+`
+
+const circleSize = 11
 const Circle = styled.div`
 	position: absolute;
-	pointer-events: auto;
+	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
 
 	transform: translate(-50%, -50%);
 
@@ -32,7 +60,8 @@ const Circle = styled.div`
 
 const ButtonRight = styled(Circle)`
 	top: 50%;
-	left: 100%;
+	left: ${({move})=> move ? (100/3*2) : 100 }%;
+	transition: left 0.5s ease-in-out;
 `
 
 const ButtonRightBot = styled(Circle)`
@@ -42,15 +71,49 @@ const ButtonRightBot = styled(Circle)`
 	font-size: 1.2rem;
 `
 
-export default ({show}) => (
-	<GUI show={show}>
-			<ButtonRight /> 
-			<ButtonRightBot
-				onClick={toggleFullScreen}>
-				full
-			</ButtonRightBot>
-	</GUI>
-)
+export default class GuiOverlay extends react.Component{
+
+	constructor(props){
+		super(props)
+		this.state = {
+			showOptions: false
+		}
+	}
+	
+	render(){
+		return (
+			<GUI 
+				show={this.props.show}>
+				<ButtonRight
+					clickable={this.props.show}
+					move={this.state.showOptions}
+					onClick={()=>this.toggleOptionsDrawer()} />
+				<OprionsDrawer
+					show={this.state.showOptions}>
+					<Button
+						onClick={() => this.props.brush.setShape("CIRCLE")}>
+						Circle
+					</Button>
+					<Button
+						onClick={() => this.props.brush.setShape("BOX")}>
+						Box
+					</Button>
+					<Button
+						onClick={() => this.props.brush.setShape("SQUARE")}>
+						Square
+					</Button>
+				</OprionsDrawer>
+				<ButtonRightBot
+					clickable={this.props.show}
+					onClick={toggleFullScreen} />
+			</GUI>
+		)
+	}
+
+	toggleOptionsDrawer(){
+		this.setState({showOptions: !this.state.showOptions})
+	}
+}
 
 function toggleFullScreen() {
   var doc = window.document
@@ -66,3 +129,4 @@ function toggleFullScreen() {
 	cancelFullScreen.call(doc)
   }
 }
+

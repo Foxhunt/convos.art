@@ -4,8 +4,8 @@ import p2 from 'p2'
 import Brush from './Brush'
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
-export default roomId => {
-			var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
+export default roomId => new Promise((resolve, reject) =>{
+	var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
 				boxes = new Map,
 				debug = false;
 
@@ -98,8 +98,7 @@ export default roomId => {
 				//Neuen client und seine Box anlegen
 				socket.on('new', ({id}) => {
 					console.log("new! : " + id)
-					let box = new Brush({id})
-					box.addToWorld(world)
+					let box = new Brush({id, world})
 					boxes.set(id, box);
 				});
 		
@@ -135,8 +134,7 @@ export default roomId => {
 
 					//get and set client ID
 					ownId = socket.id;
-					ownBrush = new Brush({ownId, own: true});
-					ownBrush.addToWorld(world)
+					ownBrush = new Brush({id: ownId, own: true, world});
 
 					// Add a box
 					boxes.set(ownId, ownBrush);
@@ -148,12 +146,12 @@ export default roomId => {
 		
 						initBoxes.forEach(({id, x, y, angle}) => {
 							if (id !== ownId) {
-								let box = new Brush({id, x, y, angle})
-								box.addToWorld(world)
+								let box = new Brush({id, x, y, angle, world})
 								boxes.set(box.id, box)
 							}
 						});
 					}); // ende emit init
+					resolve(ownBrush)
 				}); // ende onConnect
 		
 			//event handler für User Interaktion
@@ -387,4 +385,6 @@ export default roomId => {
 				world.gravity[0] = x/7
 				world.gravity[1] = -y/7
 			} 
-		}
+		
+
+})

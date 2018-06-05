@@ -31,14 +31,13 @@ class Room extends react.Component{
             showGui: true
         }
 
-        this.showGuiTimeout = null
         this.CursorDown = false
+        this.brush = null
     }
 
     async componentDidMount () {
-        import("../src/game").then(main => {
-            console.log(this.props.router)
-            main.default(this.props.router.query.roomId)
+        import("../src/game").then(async game => {
+            this.brush = await game.default(this.props.router.query.roomId)
         })
     }
 
@@ -56,7 +55,10 @@ class Room extends react.Component{
                     onTouchMove={() => this.onCursorMove()}
                     onTouchEnd={() => this.onCursorUp()}
                     />
-                <GuiOverlay show={this.state.showGui} />
+                <GuiOverlay 
+                    show={this.state.showGui}
+                    brush={this.brush}
+                    />
             </Background>
         )
     }

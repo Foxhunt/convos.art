@@ -1,11 +1,13 @@
-import p2 from 'p2'
-import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
+import p2 from 'p2';
+import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
-    constructor({id, x = 0, y = 0, angle = 0, own = false}){
+    constructor({id, x = 0, y = 0, angle = 0, own = false, world}){
         this.id = id
         this.isOwnBox = own
+        this.world = world
         this.shape = null
+        this.shapeType = null
         this.body = new p2.Body({
             mass: 100,
             position: [x, y],
@@ -14,35 +16,39 @@ export default class Brush {
         })
 
         this.setShape("CIRCLE")
-
-        this.shape.collisionGroup = BRUSH
-        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
-
-        /* this.vertices = [[], [], [], []]
-        for(let i = 0; i < this.shape.vertices.length; i++){
-            this.vertices[i][0] = this.shape.vertices[i][0]
-            this.vertices[i][1] = this.shape.vertices[i][1]
-        } */
-
-        this.height = this.shape.height
-        this.width = this.shape.width
+        this.world.addBody(this.body)
     }
 
     setShape(shape){
         this.body.removeShape(this.shape)
         switch (shape) {
-            case "CIRCLE": this.shape = new p2.Circle({radius: 50})
+            case "CIRCLE": this.setCircleShape(50)
             break
-            case "BOX": this.shape = new p2.Box({width: 100, height: 50}) 
+            case "BOX": this.setSquareShape(100, 50) 
             break
-            case "SQUARE": this.shape = new p2.Box({width: 50, height: 50}) 
+            case "SQUARE": this.setSquareShape(75, 75) 
             break
         }
+        this.shapeType = shape
+        this.shape.collisionGroup = BRUSH
+        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         this.body.addShape(this.shape)
+        this.updateShape()
     }
 
-    addToWorld(world){
-        world.addBody(this.body)
+    setCircleShape(radius){
+        this.shape = new p2.Circle({radius})
+    }
+
+    setSquareShape(width, height){
+        this.shape = new p2.Box({width, height})
+        this.height = this.shape.height
+        this.width = this.shape.width
+        this.vertices = [[], [], [], []]
+        for(let i = 0; i < this.shape.vertices.length; i++){
+            this.vertices[i][0] = this.shape.vertices[i][0]
+            this.vertices[i][1] = this.shape.vertices[i][1]
+        }
     }
 
     render(ctx){
@@ -53,17 +59,28 @@ export default class Brush {
     adjustSize(){
         const factor = this.calculateSizeFactor()
 
-        /* this.shape.width = factor * this.width
-        this.shape.height = factor * this.height
+        switch (this.shapeType) {
+            case "CIRCLE": this.adjustCircle(factor)
+            break
+            case "BOX":
+            case "SQUARE": this.adjustSquare(factor)
+            break
+        }
+        
+        this.updateShape()
+    }
 
+    adjustCircle(factor){
+        this.shape.radius = 50 * factor
+    }
+
+    adjustSquare(factor){
+        this.shape.width = factor * this.width 
+        this.shape.height = factor * this.height 
         this.shape.vertices.forEach((vertex, index, array) => {
             array[index][0] = factor * this.vertices[index][0]
             array[index][1] = factor * this.vertices[index][1]
-        }) */
-
-        this.shape.radius = 50 * factor
-        
-        this.updateShape()
+        })
     }
 
     calculateSizeFactor(){
@@ -101,12 +118,21 @@ export default class Brush {
         if (this.isOwnBox) {
             ctx.strokeStyle = "red"
         }
-        ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
-        //ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+        this.drawShape(ctx)
         ctx.fillStyle = "blue"
         ctx.lineWidth = 4
         ctx.fill()
         ctx.stroke()
         ctx.restore()
+    }
+
+    drawShape(ctx){
+        switch (this.shapeType) {
+            case "CIRCLE": ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
+            break
+            case "BOX":
+            case "SQUARE": ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+            break
+        }
     }
 }
