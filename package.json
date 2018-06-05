@@ -7,21 +7,21 @@
     "deploy": "now & now ln & now rm Convos -sy"
   },
   "dependencies": {
-    "cross-env": "^5.1.5",
+    "cross-env": "^5.1.6",
     "dat.gui": "^0.7.2",
     "express": "^4.16.3",
-    "next": "^6.0.1",
+    "next": "^6.0.3",
     "p2": "^0.7.1",
-    "react": "^16.3.2",
+    "react": "^16.4.0",
     "react-color": "^2.14.1",
-    "react-dom": "^16.3.2",
-    "socket.io": "^2.1.0",
-    "socket.io-client": "^2.1.0",
-    "styled-components": "^3.2.6"
+    "react-dom": "^16.4.0",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
+    "styled-components": "^3.3.2"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.5.1",
-    "nodemon": "^1.17.4"
+    "nodemon": "^1.17.5"
   },
   "now": {
     "alias": "Convos",
