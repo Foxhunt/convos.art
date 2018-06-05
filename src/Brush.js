@@ -8,6 +8,11 @@ export default class Brush {
         this.world = world
         this.shape = null
         this.shapeType = null
+
+        this.fillStyle = "blue"
+        this.strokeStyle = "red"
+
+
         this.body = new p2.Body({
             mass: 100,
             position: [x, y],
@@ -116,10 +121,10 @@ export default class Brush {
         ctx.translate(x, y)
         ctx.rotate(this.body.interpolatedAngle)
         if (this.isOwnBox) {
-            ctx.strokeStyle = "red"
+            ctx.strokeStyle = this.strokeStyle
         }
         this.drawShape(ctx)
-        ctx.fillStyle = "blue"
+        ctx.fillStyle = this.fillStyle
         ctx.lineWidth = 4
         ctx.fill()
         ctx.stroke()

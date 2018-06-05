@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import react from 'react'
+import { HuePicker } from "react-color"
 
 const Button = styled.div`
 	width: 100%;
@@ -30,9 +31,11 @@ const OprionsDrawer = styled.div`
 	pointer-events: auto;
 
 	position: absolute;
-	right: ${({show}) => show ? 0 : -33 }%;
+	left: ${({show}) => show ? 67 : 100 }%;
 
-	transition: right 0.5s ease-in-out;
+	transition: left 0.5s ease-in-out;
+
+	overflow: hidden;
 
 	width: 33vw;
 	height: 56.25vw;
@@ -75,6 +78,8 @@ export default class GuiOverlay extends react.Component{
 
 	constructor(props){
 		super(props)
+		this.fillStyle = "#0000FF"
+		this.strokeStyle = "#0000FF"
 		this.state = {
 			showOptions: false
 		}
@@ -102,6 +107,26 @@ export default class GuiOverlay extends react.Component{
 						onClick={() => this.props.brush.setShape("SQUARE")}>
 						Square
 					</Button>
+					Fill
+					<HuePicker
+						width={"100%"}
+						color={this.fillStyle}
+						onChange={
+							color =>{
+								this.props.brush.fillStyle = color.hex
+								this.fillStyle = color.hex
+							}
+					}/>
+					Stroke
+					<HuePicker
+						width={"100%"}
+						color={this.strokeStyle}
+						onChange={
+							color => {
+								this.props.brush.strokeStyle = color.hex
+								this.strokeStyle = color.hex
+							}
+					}/>
 				</OprionsDrawer>
 				<ButtonRightBot
 					clickable={this.props.show}

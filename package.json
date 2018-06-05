@@ -4,7 +4,7 @@
     "dev": "nodemon -w app.js app.js",
     "build": "next build",
     "start": "cross-env NODE_ENV=production node app.js",
-		"deploy": "now & now ln & now rm Convos -sy"
+    "deploy": "now & now ln & now rm Convos -sy"
   },
   "dependencies": {
     "cross-env": "^5.1.5",
@@ -13,6 +13,7 @@
     "next": "^6.0.1",
     "p2": "^0.7.1",
     "react": "^16.3.2",
+    "react-color": "^2.14.1",
     "react-dom": "^16.3.2",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
@@ -23,12 +24,12 @@
     "nodemon": "^1.17.4"
   },
   "now": {
-		"alias": "Convos",
-		"scale": {
-			"bru1": {
-				"min": 1,
-				"max": 1
-			}
-		}
-	}
+    "alias": "Convos",
+    "scale": {
+      "bru1": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  }
 }
