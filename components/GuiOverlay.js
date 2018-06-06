@@ -97,15 +97,15 @@ export default class GuiOverlay extends react.Component{
 					clickable={this.props.show}
 					show={this.state.showOptions}>
 					<Button
-						onClick={() => this.props.brush.setShape("CIRCLE")}>
+						onClick={() => this.props.brush.Shape = "CIRCLE"}>
 						Circle
 					</Button>
 					<Button
-						onClick={() => this.props.brush.setShape("BOX")}>
+						onClick={() => this.props.brush.Shape = "BOX"}>
 						Box
 					</Button>
 					<Button
-						onClick={() => this.props.brush.setShape("SQUARE")}>
+						onClick={() => this.props.brush.Shape = "SQUARE"}>
 						Square
 					</Button>
 					Fill

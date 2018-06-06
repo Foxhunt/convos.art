@@ -20,11 +20,11 @@ export default class Brush {
             angularVelocity: 1
         })
 
-        this.setShape("CIRCLE")
+        this.Shape = "CIRCLE"
         this.world.addBody(this.body)
     }
 
-    setShape(shape){
+    set Shape(shape){
         this.body.removeShape(this.shape)
         switch (shape) {
             case "CIRCLE": this.setCircleShape(50)
@@ -120,9 +120,7 @@ export default class Brush {
         ctx.save()
         ctx.translate(x, y)
         ctx.rotate(this.body.interpolatedAngle)
-        if (this.isOwnBox) {
-            ctx.strokeStyle = this.strokeStyle
-        }
+        ctx.strokeStyle = this.strokeStyle
         this.drawShape(ctx)
         ctx.fillStyle = this.fillStyle
         ctx.lineWidth = 4

@@ -51,10 +51,13 @@ io.on('connection', socket => {
 	//Box informationen vom Client erhalten
 	socket.on('toServer', data => {
 		//suche die passende box und setze x, y und angle
-		box.x = data.x;
-		box.y = data.y;
-		box.angle = data.angle;
-		box.velocity = data.velocity;
+		box.x = data.x
+		box.y = data.y
+		box.angle = data.angle
+		box.velocity = data.velocity
+		box.strokeStyle = data.strokeStyle
+		box.fillStyle = data.fillStyle
+		box.shapeType = data.shapeType
 	});
 
 	//periodischen senden von updates an die  Clients;
@@ -67,7 +70,10 @@ io.on('connection', socket => {
 			x: box.x,
 			y: box.y,
 			angle: box.angle,
-			velocity: box.velocity
+			velocity: box.velocity,
+			fillStyle: box.fillStyle,
+			strokeStyle: box.strokeStyle,
+			shapeType: box.shapeType
 		});
 	}
 
@@ -94,11 +100,14 @@ function getBoxesOfRoom(roomId){
 
 //Box constructor Server Version
 function Box(id, x, y, angle, velocity) {
-	this.id = id;
-	this.x = x || 0;
-	this.y = y || 5;
-	this.angle = angle || 0;
-	this.velocity = velocity || 0;
+	this.id = id
+	this.x = x || 0
+	this.y = y || 5
+	this.angle = angle || 0
+	this.velocity = velocity || 0
+	this.fillStyle = ""
+	this.strokeStyle = ""
+	this.shapeType = ""
 }
 
 nextApp.prepare().then(() => {

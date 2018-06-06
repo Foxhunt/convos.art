@@ -111,15 +111,18 @@ export default roomId => new Promise((resolve, reject) =>{
 				});
 		
 				//Box Informationen vom Server erhalten
-				socket.on('toClient', ({id, x, y, angle, velocity}) => {
+				socket.on('toClient', ({id, x, y, angle, velocity, fillStyle, strokeStyle, shapeType}) => {
 					// betroffene box ermitteln
 					let box = boxes.get(id);
 					//erhaltenen Informationen verarbeiten
 					if (box) {
-						box.body.position[0] = x;
-						box.body.position[1] = y;
-						box.body.angle = angle;
-						box.body.velocity = velocity;
+						box.body.position[0] = x
+						box.body.position[1] = y
+						box.body.angle = angle
+						box.body.velocity = velocity
+						box.fillStyle = fillStyle
+						box.strokeStyle = strokeStyle
+						box.Shape = shapeType
 					}
 				});
 		
@@ -360,7 +363,10 @@ export default roomId => new Promise((resolve, reject) =>{
 						x: ownBrush.body.interpolatedPosition[0],
 						y: ownBrush.body.interpolatedPosition[1],
 						angle: ownBrush.body.interpolatedAngle,
-						velocity: ownBrush.body.velocity
+						velocity: ownBrush.body.velocity,
+						fillStyle: ownBrush.fillStyle,
+						strokeStyle: ownBrush.strokeStyle,
+						shapeType: ownBrush.shapeType
 					});
 				}
 			}
