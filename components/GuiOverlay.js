@@ -47,7 +47,7 @@ const OptionsDrawer = styled.div`
 `
 
 const circleSize = 11
-const Circle = styled.div`
+const Circle = styled.a`
 	position: absolute;
 	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
 
@@ -70,8 +70,11 @@ const ButtonRight = styled(Circle)`
 const ButtonRightBot = styled(Circle)`
 	top: 100%;
 	left: 100%;
+`
 
-	font-size: 1.2rem;
+const ButtonBot = styled(Circle)`
+	top: 100%;
+	left: 50%;
 `
 
 export default class GuiOverlay extends react.Component{
@@ -80,9 +83,16 @@ export default class GuiOverlay extends react.Component{
 		super(props)
 		this.fillStyle = "#0000FF"
 		this.strokeStyle = "#0000FF"
+
+		this.canvas = null
+
 		this.state = {
 			showOptions: false
 		}
+	}
+
+	componentDidMount(){
+		this.canvas = document.getElementById('myCanvas')
 	}
 	
 	render(){
@@ -132,12 +142,21 @@ export default class GuiOverlay extends react.Component{
 				<ButtonRightBot
 					clickable={this.props.show}
 					onClick={toggleFullScreen} />
+				<ButtonBot 
+					clickable={this.props.show}
+					onClick={event => this.saveCanvas(event)}
+					download='canvas' />
 			</GUI>
 		)
 	}
 
 	toggleOptionsDrawer(){
 		this.setState({showOptions: !this.state.showOptions})
+	}
+
+	saveCanvas(event){
+		const imgURL = this.canvas.toDataURL('image/png')
+		event.target.href = imgURL
 	}
 }
 
