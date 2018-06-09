@@ -30,13 +30,11 @@ export default class CreateJoinRoom extends react.Component{
     render(){
         return (
             <Container>
-                <label>
-                    {'Room '}
-                    <input
-                    type='text'
-                    value={this.state.roomId}
-                    onChange={event => this.handleInput(event)}/>
-                </label>
+                Enter a Name to create or join a Room.
+                <input
+                type='text'
+                value={this.state.roomId}
+                onChange={event => this.handleInput(event)}/>
                 <ButtonContainer>
                     <Link 
                         prefetch
