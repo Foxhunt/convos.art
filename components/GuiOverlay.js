@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import react from 'react'
 import { HuePicker } from "react-color"
+import ReactWebcam from "react-webcam"
 
 const Button = styled.div`
 	width: 100%;
@@ -9,6 +10,25 @@ const Button = styled.div`
 	background-color: #aaaaaa;
 
 	border: 3px solid #000000;
+`
+
+const camSize = 40
+const Webcam = styled.div`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	overflow: hidden;
+
+	width: ${camSize}%;
+	height: ${camSize*(16/9)}%;
+
+	transform: translate(-50%, -50%);
+	
+	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
+`
+
+const Img = styled.img`
+	width: 100%;
 `
 
 const GUI = styled.div`
@@ -85,9 +105,13 @@ export default class GuiOverlay extends react.Component{
 		this.strokeStyle = "#0000FF"
 
 		this.canvas = null
+		this.cam = React.createRef()
+		this.image = null
 
 		this.state = {
-			showOptions: false
+			showOptions: false,
+			showWebcam: false,
+			camCapture: null
 		}
 	}
 
@@ -124,7 +148,7 @@ export default class GuiOverlay extends react.Component{
 						color={this.fillStyle}
 						onChange={
 							color =>{
-								this.props.brush.fillStyle = color.hex
+								this.props.brush.Fill = color.hex
 								this.fillStyle = color.hex
 							}
 					}/>
@@ -134,29 +158,62 @@ export default class GuiOverlay extends react.Component{
 						color={this.strokeStyle}
 						onChange={
 							color => {
-								this.props.brush.strokeStyle = color.hex
+								this.props.brush.Stroke = color.hex
 								this.strokeStyle = color.hex
 							}
 					}/>
+					<Button
+						onClick={() => this.setState({showWebcam: !this.state.showWebcam})}>
+						toggle Webcam
+					</Button>
+					<Img
+						id="imgPreview"
+						src={this.state.camCapture} />
 				</OptionsDrawer>
+				{
+					this.state.showWebcam && 
+					<Webcam>
+						<ReactWebcam
+							audio={false}
+							ref={this.cam} 
+							style={{width: `100%`, height: `100%`}}
+							/>
+					</Webcam>
+				}
 				<ButtonRightBot
 					clickable={this.props.show}
 					onClick={toggleFullScreen} />
 				<ButtonBot 
 					clickable={this.props.show}
-					onClick={event => this.saveCanvas(event)}
+					onClick={event => this.takePicture(event)}
 					download='canvas' />
 			</GUI>
 		)
 	}
 
 	toggleOptionsDrawer(){
-		this.setState({showOptions: !this.state.showOptions})
+		const showOptions = !this.state.showOptions
+		const showWebcam = showOptions ? this.state.showWebcam : false
+		this.setState({showOptions, showWebcam})
+	}
+
+	takePicture(event){
+		if(this.state.showWebcam){
+			this.captureWebcam()
+		}else{
+			this.saveCanvas(event)
+		}
 	}
 
 	saveCanvas(event){
 		const imgURL = this.canvas.toDataURL('image/png')
 		event.target.href = imgURL
+	}
+
+	captureWebcam(){
+		const camCapture = this.cam.current.getScreenshot()
+		this.setState({camCapture})
+		this.props.brush.Image = document.getElementById('imgPreview')
 	}
 }
 

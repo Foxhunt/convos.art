@@ -10,8 +10,8 @@ export default class Brush {
         this.shapeType = null
 
         this.fillStyle = "blue"
+        this.fillImage = null
         this.strokeStyle = "red"
-
 
         this.body = new p2.Body({
             mass: 100,
@@ -22,6 +22,19 @@ export default class Brush {
 
         this.Shape = "CIRCLE"
         this.world.addBody(this.body)
+    }
+
+    set Fill(color){
+        this.fillStyle = color
+        this.fillImage = null
+    }
+
+    set Stroke(color){
+        this.strokeStyle = color
+    }
+
+    set Image(src){
+        this.fillImage = src
     }
 
     set Shape(shape){
@@ -131,11 +144,37 @@ export default class Brush {
 
     drawShape(ctx){
         switch (this.shapeType) {
-            case "CIRCLE": ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
+            case "CIRCLE": this.drawCircle(ctx)
             break
             case "BOX":
-            case "SQUARE": ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+            case "SQUARE": this.drawRect(ctx)
             break
+        }
+    }
+
+    drawCircle(ctx){
+        if(this.fillImage){
+            ctx.beginPath()
+            ctx.arc(0, 2*24, 2*24, 0, Math.PI*2)
+            ctx.closePath()
+            ctx.clip()
+
+            ctx.drawImage(this.fillImage, 0, 0, 4*24+2, 4*24+2)
+    
+            ctx.beginPath()
+            ctx.arc(0, 0, 2, 0, Math.PI*2)
+            ctx.clip()
+            ctx.closePath()
+        }else{
+            ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
+        }
+    }
+
+    drawRect(ctx){
+        if(this.fillImage){
+            ctx.drawImage(this.fillImage, -this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+        }else{
+            ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
         }
     }
 }
