@@ -166,9 +166,6 @@ export default class GuiOverlay extends react.Component{
 						onClick={() => this.setState({showWebcam: !this.state.showWebcam})}>
 						toggle Webcam
 					</Button>
-					<Img
-						id="imgPreview"
-						src={this.state.camCapture} />
 				</OptionsDrawer>
 				{
 					this.state.showWebcam && 
@@ -211,9 +208,7 @@ export default class GuiOverlay extends react.Component{
 	}
 
 	captureWebcam(){
-		const camCapture = this.cam.current.getScreenshot()
-		this.setState({camCapture})
-		this.props.brush.Image = document.getElementById('imgPreview')
+		this.props.brush.Image = this.cam.current.getScreenshot()
 	}
 }
 

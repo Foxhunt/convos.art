@@ -39,7 +39,11 @@ export default class Brush {
     }
 
     set Image(src){
-        this.fillImage = src
+        const img = new Image()
+        img.src = src
+        this.fillImage = img
+        if (this.socket)
+            this.socket.emit('setFillImage', src)
     }
 
     set Shape(shapeType){

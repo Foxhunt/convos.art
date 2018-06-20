@@ -46,7 +46,7 @@ io.on('connection', socket => {
 			boxesArr.push(value);
 		}
 		fn(boxesArr);
-	});
+	})
 
 	//Box informationen vom Client erhalten
 	socket.on('toServer', data => {
@@ -59,6 +59,7 @@ io.on('connection', socket => {
 
 	socket.on('setFillStyle', color => {
 		box.fillStyle = color
+		box.fillImage = ""
 		socket.broadcast.to(roomId).emit('setFillStyle', {id, color})
 	})
 
@@ -70,6 +71,12 @@ io.on('connection', socket => {
 	socket.on('setShapeType', shapeType => {
 		box.shapeType = shapeType
 		socket.broadcast.to(roomId).emit('setShapeType', {id, shapeType})
+	})
+
+	socket.on('setFillImage', imageSrc => {
+		box.fillImage = imageSrc
+		box.fillStyle = ""
+		socket.broadcast.to(roomId).emit('setFillImage', {id, imageSrc})
 	})
 
 	//periodischen senden von updates an die  Clients;
@@ -114,9 +121,10 @@ function Box(id, x, y, angle, velocity) {
 	this.y = y || 5
 	this.angle = angle || 0
 	this.velocity = velocity || 0
-	this.fillStyle = ""
-	this.strokeStyle = ""
+	this.fillStyle = "blue"
+	this.strokeStyle = "red"
 	this.shapeType = ""
+	this.fillImage = ""
 }
 
 nextApp.prepare().then(() => {
