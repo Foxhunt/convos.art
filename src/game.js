@@ -183,7 +183,7 @@ export default roomId => new Promise((resolve, reject) => {
 						box.Stroke = strokeStyle
 						box.Shape = shapeType
 						if(fillImage)
-							box.Fill = fillImage
+							box.Image = fillImage
 						boxes.set(box.id, box)
 					}
 				})
