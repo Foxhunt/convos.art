@@ -55,10 +55,22 @@ io.on('connection', socket => {
 		box.y = data.y
 		box.angle = data.angle
 		box.velocity = data.velocity
-		box.strokeStyle = data.strokeStyle
-		box.fillStyle = data.fillStyle
-		box.shapeType = data.shapeType
-	});
+	})
+
+	socket.on('setFillStyle', color => {
+		box.fillStyle = color
+		socket.broadcast.to(roomId).emit('setFillStyle', {id, color})
+	})
+
+	socket.on('setStrokeStyle', color => {
+		box.strokeStyle = color
+		socket.broadcast.to(roomId).emit('setStrokeStyle', {id, color})
+	})
+	
+	socket.on('setShapeType', shapeType => {
+		box.shapeType = shapeType
+		socket.broadcast.to(roomId).emit('setShapeType', {id, shapeType})
+	})
 
 	//periodischen senden von updates an die  Clients;
 	setInterval(toClients, 50);
@@ -70,10 +82,7 @@ io.on('connection', socket => {
 			x: box.x,
 			y: box.y,
 			angle: box.angle,
-			velocity: box.velocity,
-			fillStyle: box.fillStyle,
-			strokeStyle: box.strokeStyle,
-			shapeType: box.shapeType
+			velocity: box.velocity
 		});
 	}
 

@@ -7,30 +7,30 @@ import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 export default roomId => new Promise((resolve, reject) =>{
 	var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
 				boxes = new Map,
-				debug = false;
+				debug = false
 
 				const particles = []
 
 
 				const socket = io({ query: { roomId } })
 
-				canvas = document.getElementById("myCanvas");
-				w = canvas.width;
-				h = canvas.height;
+				canvas = document.getElementById("myCanvas")
+				w = canvas.width
+				h = canvas.height
 		
-				ctx = canvas.getContext("2d");
-				ctx.lineWidth = 0.05;
+				ctx = canvas.getContext("2d")
+				ctx.lineWidth = 0.05
 		
 				// Init p2.js
 				world = new p2.World({
 					gravity: [0, -60]
-				});
+				})
 				
 				//window.addEventListener('deviceorientation', event => handleOrientation(event));
 		
 				// Add a plane
-				planeBody = new p2.Body();
-				planeBody.addShape(new p2.Plane());
+				planeBody = new p2.Body()
+				planeBody.addShape(new p2.Plane())
 				planeBody.shapes[0].collisionGroup = PLANES
 				planeBody.shapes[0].collisionMask = BRUSH
 
@@ -111,7 +111,7 @@ export default roomId => new Promise((resolve, reject) =>{
 				});
 		
 				//Box Informationen vom Server erhalten
-				socket.on('toClient', ({id, x, y, angle, velocity, fillStyle, strokeStyle, shapeType}) => {
+				socket.on('toClient', ({id, x, y, angle, velocity}) => {
 					// betroffene box ermitteln
 					let box = boxes.get(id);
 					//erhaltenen Informationen verarbeiten
@@ -120,11 +120,29 @@ export default roomId => new Promise((resolve, reject) =>{
 						box.body.position[1] = y
 						box.body.angle = angle
 						box.body.velocity = velocity
-						box.fillStyle = fillStyle
-						box.strokeStyle = strokeStyle
-						box.Shape = shapeType
 					}
 				});
+
+				socket.on('setFillStyle', ({id, color}) => {
+					let box = boxes.get(id)
+					if (box) {
+						box.Fill = color
+					}
+				})
+
+				socket.on('setStrokeStyle', ({id, color}) => {
+					let box = boxes.get(id)
+					if (box) {
+						box.Stroke = color
+					}
+				})
+
+				socket.on('setShapeType', ({id, shapeType}) => {
+					let box = boxes.get(id)
+					if (box) {
+						box.Shape = shapeType
+					}
+				})
 		
 				//Den server nach den bereits vorhandenen clients fragen
 				//wenn die verbindung aufgebaut wurde.
@@ -137,7 +155,7 @@ export default roomId => new Promise((resolve, reject) =>{
 
 					//get and set client ID
 					ownId = socket.id;
-					ownBrush = new Brush({id: ownId, own: true, world});
+					ownBrush = new Brush({id: ownId, own: true, world, socket});
 
 					// Add a box
 					boxes.set(ownId, ownBrush);
@@ -354,7 +372,7 @@ export default roomId => new Promise((resolve, reject) =>{
 				render();
 			}
 		
-			requestAnimationFrame(animate);
+			requestAnimationFrame(animate)
 		
 			//Box informationen an server senden
 			function toServer() {
@@ -363,25 +381,22 @@ export default roomId => new Promise((resolve, reject) =>{
 						x: ownBrush.body.interpolatedPosition[0],
 						y: ownBrush.body.interpolatedPosition[1],
 						angle: ownBrush.body.interpolatedAngle,
-						velocity: ownBrush.body.velocity,
-						fillStyle: ownBrush.fillStyle,
-						strokeStyle: ownBrush.strokeStyle,
-						shapeType: ownBrush.shapeType
-					});
+						velocity: ownBrush.body.velocity
+					})
 				}
 			}
 		
 			//Update loop
-			setInterval(toServer, 50);
+			setInterval(toServer, 50)
 			
 			function handleOrientation(event){
-				var x = event.gamma;  // In degree in the range [-180,180]
-				var y = event.beta; // In degree in the range [-90,90]
+				var x = event.gamma  // In degree in the range [-180,180]
+				var y = event.beta // In degree in the range [-90,90]
 		
 				// Because we don't want to have the device upside down
 				// We constrain the x value to the range [-90,90]
-				if (x >  90) { x =  90};
-				if (x < -90) { x = -90};
+				if (x >  90) { x =  90}
+				if (x < -90) { x = -90}
 		
 				// To make computation easier we shift the range of 
 				// x and y to [0,180]
@@ -390,7 +405,5 @@ export default roomId => new Promise((resolve, reject) =>{
 				
 				world.gravity[0] = x/7
 				world.gravity[1] = -y/7
-			} 
-		
-
+			}
 })

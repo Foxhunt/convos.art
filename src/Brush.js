@@ -2,10 +2,11 @@ import p2 from 'p2';
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
-    constructor({id, x = 0, y = 0, angle = 0, own = false, world}){
+    constructor({id, x = 0, y = 0, angle = 0, own = false, world, socket}){
         this.id = id
         this.isOwnBox = own
         this.world = world
+        this.socket = socket
         this.shape = null
         this.shapeType = null
 
@@ -27,19 +28,23 @@ export default class Brush {
     set Fill(color){
         this.fillStyle = color
         this.fillImage = null
+        if (this.socket)
+            this.socket.emit('setFillStyle', color)
     }
 
     set Stroke(color){
         this.strokeStyle = color
+        if (this.socket)
+            this.socket.emit('setStrokeStyle', color)
     }
 
     set Image(src){
         this.fillImage = src
     }
 
-    set Shape(shape){
+    set Shape(shapeType){
         this.body.removeShape(this.shape)
-        switch (shape) {
+        switch (shapeType) {
             case "CIRCLE": this.setCircleShape(50)
             break
             case "BOX": this.setSquareShape(100, 50) 
@@ -47,11 +52,13 @@ export default class Brush {
             case "SQUARE": this.setSquareShape(75, 75) 
             break
         }
-        this.shapeType = shape
+        this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
         this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         this.body.addShape(this.shape)
         this.updateShape()
+        if (this.socket)
+            this.socket.emit('setShapeType', shapeType)
     }
 
     setCircleShape(radius){
