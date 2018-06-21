@@ -166,24 +166,30 @@ export default class Brush {
     drawCircle(ctx){
         if(this.fillImage){
             ctx.beginPath()
-            ctx.arc(0, 2*24, 2*24, 0, Math.PI*2)
-            ctx.closePath()
+            ctx.arc(0, 0, this.shape.radius, 0, Math.PI*2)
             ctx.clip()
 
-            ctx.drawImage(this.fillImage, 0, 0, 4*24+2, 4*24+2)
-    
+            const ratioW = this.shape.radius*2 / this.fillImage.width
+            const ratioH = this.shape.radius*2 / this.fillImage.height
+
             ctx.beginPath()
-            ctx.arc(0, 0, 2, 0, Math.PI*2)
-            ctx.clip()
-            ctx.closePath()
+            ctx.drawImage(this.fillImage,
+                -this.shape.radius,
+                -this.shape.radius,
+                this.fillImage.width*ratioW,
+                this.fillImage.height*ratioH)
         }else{
-            ctx.arc(0, 0, this.shape.radius, 0, 2*Math.PI)
+            ctx.arc(0, 0, this.shape.radius, 0, Math.PI*2)
         }
     }
 
     drawRect(ctx){
         if(this.fillImage){
-            ctx.drawImage(this.fillImage, -this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
+            ctx.drawImage(this.fillImage,
+                -this.shape.width / 2,
+                -this.shape.height / 2,
+                this.shape.width,
+                this.shape.height)
         }else{
             ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
         }
