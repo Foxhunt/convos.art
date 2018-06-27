@@ -22,11 +22,18 @@ export default roomId => new Promise((resolve, reject) => {
 	ctx.lineWidth = 0.05
 
 	// Init p2.js
-	world = new p2.World({
-		gravity: [0, -60]
-	})
+	if(window.screen.orientation.type == "landscape-primary"){
+		world = new p2.World({
+			gravity: [0, -90]
+		})
+	}else{
+		world = new p2.World({
+			gravity: [0, 0]
+		})
+	}
 
-	//window.addEventListener('deviceorientation', event => handleOrientation(event));
+	if(typeof window.orientation !== "undefined")
+		window.addEventListener('deviceorientation', event => handleOrientation(event));
 
 	// Add a plane
 	planeBody = new p2.Body()
@@ -406,20 +413,24 @@ export default roomId => new Promise((resolve, reject) => {
 	setInterval(toServer, 50)
 
 	function handleOrientation(event) {
-		var x = event.gamma  // In degree in the range [-180,180]
-		var y = event.beta // In degree in the range [-90,90]
+		let x = event.gamma  // In degree in the range [-180,180]
+		let y = event.beta // In degree in the range [-90,90]
 
 		// Because we don't want to have the device upside down
 		// We constrain the x value to the range [-90,90]
-		if (x > 90) { x = 90 }
-		if (x < -90) { x = -90 }
+		if (window.screen.orientation.type == "landscape-primary") { 
+			const tmp = y
+			y = -x
+			x = tmp
+		}
 
-		// To make computation easier we shift the range of 
-		// x and y to [0,180]
-		//x += 90;
-		//y += 90;	
+		if (window.screen.orientation.type == "landscape-secondary") { 
+			const tmp = y
+			y = x
+			x = -tmp
+		}
 
-		world.gravity[0] = x / 7
-		world.gravity[1] = -y / 7
+		world.gravity[0] = x
+		world.gravity[1] = -y
 	}
 })
