@@ -141,7 +141,7 @@ export default class GuiOverlay extends react.Component{
 	}
 
 	saveCanvas(event){
-		const imgURL = this.canvas.toDataURL('image/png')
+		const imgURL = this.canvas.toDataURL('image/jpeg')
 		event.target.href = imgURL
 	}
 
