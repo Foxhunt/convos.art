@@ -7,18 +7,18 @@
     "deploy": "now & now ln & now rm convos -sy"
   },
   "dependencies": {
-    "cross-env": "^5.1.6",
+    "cross-env": "^5.2.0",
     "dat.gui": "^0.7.2",
     "express": "^4.16.3",
-    "next": "^6.0.3",
+    "next": "^6.1.1",
     "p2": "^0.7.1",
-    "react": "^16.4.0",
+    "react": "^16.4.1",
     "react-color": "^2.14.1",
-    "react-dom": "^16.4.0",
-    "react-webcam": "^0.5.0",
+    "react-dom": "^16.4.1",
+    "react-webcam": "^1.0.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
-    "styled-components": "^3.3.2"
+    "styled-components": "^3.3.3"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.5.1",
