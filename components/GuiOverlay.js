@@ -1,16 +1,8 @@
 import styled from 'styled-components'
 import react from 'react'
-import { HuePicker } from "react-color"
 import ReactWebcam from "react-webcam"
 
-const Button = styled.div`
-	width: 100%;
-	height: 5%;
-
-	background-color: #aaaaaa;
-
-	border: 3px solid #000000;
-`
+import OptionsDrawer from "./OptionsDrawer"
 
 const camSize = 40
 const Webcam = styled.div`
@@ -47,25 +39,6 @@ const GUI = styled.div`
 	opacity: ${({show}) => show ? 0.9 : 0 };
 `
 
-const OptionsDrawer = styled.div`
-	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
-
-	position: absolute;
-	left: ${({show}) => show ? 67 : 100 }%;
-
-	transition: left 0.5s ease-in-out;
-
-	overflow: hidden;
-
-	width: 33vw;
-	height: 56.25vw;
-
-	max-width: calc(177.78vh / 3);
-	max-height: 100vh;
-
-	background-color: #00ffff;
-`
-
 const circleSize = 11
 const Circle = styled.a`
 	position: absolute;
@@ -98,7 +71,6 @@ const ButtonBot = styled(Circle)`
 `
 
 export default class GuiOverlay extends react.Component{
-
 	constructor(props){
 		super(props)
 		this.fillStyle = "#0000FF"
@@ -129,44 +101,9 @@ export default class GuiOverlay extends react.Component{
 					onClick={()=>this.toggleOptionsDrawer()} />
 				<OptionsDrawer
 					clickable={this.props.show}
-					show={this.state.showOptions}>
-					<Button
-						onClick={() => this.props.brush.Shape = "CIRCLE"}>
-						Circle
-					</Button>
-					<Button
-						onClick={() => this.props.brush.Shape = "BOX"}>
-						Box
-					</Button>
-					<Button
-						onClick={() => this.props.brush.Shape = "SQUARE"}>
-						Square
-					</Button>
-					Fill
-					<HuePicker
-						width={"100%"}
-						color={this.fillStyle}
-						onChange={
-							color =>{
-								this.props.brush.Fill = color.hex
-								this.fillStyle = color.hex
-							}
-					}/>
-					Stroke
-					<HuePicker
-						width={"100%"}
-						color={this.strokeStyle}
-						onChange={
-							color => {
-								this.props.brush.Stroke = color.hex
-								this.strokeStyle = color.hex
-							}
-					}/>
-					<Button
-						onClick={() => this.setState({showWebcam: !this.state.showWebcam})}>
-						toggle Webcam
-					</Button>
-				</OptionsDrawer>
+					show={this.state.showOptions}
+					brush={this.props.brush}
+					toggleWebcam={() => this.setState({ showWebcam: !this.state.showWebcam })} />
 				{
 					this.state.showWebcam && 
 					<Webcam>
