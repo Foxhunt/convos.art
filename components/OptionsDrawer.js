@@ -6,9 +6,7 @@ const Container = styled.div`
 	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
 
 	position: absolute;
-	left: ${({ show }) => show ? 67 : 100}%;
-
-	transition: left 0.5s ease-in-out;
+	left: 100%;
 
 	overflow: hidden;
 
@@ -30,10 +28,9 @@ const Button = styled.div`
 	border: 3px solid #000000;
 `
 
-export default ({ clickable, show, brush, toggleWebcam }) =>
+export default ({ clickable, brush, toggleWebcam }) =>
     <Container
-        clickable={clickable}
-        show={show}>
+        clickable={clickable}>
         <Button
             onClick={() => brush.Shape = "CIRCLE"}>
             Circle
