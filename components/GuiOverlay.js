@@ -133,6 +133,7 @@ export default class GuiOverlay extends react.Component{
 
 	takePicture(event){
 		if(this.state.showWebcam){
+			event.preventDefault()
 			this.captureWebcam()
 		}else{
 			this.saveCanvas(event)
