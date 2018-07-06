@@ -3,6 +3,7 @@ import react from 'react'
 import ReactWebcam from "react-webcam"
 
 import OptionsDrawer from "./OptionsDrawer"
+import Circle from "./DivCircle"
 
 const camSize = 40
 const Webcam = styled.div`
@@ -39,20 +40,6 @@ const GUI = styled.div`
 	opacity: ${({show}) => show ? 0.9 : 0 };
 `
 
-const circleSize = 11
-const Circle = styled.a`
-	position: absolute;
-	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };
-
-	transform: translate(-50%, -50%);
-
-	border-radius: 50%;
-
-	width: ${circleSize}%;
-	height: ${circleSize*(16/9)}%;
-
-	background-color: #ffffff;
-`
 
 const ButtonRight = styled(Circle)`
 	top: 50%;
