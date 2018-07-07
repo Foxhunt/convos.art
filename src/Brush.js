@@ -58,7 +58,9 @@ export default class Brush {
         }
         this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
-        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+        setTimeout(() => {
+            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+        }, 1000)
         this.body.addShape(this.shape)
         this.updateShape()
         if (this.socket)
