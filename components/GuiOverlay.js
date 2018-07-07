@@ -74,6 +74,7 @@ export default class GuiOverlay extends react.Component {
 
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
 		this.showOptionsDrawerPos = { x: 0, y: 0 }
+		this.dragBounds = {left: 0, right: 0}
 
 		this.state = {
 			showWebcam: false,
@@ -87,6 +88,10 @@ export default class GuiOverlay extends react.Component {
 	calculatepositions() {
 		this.showOptionsDrawerPos = { x: -this.canvas.offsetWidth * 0.33, y: 0 }
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
+		this.dragBounds = {
+			left: this.showOptionsDrawerPos.x,
+			right: this.hideOptionsDrawerPos.x
+		}
 		this.setState({ optionsDrawerPos: this.hideOptionsDrawerPos })
 	}
 
@@ -109,7 +114,8 @@ export default class GuiOverlay extends react.Component {
 					axis="x"
 					onDrag={(event, data) => this.handleDrag(event, data)}
 					onStop={event => this.handleDragStop(event)}
-					position={this.state.optionsDrawerPos}>
+					position={this.state.optionsDrawerPos}
+					bounds={this.dragBounds}>
 					<DragWraper
 						isDragging={this.state.isDragging}>
 						<ButtonRight
@@ -150,7 +156,9 @@ export default class GuiOverlay extends react.Component {
 		if(!this.state.isDragging){
 			this.setState({ isDragging: true })
 		}
-		this.dragDirection = data.deltaX
+		if(data.deltaX != 0){
+			this.dragDirection = data.deltaX
+		}
 	}
 
 	handleDragStop(event) {
@@ -177,7 +185,6 @@ export default class GuiOverlay extends react.Component {
 					:
 					this.hideOptionsDrawerPos
 		})
-		console.log("show Drawer", this.showOptionsDrawer)
 	}
 
 	toggleWebcam() {
