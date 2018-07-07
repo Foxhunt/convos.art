@@ -28,8 +28,10 @@ const Button = styled.div`
 	border: 3px solid #000000;
 `
 
-export default ({ clickable, brush, toggleWebcam }) =>
+export default ({ clickable, brush, toggleWebcam, setDraggable }) =>
     <Container
+        onPointerDown={() => setDraggable(false)}
+        onPointerUp={() => setDraggable(true)}
         clickable={clickable}>
         <Button
             onClick={() => brush.Shape = "CIRCLE"}>

@@ -25,7 +25,7 @@ const DragWraper = styled.div`
 	width: 100%;
 	height: 100%;
 	
-	${({isDragging}) => isDragging ? "" : "transition: transform 0.5s ease-in-out;"}
+	${({ isDragging }) => isDragging ? "" : "transition: transform 0.5s ease-in-out;"}
 `
 
 const GUI = styled.div`
@@ -69,20 +69,35 @@ export default class GuiOverlay extends react.Component {
 		this.canvas = null
 		this.cam = React.createRef()
 
-		this.isDragging = false
 		this.dragDirection = ""
+		this.showOptionsDrawer = false
+
+		this.hideOptionsDrawerPos = { x: 0, y: 0 }
+		this.showOptionsDrawerPos = { x: 0, y: 0 }
 
 		this.state = {
 			showWebcam: false,
-			showOptionsDrawer: false,
+			optionsDrawerPos: this.hideOptionsDrawerPos,
 			camCapture: null,
+			isDragging: false,
+			draggable: true
 		}
+	}
+
+	calculatepositions() {
+		this.showOptionsDrawerPos = { x: -this.canvas.offsetWidth * 0.33, y: 0 }
+		this.hideOptionsDrawerPos = { x: 0, y: 0 }
+		this.setState({ optionsDrawerPos: this.hideOptionsDrawerPos })
 	}
 
 	componentDidMount() {
 		this.canvas = document.getElementById('myCanvas')
-		this.showOptionsDrawerPos = { x: -window.innerWidth*0.33, y: 0 }
-		this.hideOptionsDrawerPos = { x: 0, y: 0 }
+		this.calculatepositions()
+		window.addEventListener("resize", () => this.calculatepositions())
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("resize", () => this.calculatepositions())
 	}
 
 	render() {
@@ -90,16 +105,17 @@ export default class GuiOverlay extends react.Component {
 			<GUI
 				show={this.props.show}>
 				<Draggable
+					disabled={!this.state.draggable}
 					axis="x"
 					onDrag={(event, data) => this.handleDrag(event, data)}
-					onStop={(event, data) => this.handleDragStop(event, data)}
-					position={this.state.showOptionsDrawer ? this.showOptionsDrawerPos : this.hideOptionsDrawerPos}>
+					onStop={event => this.handleDragStop(event)}
+					position={this.state.optionsDrawerPos}>
 					<DragWraper
 						isDragging={this.state.isDragging}>
 						<ButtonRight
-							clickable={this.props.show}
-							onClick={() => this.toggleOptionsDrawer()} />
+							clickable={this.props.show}/>
 						<OptionsDrawer
+							setDraggable={state => this.setDraggable(state)}
 							clickable={this.props.show}
 							brush={this.props.brush}
 							toggleWebcam={() => this.toggleWebcam()} />
@@ -126,35 +142,42 @@ export default class GuiOverlay extends react.Component {
 		)
 	}
 
-	handleDrag(event, data){
-		this.setState({ isDragging: true })
-		if(data.deltaX > 5){
-			this.dragDirection = "right"
-		}
-		if(data.deltaX < -5){
-			this.dragDirection = "left"
-		}
+	setDraggable(state){
+		this.setState({ draggable: state })
 	}
 
-	handleDragStop(event, data){
-		console.log(data.deltaX)
-		if(this.dragDirection === "right"){
-			this.setState({ showOptionsDrawer: false })
-		}
-		if(this.dragDirection === "left"){
-			this.setState({ showOptionsDrawer: true })
-		}
-		this.dragDirection = ""
-
-		setTimeout(() => {
-			this.setState({ isDragging: false })
-		}, 100)
-	}
-
-	toggleOptionsDrawer() {
+	handleDrag(event, data) {
 		if(!this.state.isDragging){
-			this.setState({ showOptionsDrawer: !this.state.showOptionsDrawer })
+			this.setState({ isDragging: true })
 		}
+		this.dragDirection = data.deltaX
+	}
+
+	handleDragStop(event) {
+		this.setState({ isDragging: false })
+		if (this.dragDirection > 0) {
+			this.dragDirection = 0
+			return this.setOptionsDrawer(false)
+		}
+		if (this.dragDirection < 0) {
+			this.dragDirection = 0
+			return this.setOptionsDrawer(true)
+		}
+		if (this.dragDirection == 0 && event.type == "mouseup") {
+			this.setOptionsDrawer(!this.showOptionsDrawer)
+		}
+	}
+
+	setOptionsDrawer(state) {
+		this.showOptionsDrawer = state
+		this.setState({
+			optionsDrawerPos:
+			this.showOptionsDrawer ?
+					this.showOptionsDrawerPos
+					:
+					this.hideOptionsDrawerPos
+		})
+		console.log("show Drawer", this.showOptionsDrawer)
 	}
 
 	toggleWebcam() {
@@ -179,6 +202,9 @@ export default class GuiOverlay extends react.Component {
 
 	captureWebcam() {
 		this.props.brush.Image = this.cam.current.getScreenshot()
+		this.setState({
+			showWebcam: !this.state.showWebcam
+		})
 	}
 }
 
