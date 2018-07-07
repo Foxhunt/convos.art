@@ -118,7 +118,7 @@ export default roomId => new Promise((resolve, reject) => {
 	});
 
 	//Box Informationen vom Server erhalten
-	socket.on('toClient', ({ id, x, y, angle, velocity }) => {
+	socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
 		// betroffene box ermitteln
 		let box = boxes.get(id);
 		//erhaltenen Informationen verarbeiten
@@ -127,6 +127,7 @@ export default roomId => new Promise((resolve, reject) => {
 			box.body.position[1] = y
 			box.body.angle = angle
 			box.body.velocity = velocity
+			box.body.angularVelocity = angularVelocity
 		}
 	});
 
@@ -404,7 +405,8 @@ export default roomId => new Promise((resolve, reject) => {
 				x: ownBrush.body.interpolatedPosition[0],
 				y: ownBrush.body.interpolatedPosition[1],
 				angle: ownBrush.body.interpolatedAngle,
-				velocity: ownBrush.body.velocity
+				velocity: ownBrush.body.velocity,
+				angularVelocity: ownBrush.body.angularVelocity
 			})
 		}
 	}

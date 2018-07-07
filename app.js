@@ -55,6 +55,7 @@ io.on('connection', socket => {
 		box.y = data.y
 		box.angle = data.angle
 		box.velocity = data.velocity
+		box.angularVelocity = data.angularVelocity
 	})
 
 	socket.on('setFillStyle', color => {
@@ -89,7 +90,8 @@ io.on('connection', socket => {
 			x: box.x,
 			y: box.y,
 			angle: box.angle,
-			velocity: box.velocity
+			velocity: box.velocity,
+			angularVelocity: box.angularVelocity
 		});
 	}
 
@@ -121,6 +123,7 @@ function Box(id, x, y, angle, velocity) {
 	this.y = y || 5
 	this.angle = angle || 0
 	this.velocity = velocity || 0
+	this.angularVelocity = 0
 	this.fillStyle = "blue"
 	this.strokeStyle = "red"
 	this.shapeType = ""
