@@ -6,6 +6,8 @@ import Draggable from "react-draggable"
 import OptionsDrawer from "./OptionsDrawer"
 import Circle from "./DivCircle"
 
+import * as PNGS from "./PNGS"
+
 const camSize = 40
 const Webcam = styled.div`
 	position: absolute;
@@ -74,10 +76,11 @@ export default class GuiOverlay extends react.Component {
 
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
 		this.showOptionsDrawerPos = { x: 0, y: 0 }
-		this.dragBounds = {left: 0, right: 0}
+		this.dragBounds = { left: 0, right: 0 }
 
 		this.state = {
 			showWebcam: false,
+			showOptionsDrawer: false,
 			optionsDrawerPos: this.hideOptionsDrawerPos,
 			camCapture: null,
 			isDragging: false,
@@ -119,7 +122,9 @@ export default class GuiOverlay extends react.Component {
 					<DragWraper
 						isDragging={this.state.isDragging}>
 						<ButtonRight
-							clickable={this.props.show}/>
+							clickable={this.props.show}>
+							<PNGS.Arrow invert={this.state.showOptionsDrawer} />
+						</ButtonRight>
 						<OptionsDrawer
 							setDraggable={state => this.setDraggable(state)}
 							clickable={this.props.show}
@@ -139,24 +144,33 @@ export default class GuiOverlay extends react.Component {
 				}
 				<ButtonRightBot
 					clickable={this.props.show}
-					onClick={toggleFullScreen} />
+					onClick={toggleFullScreen}>
+					{PNGS.FullScreen}
+				</ButtonRightBot>
 				<ButtonBot
 					clickable={this.props.show}
 					onClick={event => this.takePicture(event)}
-					download='canvas' />
+					download='canvas'>
+					{
+						this.state.showWebcam ?
+							PNGS.Camera
+							:
+							PNGS.Download
+					}
+				</ButtonBot>
 			</GUI>
 		)
 	}
 
-	setDraggable(state){
+	setDraggable(state) {
 		this.setState({ draggable: state })
 	}
 
 	handleDrag(event, data) {
-		if(!this.state.isDragging){
+		if (!this.state.isDragging) {
 			this.setState({ isDragging: true })
 		}
-		if(data.deltaX != 0){
+		if (data.deltaX != 0) {
 			this.dragDirection = data.deltaX
 		}
 	}
@@ -180,10 +194,11 @@ export default class GuiOverlay extends react.Component {
 		this.showOptionsDrawer = state
 		this.setState({
 			optionsDrawerPos:
-			this.showOptionsDrawer ?
+				this.showOptionsDrawer ?
 					this.showOptionsDrawerPos
 					:
-					this.hideOptionsDrawerPos
+					this.hideOptionsDrawerPos,
+			showOptionsDrawer: this.showOptionsDrawer
 		})
 	}
 
