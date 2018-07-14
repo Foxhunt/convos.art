@@ -4,7 +4,7 @@ import p2 from 'p2'
 import Brush from './Brush'
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
-export default roomId => new Promise((resolve, reject) => {
+export default roomId => new Promise((resolve) => {
 	var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
 		boxes = new Map,
 		debug = false

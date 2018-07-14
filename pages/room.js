@@ -28,16 +28,16 @@ class Room extends react.Component{
         super(props)
 
         this.state = {
-            showGui: true
+            showGui: true,
+            brush: null
         }
 
         this.CursorDown = false
-        this.brush = null
     }
 
     async componentDidMount () {
         import("../src/game").then(async game => {
-            this.brush = await game.default(this.props.router.query.roomId)
+            this.setState({ brush: await game.default(this.props.router.query.roomId) })
         })
     }
 
@@ -57,7 +57,7 @@ class Room extends react.Component{
                 />
                 <GuiOverlay 
                     show={this.state.showGui}
-                    brush={this.brush}
+                    brush={this.state.brush}
                 />
             </Background>
         )
