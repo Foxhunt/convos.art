@@ -1,4 +1,5 @@
 import react from 'react'
+import autoBind from 'react-autobind'
 import styled from 'styled-components'
 import { withRouter } from 'next/router'
 
@@ -26,6 +27,7 @@ max-width: 177.78vh;
 class Room extends react.Component{
     constructor(props){
         super(props)
+        autoBind(this)
 
         this.state = {
             showGui: true,
@@ -48,12 +50,9 @@ class Room extends react.Component{
                     id="myCanvas"
                     width="1920"
                     height="1080"
-                    onMouseDown={() => this.onCursorDown()}
-                    onMouseMove={() => this.onCursorMove()}
-                    onMouseUp={() => this.onCursorUp()}
-                    onTouchStart={() => this.onCursorDown()}
-                    onTouchMove={() => this.onCursorMove()}
-                    onTouchEnd={() => this.onCursorUp()}
+                    onPointerDown={this.onCursorDown}
+                    onPointerMove={this.onCursorMove}
+                    onPointerUp={this.onCursorUp}
                 />
                 <GuiOverlay 
                     show={this.state.showGui}

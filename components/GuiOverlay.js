@@ -1,5 +1,6 @@
-import styled from 'styled-components'
 import react from 'react'
+import autoBind from 'react-autobind'
+import styled from 'styled-components'
 import ReactWebcam from "react-webcam"
 import Draggable from "react-draggable"
 
@@ -65,6 +66,8 @@ const ButtonBot = styled(Circle)`
 export default class GuiOverlay extends react.Component {
 	constructor(props) {
 		super(props)
+		autoBind(this)
+
 		this.fillStyle = "#0000FF"
 		this.strokeStyle = "#0000FF"
 
@@ -115,8 +118,8 @@ export default class GuiOverlay extends react.Component {
 				<Draggable
 					disabled={!this.state.draggable}
 					axis="x"
-					onDrag={(event, data) => this.handleDrag(event, data)}
-					onStop={event => this.handleDragStop(event)}
+					onDrag={this.handleDrag}
+					onStop={this.handleDragStop}
 					position={this.state.optionsDrawerPos}
 					bounds={this.dragBounds}>
 					<DragWraper
@@ -126,10 +129,10 @@ export default class GuiOverlay extends react.Component {
 							<PNGS.Arrow invert={this.state.showOptionsDrawer} />
 						</ButtonRight>
 						<OptionsDrawer
-							setDraggable={state => this.setDraggable(state)}
+							setDraggable={this.setDraggable}
 							clickable={this.props.show}
 							brush={this.props.brush}
-							toggleWebcam={() => this.toggleWebcam()} />
+							toggleWebcam={this.toggleWebcam} />
 					</DragWraper>
 				</Draggable>
 				{
@@ -149,7 +152,7 @@ export default class GuiOverlay extends react.Component {
 				</ButtonRightBot>
 				<ButtonBot
 					clickable={this.props.show}
-					onClick={event => this.takePicture(event)}
+					onClick={this.takePicture}
 					download='canvas'>
 					{
 						this.state.showWebcam ?

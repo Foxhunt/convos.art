@@ -1,4 +1,5 @@
 import react from 'react'
+import autoBind from 'react-autobind'
 import styled from 'styled-components'
 import Link from 'next/link'
 
@@ -18,25 +19,26 @@ const ButtonContainer = styled.div`
     justify-content: space-around;
 `
 
-export default class CreateJoinRoom extends react.Component{
-    constructor(props){
+export default class CreateJoinRoom extends react.Component {
+    constructor(props) {
         super(props)
+        autoBind(this)
 
         this.state = {
             roomId: ''
         }
     }
-    
-    render(){
+
+    render() {
         return (
             <Container>
                 Enter a Name to create or join a Room.
                 <input
-                type='text'
-                value={this.state.roomId}
-                onChange={event => this.handleInput(event)}/>
+                    type='text'
+                    value={this.state.roomId}
+                    onChange={this.handleInput} />
                 <ButtonContainer>
-                    <Link 
+                    <Link
                         prefetch
                         href={`/room?roomId=${this.state.roomId}`}
                         as={`/room/${this.state.roomId}`}>
@@ -47,7 +49,7 @@ export default class CreateJoinRoom extends react.Component{
         )
     }
 
-    handleInput(event){
+    handleInput(event) {
         this.setState({
             roomId: event.target.value.toLowerCase()
         })
