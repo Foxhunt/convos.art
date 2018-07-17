@@ -38,8 +38,9 @@ class Room extends react.Component{
     }
 
     async componentDidMount () {
-        import("../src/game").then(async game => {
-            this.setState({ brush: await game.default(this.props.router.query.roomId) })
+        const { default: game } = await import("../src/game")
+        this.setState({
+            brush: await game(this.props.router.query.roomId)
         })
     }
 
