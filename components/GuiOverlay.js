@@ -75,7 +75,6 @@ export default class GuiOverlay extends react.Component {
 		this.cam = React.createRef()
 
 		this.dragDirection = ""
-		this.showOptionsDrawer = false
 
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
 		this.showOptionsDrawerPos = { x: 0, y: 0 }
@@ -87,7 +86,8 @@ export default class GuiOverlay extends react.Component {
 			optionsDrawerPos: this.hideOptionsDrawerPos,
 			camCapture: null,
 			isDragging: false,
-			draggable: true
+			draggable: true,
+			dragAt: 0
 		}
 	}
 
@@ -104,11 +104,11 @@ export default class GuiOverlay extends react.Component {
 	componentDidMount() {
 		this.canvas = document.getElementById('myCanvas')
 		this.calculatepositions()
-		window.addEventListener("resize", () => this.calculatepositions())
+		window.addEventListener("resize", this.calculatepositions)
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener("resize", () => this.calculatepositions())
+		window.removeEventListener("resize", this.calculatepositions)
 	}
 
 	render() {
@@ -126,7 +126,9 @@ export default class GuiOverlay extends react.Component {
 						isDragging={this.state.isDragging}>
 						<ButtonRight
 							clickable={this.props.show}>
-							<PNGS.Arrow invert={this.state.showOptionsDrawer} />
+							<PNGS.Arrow
+								invert={this.state.dragAt}
+								isDragging={this.state.isDragging}/>
 						</ButtonRight>
 						<OptionsDrawer
 							setDraggable={this.setDraggable}
@@ -176,32 +178,33 @@ export default class GuiOverlay extends react.Component {
 		if (data.deltaX != 0) {
 			this.dragDirection = data.deltaX
 		}
+		this.setState({ dragAt: data.x / this.showOptionsDrawerPos.x })
 	}
 
 	handleDragStop(event) {
 		this.setState({ isDragging: false })
 		if (this.dragDirection > 0) {
 			this.dragDirection = 0
-			return this.setOptionsDrawer(false)
+			return this.showOptionsDrawer(false)
 		}
 		if (this.dragDirection < 0) {
 			this.dragDirection = 0
-			return this.setOptionsDrawer(true)
+			return this.showOptionsDrawer(true)
 		}
 		if (this.dragDirection == 0 && event.type == "mouseup") {
-			this.setOptionsDrawer(!this.showOptionsDrawer)
+			this.showOptionsDrawer(!this.state.showOptionsDrawer)
 		}
 	}
 
-	setOptionsDrawer(state) {
-		this.showOptionsDrawer = state
+	showOptionsDrawer(state) {
 		this.setState({
 			optionsDrawerPos:
-				this.showOptionsDrawer ?
+				state ?
 					this.showOptionsDrawerPos
 					:
 					this.hideOptionsDrawerPos,
-			showOptionsDrawer: this.showOptionsDrawer
+			showOptionsDrawer: state,
+			dragAt: state ? 1 : 0
 		})
 	}
 

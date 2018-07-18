@@ -43,13 +43,20 @@ const ArrowContainer = styled(Container)`
     height: 100%;
 `
 
-const ArrowIMG = styled.img`
+const ArrowIMG = styled.img.attrs({
+    style: ({invert}) => ({transform: `scale(${Math.cos(Math.PI * invert)}, 1)`})
+})`
     width: 100%;
-    ${({invert}) => invert ? "transform: scale(-1, 1);" : ""}
-    transition: transform 500ms ease-in-out;
+    ${({isDragging}) => isDragging ? "" : "transition: transform 500ms ease-in-out;"}
 `
 
 export const Download = <DownloadContainer><DownloadIMG src={DownloadPNG} /></DownloadContainer>
 export const Camera = <CameraContainer><CameraIMG src={CameraPNG} /></CameraContainer>
 export const FullScreen = <FullScreenContainer><FullScreenIMG src={FullScreenPNG} /></FullScreenContainer>
-export const Arrow = ({invert}) => <ArrowContainer><ArrowIMG src={ArrowPNG} invert={invert} /></ArrowContainer>
+export const Arrow = ({invert, isDragging}) => 
+                        <ArrowContainer>
+                            <ArrowIMG 
+                                src={ArrowPNG} 
+                                invert={invert} 
+                                isDragging={isDragging}/>
+                        </ArrowContainer>
