@@ -5,20 +5,17 @@ import Brush from './Brush'
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default roomId => new Promise((resolve) => {
-	var canvas, ctx, w, h, ownBrush, world, mouseBody, planeBody, roofBody, leftWallBody, rightWallBody, mouseConstraint, ownId,
-		boxes = new Map,
-		debug = false
+	var ownBrush, world, mouseConstraint, ownId
+		
+	const boxes = new Map()
 
 	const particles = []
 
+	const canvas = document.getElementById("myCanvas")
+	const w = canvas.width
+	const h = canvas.height
 
-	const socket = io({ query: { roomId } })
-
-	canvas = document.getElementById("myCanvas")
-	w = canvas.width
-	h = canvas.height
-
-	ctx = canvas.getContext("2d")
+	const ctx = canvas.getContext("2d")
 	ctx.lineWidth = 0.05
 
 	// Init p2.js
@@ -33,94 +30,147 @@ export default roomId => new Promise((resolve) => {
 	}
 
 	if(typeof window.orientation !== "undefined")
-		window.addEventListener('deviceorientation', event => handleOrientation(event));
+		window.addEventListener('deviceorientation', handleOrientation)
 
 	// Add a plane
-	planeBody = new p2.Body()
+	const planeBody = new p2.Body()
 	planeBody.addShape(new p2.Plane())
 	planeBody.shapes[0].collisionGroup = PLANES
 	planeBody.shapes[0].collisionMask = BRUSH
 
-	roofBody = new p2.Body();
-	roofBody.addShape(new p2.Plane());
+	const roofBody = new p2.Body()
+	roofBody.addShape(new p2.Plane())
 	roofBody.shapes[0].collisionGroup = PLANES
 	roofBody.shapes[0].collisionMask = BRUSH
 
 	//wand links
-	leftWallBody = new p2.Body();
-	leftWallBody.addShape(new p2.Plane());
+	const leftWallBody = new p2.Body()
+	leftWallBody.addShape(new p2.Plane())
 	leftWallBody.shapes[0].collisionGroup = PLANES
 	leftWallBody.shapes[0].collisionMask = BRUSH
 
 	//wand rechts
-	rightWallBody = new p2.Body();
-	rightWallBody.addShape(new p2.Plane());
+	const rightWallBody = new p2.Body()
+	rightWallBody.addShape(new p2.Plane())
 	rightWallBody.shapes[0].collisionGroup = PLANES
 	rightWallBody.shapes[0].collisionMask = BRUSH
 
 	// planes hinzufügen
-	world.addBody(planeBody);
-	world.addBody(roofBody);
-	world.addBody(rightWallBody);
-	world.addBody(leftWallBody);
+	world.addBody(planeBody)
+	world.addBody(roofBody)
+	world.addBody(rightWallBody)
+	world.addBody(leftWallBody)
 
 	// positionen und rotationen setzten
-	planeBody.position[1] = -h / 2;
+	planeBody.position[1] = -h / 2
 
-	roofBody.position[1] = h / 2;
-	roofBody.angle = Math.PI;
+	roofBody.position[1] = h / 2
+	roofBody.angle = Math.PI
 
-	leftWallBody.position[0] = -w / 2;
-	leftWallBody.angle = -(Math.PI / 2);
+	leftWallBody.position[0] = -w / 2
+	leftWallBody.angle = -(Math.PI / 2)
 
 
-	rightWallBody.position[0] = w / 2;
-	rightWallBody.angle = Math.PI / 2;
+	rightWallBody.position[0] = w / 2
+	rightWallBody.angle = Math.PI / 2
 
 
 	// Create a body for the cursor
-	mouseBody = new p2.Body()
-	world.addBody(mouseBody);
+	const mouseBody = new p2.Body()
+	world.addBody(mouseBody)
 
 	//Get mouse Position and create a mouse object
-	canvas.addEventListener('mousedown', coursorDown);
-	canvas.addEventListener('touchstart', coursorDown);
-	//canvas.addEventListener('pointerdown', coursorDown);
+	canvas.addEventListener('mousedown', coursorDown)
+	canvas.addEventListener('touchstart', coursorDown)
 
 	// Sync the mouse body to be at the cursor position
-	canvas.addEventListener('mousemove', coursorMove);
-	canvas.addEventListener('touchmove', coursorMove);
-	//canvas.addEventListener('pointermove', coursorDown);
-
+	canvas.addEventListener('mousemove', coursorMove)
+	canvas.addEventListener('touchmove', coursorMove)
 
 	// Remove the mouse constraint on mouse up
-	canvas.addEventListener('mouseup', coursorUp);
-	canvas.addEventListener('touchend', coursorUp);
-	//canvas.addEventListener('pointerup', coursorDown);
+	canvas.addEventListener('mouseup', coursorUp)
+	canvas.addEventListener('touchend', coursorUp)
 
 	// Beim verlassen der Maus wird die Box an Position gehalten
-	canvas.addEventListener('mouseleave', mouseLeave);
+	canvas.addEventListener('mouseleave', mouseLeave)
 
+	//event handler für User Interaktion
+	function coursorDown(event) {
+		// Convert the canvas coordinate to physics coordinates
+		var position = getPhysicsCoord(event)
+
+		// Check if the cursor is inside the box
+		var hitBodies = world.hitTest(position, [ownBrush.body])
+
+		if (hitBodies.length) {
+			// Move the mouse body to the cursor position
+			mouseBody.position[0] = position[0]
+			mouseBody.position[1] = position[1]
+
+			// Create a RevoluteConstraint.
+			// This constraint lets the bodies rotate around a common point
+			mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBrush.body, {
+				worldPivot: position,
+				collideConnected: false
+			});
+			world.addConstraint(mouseConstraint)
+		}
+	}
+
+	function coursorMove(event) {
+		var position = getPhysicsCoord(event)
+		mouseBody.position[0] = position[0]
+		mouseBody.position[1] = position[1]
+	}
+
+	function coursorUp(event) {
+		world.removeConstraint(mouseConstraint)
+		mouseConstraint = null
+	}
+
+	function mouseLeave(event) {
+		world.removeConstraint(mouseConstraint)
+		mouseConstraint = null
+	}
+
+	// Convert a canvas coordiante to physics coordinate
+	function getPhysicsCoord(Event) {
+		Event.preventDefault()
+		var rect = canvas.getBoundingClientRect()
+
+		if (Event.touches) {
+			var x = Event.touches[0].clientX - rect.left
+			var y = Event.touches[0].clientY - rect.top
+		} else {
+			var x = Event.clientX - rect.left
+			var y = Event.clientY - rect.top
+		}
+		x = (x - rect.width / 2) * (w / rect.width)
+		y = (y - rect.height / 2) * -(h / rect.height)
+		return [x, y]
+	}
+
+	const socket = io({ query: { roomId } })
 
 	//Neuen client und seine Box anlegen
 	socket.on('new', ({ id }) => {
 		console.log("new! : " + id)
 		let box = new Brush({ id, world })
-		boxes.set(id, box);
-	});
+		boxes.set(id, box)
+	})
 
 	//Box eines Clients löschen der das Spiel verlassen hat
 	socket.on('leave', ({ id }) => {
 		// Box löschen
-		world.removeBody(boxes.get(id).body);
+		world.removeBody(boxes.get(id).body)
 		boxes.delete(id);
-		console.log("left! : " + id);
-	});
+		console.log("left! : " + id)
+	})
 
 	//Box Informationen vom Server erhalten
 	socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
 		// betroffene box ermitteln
-		let box = boxes.get(id);
+		let box = boxes.get(id)
 		//erhaltenen Informationen verarbeiten
 		if (box) {
 			box.body.position[0] = x
@@ -129,7 +179,7 @@ export default roomId => new Promise((resolve) => {
 			box.body.velocity = velocity
 			box.body.angularVelocity = angularVelocity
 		}
-	});
+	})
 
 	socket.on('setFillStyle', ({ id, color }) => {
 		let box = boxes.get(id)
@@ -165,20 +215,18 @@ export default roomId => new Promise((resolve) => {
 	//die vom Server an den Client zurück gegeben wird.
 	//Und beim client ausgeführt wird.
 	socket.on('connect', () => {
-
 		console.log(`connected as ${socket.id}`)
 
 		//get and set client ID
-		ownId = socket.id;
-		ownBrush = new Brush({ id: ownId, own: true, world, socket });
+		ownId = socket.id
+		ownBrush = new Brush({ id: ownId, own: true, world, socket })
 
 		// Add a box
-		boxes.set(ownId, ownBrush);
+		boxes.set(ownId, ownBrush)
 
 		//Vom Server die bereits verbundenen clients abrufen
 		socket.emit('init', initBoxes => {
-
-			console.log(initBoxes.length + " Boxen initialisiert");
+			console.log(initBoxes.length + " Boxen initialisiert")
 
 			initBoxes.forEach(
 				({
@@ -195,69 +243,25 @@ export default roomId => new Promise((resolve) => {
 						boxes.set(box.id, box)
 					}
 				})
-		}); // ende emit init
+		}) // ende emit init
 		resolve(ownBrush)
-	}); // ende onConnect
+	}) // ende onConnect
 
-	//event handler für User Interaktion
-	function coursorDown(event) {
-
-		// Convert the canvas coordinate to physics coordinates
-		var position = getPhysicsCoord(event);
-
-		// Check if the cursor is inside the box
-		var hitBodies = world.hitTest(position, [ownBrush.body]);
-
-		if (hitBodies.length) {
-
-			// Move the mouse body to the cursor position
-			mouseBody.position[0] = position[0];
-			mouseBody.position[1] = position[1];
-
-			// Create a RevoluteConstraint.
-			// This constraint lets the bodies rotate around a common point
-			mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBrush.body, {
-				worldPivot: position,
-				collideConnected: false
-			});
-			world.addConstraint(mouseConstraint);
+	//Box informationen an server senden
+	function toServer() {
+		if (ownBrush) {
+			socket.emit('toServer', {
+				x: ownBrush.body.interpolatedPosition[0],
+				y: ownBrush.body.interpolatedPosition[1],
+				angle: ownBrush.body.interpolatedAngle,
+				velocity: ownBrush.body.velocity,
+				angularVelocity: ownBrush.body.angularVelocity
+			})
 		}
 	}
 
-	function coursorMove(event) {
-		var position = getPhysicsCoord(event);
-		mouseBody.position[0] = position[0];
-		mouseBody.position[1] = position[1];
-	}
-
-	function coursorUp(event) {
-		world.removeConstraint(mouseConstraint);
-		mouseConstraint = null;
-	}
-
-	function mouseLeave(event) {
-		world.removeConstraint(mouseConstraint);
-		mouseConstraint = null;
-	}
-
-	// Convert a canvas coordiante to physics coordinate
-	function getPhysicsCoord(Event) {
-		Event.preventDefault();
-		var rect = canvas.getBoundingClientRect();
-
-		if (Event.touches) {
-			var x = Event.touches[0].clientX - rect.left;
-			var y = Event.touches[0].clientY - rect.top;
-		} else {
-			var x = Event.clientX - rect.left;
-			var y = Event.clientY - rect.top;
-		}
-		x = (x - rect.width / 2) * (w / rect.width);
-		y = (y - rect.height / 2) * -(h / rect.height);
-		return [x, y];
-	}
-
-
+	//Update loop
+	setInterval(toServer, 50)
 
 	//Boden malen
 	function drawPlane() {
@@ -274,7 +278,6 @@ export default roomId => new Promise((resolve) => {
 
 	//Boden wände
 	function drawWalls() {
-
 		var x = leftWallBody.position[0]
 		ctx.moveTo(x, -h)
 		ctx.lineTo(x, h)
@@ -342,7 +345,6 @@ export default roomId => new Promise((resolve) => {
 		return Math.floor(number * Math.random())
 	}
 
-	//Render ?! LOL
 	function render() {
 		// Transform the canvas
 		ctx.save()
@@ -363,56 +365,31 @@ export default roomId => new Promise((resolve) => {
 		ctx.restore()
 	}
 
-	//LOL duno shit?!
-	function normalizeAngle(angle) {
-		angle = angle % (2 * Math.PI);
-		if (angle < 0) {
-			angle += (2 * Math.PI);
-		}
-		return angle;
-	}
-
 
 	//world interpolation variablen
-	var fixedTimeStep = 1 / 60;
-	var maxSubSteps = 1;
-	var lastTimeSeconds;
-	var deltaTime;
-	var timeSeconds;
+	var fixedTimeStep = 1 / 60
+	var maxSubSteps = 1
+	var lastTimeSeconds
+	var deltaTime
+	var timeSeconds
 
 	// Animation loop
 	function animate(t) {
-		requestAnimationFrame(animate);
+		requestAnimationFrame(animate)
 
-		timeSeconds = t / 1000;
-		lastTimeSeconds = lastTimeSeconds || timeSeconds;
+		timeSeconds = t / 1000
+		lastTimeSeconds = lastTimeSeconds || timeSeconds
 
-		deltaTime = timeSeconds - lastTimeSeconds;
+		deltaTime = timeSeconds - lastTimeSeconds
 
 		// Move physics bodies forward in time
-		world.step(fixedTimeStep, deltaTime, maxSubSteps);
+		world.step(fixedTimeStep, deltaTime, maxSubSteps)
 
 		// Render scene
-		render();
+		render()
 	}
 
 	requestAnimationFrame(animate)
-
-	//Box informationen an server senden
-	function toServer() {
-		if (ownBrush) {
-			socket.emit('toServer', {
-				x: ownBrush.body.interpolatedPosition[0],
-				y: ownBrush.body.interpolatedPosition[1],
-				angle: ownBrush.body.interpolatedAngle,
-				velocity: ownBrush.body.velocity,
-				angularVelocity: ownBrush.body.angularVelocity
-			})
-		}
-	}
-
-	//Update loop
-	setInterval(toServer, 50)
 
 	function handleOrientation(event) {
 		let x = event.gamma  // In degree in the range [-180,180]
