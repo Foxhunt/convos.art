@@ -2,6 +2,7 @@
   "name": "convos",
   "scripts": {
     "dev": "nodemon -w app.js app.js",
+    "debug": "nodemon --inspect-brk -w app.js app.js",
     "build": "next build",
     "start": "cross-env NODE_ENV=production node app.js",
     "deploy": "now & now ln & now rm convos -sy"
