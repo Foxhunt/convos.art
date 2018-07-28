@@ -1,213 +1,22 @@
 import io from 'socket.io-client'
-import p2 from 'p2'
 
 import Brush from './Brush'
-import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
+import World from './world'
 
 export default roomId => new Promise((resolve) => {
-	var ownBrush, world, mouseConstraint, ownId
-		
-	const boxes = new Map()
 
-	const particles = []
+	let ownBrush = null
+	let ownId = null
 
 	const canvas = document.getElementById("myCanvas")
-	const w = canvas.width
-	const h = canvas.height
 
 	const ctx = canvas.getContext("2d")
 	ctx.lineWidth = 0.05
 
-	// Init p2.js
-	if(window.screen.orientation.type == "landscape-primary"){
-		world = new p2.World({
-			gravity: [0, -90]
-		})
-	}else{
-		world = new p2.World({
-			gravity: [0, 0]
-		})
-	}
-
-	if(typeof window.orientation !== "undefined")
-		window.addEventListener('deviceorientation', handleOrientation)
-
-	// Add a plane
-	const planeBody = new p2.Body()
-	planeBody.addShape(new p2.Plane())
-	planeBody.shapes[0].collisionGroup = PLANES
-	planeBody.shapes[0].collisionMask = BRUSH
-
-	const roofBody = new p2.Body()
-	roofBody.addShape(new p2.Plane())
-	roofBody.shapes[0].collisionGroup = PLANES
-	roofBody.shapes[0].collisionMask = BRUSH
-
-	//wand links
-	const leftWallBody = new p2.Body()
-	leftWallBody.addShape(new p2.Plane())
-	leftWallBody.shapes[0].collisionGroup = PLANES
-	leftWallBody.shapes[0].collisionMask = BRUSH
-
-	//wand rechts
-	const rightWallBody = new p2.Body()
-	rightWallBody.addShape(new p2.Plane())
-	rightWallBody.shapes[0].collisionGroup = PLANES
-	rightWallBody.shapes[0].collisionMask = BRUSH
-
-	// planes hinzufügen
-	world.addBody(planeBody)
-	world.addBody(roofBody)
-	world.addBody(rightWallBody)
-	world.addBody(leftWallBody)
-
-	// positionen und rotationen setzten
-	planeBody.position[1] = -h / 2
-
-	roofBody.position[1] = h / 2
-	roofBody.angle = Math.PI
-
-	leftWallBody.position[0] = -w / 2
-	leftWallBody.angle = -(Math.PI / 2)
-
-
-	rightWallBody.position[0] = w / 2
-	rightWallBody.angle = Math.PI / 2
-
-
-	// Create a body for the cursor
-	const mouseBody = new p2.Body()
-	world.addBody(mouseBody)
-
-	//Get mouse Position and create a mouse object
-	canvas.addEventListener('mousedown', coursorDown)
-	canvas.addEventListener('touchstart', coursorDown)
-
-	// Sync the mouse body to be at the cursor position
-	canvas.addEventListener('mousemove', coursorMove)
-	canvas.addEventListener('touchmove', coursorMove)
-
-	// Remove the mouse constraint on mouse up
-	canvas.addEventListener('mouseup', coursorUp)
-	canvas.addEventListener('touchend', coursorUp)
-
-	// Beim verlassen der Maus wird die Box an Position gehalten
-	canvas.addEventListener('mouseleave', mouseLeave)
-
-	//event handler für User Interaktion
-	function coursorDown(event) {
-		// Convert the canvas coordinate to physics coordinates
-		var position = getPhysicsCoord(event)
-
-		// Check if the cursor is inside the box
-		var hitBodies = world.hitTest(position, [ownBrush.body])
-
-		if (hitBodies.length) {
-			// Move the mouse body to the cursor position
-			mouseBody.position[0] = position[0]
-			mouseBody.position[1] = position[1]
-
-			// Create a RevoluteConstraint.
-			// This constraint lets the bodies rotate around a common point
-			mouseConstraint = new p2.RevoluteConstraint(mouseBody, ownBrush.body, {
-				worldPivot: position,
-				collideConnected: false
-			});
-			world.addConstraint(mouseConstraint)
-		}
-	}
-
-	function coursorMove(event) {
-		var position = getPhysicsCoord(event)
-		mouseBody.position[0] = position[0]
-		mouseBody.position[1] = position[1]
-	}
-
-	function coursorUp(event) {
-		world.removeConstraint(mouseConstraint)
-		mouseConstraint = null
-	}
-
-	function mouseLeave(event) {
-		world.removeConstraint(mouseConstraint)
-		mouseConstraint = null
-	}
-
-	// Convert a canvas coordiante to physics coordinate
-	function getPhysicsCoord(Event) {
-		Event.preventDefault()
-		var rect = canvas.getBoundingClientRect()
-
-		if (Event.touches) {
-			var x = Event.touches[0].clientX - rect.left
-			var y = Event.touches[0].clientY - rect.top
-		} else {
-			var x = Event.clientX - rect.left
-			var y = Event.clientY - rect.top
-		}
-		x = (x - rect.width / 2) * (w / rect.width)
-		y = (y - rect.height / 2) * -(h / rect.height)
-		return [x, y]
-	}
-
+	
 	const socket = io({ query: { roomId } })
-
-	//Neuen client und seine Box anlegen
-	socket.on('new', ({ id }) => {
-		console.log("new! : " + id)
-		let box = new Brush({ id, world })
-		boxes.set(id, box)
-	})
-
-	//Box eines Clients löschen der das Spiel verlassen hat
-	socket.on('leave', ({ id }) => {
-		// Box löschen
-		world.removeBody(boxes.get(id).body)
-		boxes.delete(id);
-		console.log("left! : " + id)
-	})
-
-	//Box Informationen vom Server erhalten
-	socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
-		// betroffene box ermitteln
-		let box = boxes.get(id)
-		//erhaltenen Informationen verarbeiten
-		if (box) {
-			box.body.position[0] = x
-			box.body.position[1] = y
-			box.body.angle = angle
-			box.body.velocity = velocity
-			box.body.angularVelocity = angularVelocity
-		}
-	})
-
-	socket.on('setFillStyle', ({ id, color }) => {
-		let box = boxes.get(id)
-		if (box) {
-			box.Fill = color
-		}
-	})
-
-	socket.on('setStrokeStyle', ({ id, color }) => {
-		let box = boxes.get(id)
-		if (box) {
-			box.Stroke = color
-		}
-	})
-
-	socket.on('setShapeType', ({ id, shapeType }) => {
-		let box = boxes.get(id)
-		if (box) {
-			box.Shape = shapeType
-		}
-	})
-
-	socket.on('setFillImage', ({ id, imageSrc }) => {
-		let box = boxes.get(id)
-		if (box) {
-			box.Image = imageSrc
-		}
-	})
+	
+	const world = new World(socket, canvas)
 
 	//Den server nach den bereits vorhandenen clients fragen
 	//wenn die verbindung aufgebaut wurde.
@@ -219,28 +28,28 @@ export default roomId => new Promise((resolve) => {
 
 		//get and set client ID
 		ownId = socket.id
-		ownBrush = new Brush({ id: ownId, own: true, world, socket })
+		ownBrush = new Brush({ id: ownId, own: true, world: world.p2World, socket })
 
 		// Add a box
-		boxes.set(ownId, ownBrush)
+		world.addOwnBrush(ownBrush)
 
 		//Vom Server die bereits verbundenen clients abrufen
-		socket.emit('init', initBoxes => {
-			console.log(initBoxes.length + " Boxen initialisiert")
+		socket.emit('init', brushes => {
+			console.log(brushes.length + " Boxen initialisiert")
 
-			initBoxes.forEach(
+			brushes.forEach(
 				({
 					id, x, y, angle, fillStyle,
 					strokeStyle, shapeType, fillImage,
 				}) => {
 					if (id !== ownId) {
-						const box = new Brush({ id, x, y, angle, world })
-						box.Fill = fillStyle
-						box.Stroke = strokeStyle
-						box.Shape = shapeType
+						const brush = new Brush({ id, x, y, angle, world: world.p2World })
+						brush.Fill = fillStyle
+						brush.Stroke = strokeStyle
+						brush.Shape = shapeType
 						if(fillImage)
-							box.Image = fillImage
-						boxes.set(box.id, box)
+							brush.Image = fillImage
+						world.addBrush(brush)
 					}
 				})
 		}) // ende emit init
@@ -263,103 +72,12 @@ export default roomId => new Promise((resolve) => {
 	//Update loop
 	setInterval(toServer, 50)
 
-	//Boden malen
-	function drawPlane() {
-		var y = planeBody.position[1]
-		ctx.moveTo(-w, y)
-		ctx.lineTo(w, y)
-		ctx.stroke()
-
-		y = roofBody.position[1]
-		ctx.moveTo(-w, y)
-		ctx.lineTo(w, y)
-		ctx.stroke()
-	}
-
-	//Boden wände
-	function drawWalls() {
-		var x = leftWallBody.position[0]
-		ctx.moveTo(x, -h)
-		ctx.lineTo(x, h)
-		ctx.stroke()
-
-		x = rightWallBody.position[0]
-		ctx.moveTo(x, -h)
-		ctx.lineTo(x, h)
-		ctx.stroke()
-
-	}
-
-	function findContacts() {
-		for (let i = 0; i < world.narrowphase.contactEquations.length; i++) {
-			let eq = world.narrowphase.contactEquations[i]
-			let bodyAPosition = eq.bodyA.position
-			let contactPointA = eq.contactPointA
-
-			let contactX = bodyAPosition[0] + contactPointA[0]
-			let contactY = bodyAPosition[1] + contactPointA[1]
-
-			spawnParticle(contactX, contactY)
-		}
-	}
-
-	function spawnParticle(x, y) {
-		const pShape = new p2.Particle({ radius: 3 })
-		const pBody = new p2.Body({
-			mass: 50,
-			position: [x, y],
-			velocity: [
-				140 * Math.cos(Math.PI * Math.random()),
-				140 * Math.cos(Math.PI * Math.random())
-			]
-		})
-
-		pShape.collisionGroup = PARTICLES
-		pShape.collisionMask = PLANES | BRUSH
-
-		pBody.addShape(pShape)
-		world.addBody(pBody)
-
-		particles.push(pBody)
-
-		if (particles.length > 100) {
-			world.removeBody(particles.shift())
-		}
-	}
-
-	function drawParticles() {
-		for (let particle of particles) {
-			ctx.beginPath()
-			let x = particle.interpolatedPosition[0]
-			let y = particle.interpolatedPosition[1]
-			ctx.save()
-			ctx.translate(x, y)
-			ctx.arc(0, 0, 2, 0, 2 * Math.PI)
-			ctx.fillStyle = "#ff00aa"
-			ctx.fill()
-			ctx.restore()
-		}
-	}
-
-	function rng(number) {
-		return Math.floor(number * Math.random())
-	}
-
 	function render() {
 		// Transform the canvas
 		ctx.save()
 		//ctx.clearRect(0, 0, w, h);
-		ctx.translate(w / 2, h / 2) // Translate to the center
-		ctx.scale(1, -1)
 
-		// Draw all bodies
-		for (let box of boxes.values()) {
-			box.render(ctx)
-		}
-		drawPlane()
-		drawWalls()
-		findContacts()
-		drawParticles()
+		world.render(ctx)
 
 		// Restore transform
 		ctx.restore()
@@ -390,26 +108,4 @@ export default roomId => new Promise((resolve) => {
 	}
 
 	requestAnimationFrame(animate)
-
-	function handleOrientation(event) {
-		let x = event.gamma  // In degree in the range [-180,180]
-		let y = event.beta // In degree in the range [-90,90]
-
-		// Because we don't want to have the device upside down
-		// We constrain the x value to the range [-90,90]
-		if (window.screen.orientation.type == "landscape-primary") { 
-			const tmp = y
-			y = -x
-			x = tmp
-		}
-
-		if (window.screen.orientation.type == "landscape-secondary") { 
-			const tmp = y
-			y = x
-			x = -tmp
-		}
-
-		world.gravity[0] = x
-		world.gravity[1] = -y
-	}
 })
