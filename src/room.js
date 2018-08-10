@@ -1,22 +1,16 @@
 import io from 'socket.io-client'
 
 import Brush from './Brush'
-import World from './world'
+import Canvas from './canvas'
 
 export default roomId => new Promise((resolve) => {
 
 	let ownBrush = null
 	let ownId = null
-
-	const canvas = document.getElementById("myCanvas")
-
-	const ctx = canvas.getContext("2d")
-	ctx.lineWidth = 0.05
-
 	
 	const socket = io({ query: { roomId } })
 	
-	const world = new World(socket, canvas)
+	const canvas = new Canvas(socket)
 
 	//Den server nach den bereits vorhandenen clients fragen
 	//wenn die verbindung aufgebaut wurde.
@@ -28,10 +22,10 @@ export default roomId => new Promise((resolve) => {
 
 		//get and set client ID
 		ownId = socket.id
-		ownBrush = new Brush({ id: ownId, own: true, world: world.p2World, socket })
+		ownBrush = new Brush({ id: ownId, own: true, world: canvas.world, socket })
 
 		// Add a box
-		world.addOwnBrush(ownBrush)
+		canvas.addOwnBrush(ownBrush)
 
 		//Vom Server die bereits verbundenen clients abrufen
 		socket.emit('init', brushes => {
@@ -43,13 +37,13 @@ export default roomId => new Promise((resolve) => {
 					strokeStyle, shapeType, fillImage,
 				}) => {
 					if (id !== ownId) {
-						const brush = new Brush({ id, x, y, angle, world: world.p2World })
+						const brush = new Brush({ id, x, y, angle, world: canvas.world })
 						brush.Fill = fillStyle
 						brush.Stroke = strokeStyle
 						brush.Shape = shapeType
 						if(fillImage)
 							brush.Image = fillImage
-						world.addBrush(brush)
+						canvas.addBrush(brush)
 					}
 				})
 		}) // ende emit init
@@ -71,41 +65,4 @@ export default roomId => new Promise((resolve) => {
 
 	//Update loop
 	setInterval(toServer, 50)
-
-	function render() {
-		// Transform the canvas
-		ctx.save()
-		//ctx.clearRect(0, 0, w, h);
-
-		world.render(ctx)
-
-		// Restore transform
-		ctx.restore()
-	}
-
-
-	//world interpolation variablen
-	var fixedTimeStep = 1 / 60
-	var maxSubSteps = 1
-	var lastTimeSeconds
-	var deltaTime
-	var timeSeconds
-
-	// Animation loop
-	function animate(t) {
-		requestAnimationFrame(animate)
-
-		timeSeconds = t / 1000
-		lastTimeSeconds = lastTimeSeconds || timeSeconds
-
-		deltaTime = timeSeconds - lastTimeSeconds
-
-		// Move physics bodies forward in time
-		world.step(fixedTimeStep, deltaTime, maxSubSteps)
-
-		// Render scene
-		render()
-	}
-
-	requestAnimationFrame(animate)
 })

@@ -3,12 +3,9 @@ import Brush from './Brush'
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
-export default class World {
-    constructor(socket, canvas) {
-        this.width = canvas.width
-        this.height = canvas.height
-        this.canvas = canvas
-        this.p2World = null
+export default class Canvas {
+    constructor(socket) {
+        this.world = null
         this.mouseConstraint = null
         this.planeBody = null
         this.roofBody = null
@@ -17,14 +14,25 @@ export default class World {
         this.mouseBody = null
         this.particles = []
 
+        this.canvas = document.getElementById("myCanvas")
+        this.width = this.canvas.width
+        this.height = this.canvas.height
+
         this.brushes = new Map()
         this.socket = socket
         this.ownBrush = null
+
+        this.fixedTimeStep = 1 / 60
+        this.maxSubSteps = 1
+        this.lastTimeSeconds
+        this.deltaTime
+        this.timeSeconds
 
         this.initWorld()
         this.placeWalls()
         this.addMouseControlls()
         this.initConnection()
+        requestAnimationFrame(t => this.animate(t))
 
         if (typeof window.orientation !== "undefined") {
             window.addEventListener('deviceorientation', this.handleOrientation)
@@ -45,10 +53,27 @@ export default class World {
     }
 
     step(fixedTimeStep, deltaTime, maxSubSteps) {
-        this.p2World.step(fixedTimeStep, deltaTime, maxSubSteps)
+        this.world.step(fixedTimeStep, deltaTime, maxSubSteps)
     }
 
-    render(ctx) {
+    animate(t) {
+		requestAnimationFrame(t => this.animate(t))
+
+		this.timeSeconds = t / 1000
+		this.lastTimeSeconds = this.lastTimeSeconds || this.timeSeconds
+
+		this.deltaTime = this.timeSeconds - this.lastTimeSeconds
+
+		// Move physics bodies forward in time
+		this.step(this.fixedTimeStep, this.deltaTime, this.maxSubSteps)
+
+		// Render scene
+		this.render()
+	}
+
+    render() {
+        const ctx = this.canvas.getContext("2d")
+        ctx.save()
         ctx.translate(this.width / 2, this.height / 2) // Translate to the center
         ctx.scale(1, -1)
         // Draw all bodies
@@ -58,6 +83,7 @@ export default class World {
         this.drawWalls(ctx)
         this.findContacts()
         this.drawParticles(ctx)
+        ctx.restore()
     }
 
     //Boden wände
@@ -84,8 +110,8 @@ export default class World {
     }
 
     findContacts() {
-        for (let i = 0; i < this.p2World.narrowphase.contactEquations.length; i++) {
-            let eq = this.p2World.narrowphase.contactEquations[i]
+        for (let i = 0; i < this.world.narrowphase.contactEquations.length; i++) {
+            let eq = this.world.narrowphase.contactEquations[i]
             let bodyAPosition = eq.bodyA.position
             let contactPointA = eq.contactPointA
 
@@ -111,12 +137,12 @@ export default class World {
         pShape.collisionMask = PLANES | BRUSH
 
         pBody.addShape(pShape)
-        this.p2World.addBody(pBody)
+        this.world.addBody(pBody)
 
         this.particles.push(pBody)
 
         if (this.particles.length > 100) {
-            this.p2World.removeBody(this.particles.shift())
+            this.world.removeBody(this.particles.shift())
         }
     }
 
@@ -137,11 +163,11 @@ export default class World {
 
     initWorld() {
         if (window.screen.orientation.type == "landscape-primary") {
-            this.p2World = new p2.World({
+            this.world = new p2.World({
                 gravity: [0, -90]
             })
         } else {
-            this.p2World = new p2.World({
+            this.world = new p2.World({
                 gravity: [0, 0]
             })
         }
@@ -172,10 +198,10 @@ export default class World {
         rightWallBody.shapes[0].collisionMask = BRUSH
 
         // planes hinzufügen
-        this.p2World.addBody(planeBody)
-        this.p2World.addBody(roofBody)
-        this.p2World.addBody(rightWallBody)
-        this.p2World.addBody(leftWallBody)
+        this.world.addBody(planeBody)
+        this.world.addBody(roofBody)
+        this.world.addBody(rightWallBody)
+        this.world.addBody(leftWallBody)
 
         // positionen und rotationen setzten
         planeBody.position[1] = -this.height / 2
@@ -199,7 +225,7 @@ export default class World {
     addMouseControlls() {
         // Create a body for the cursor
         this.mouseBody = new p2.Body()
-        this.p2World.addBody(this.mouseBody)
+        this.world.addBody(this.mouseBody)
 
         //Get mouse Position and create a mouse object
         this.canvas.addEventListener('mousedown', this.coursorDown.bind(this))
@@ -241,7 +267,7 @@ export default class World {
         var position = this.getPhysicsCoord(event)
 
         // Check if the cursor is inside the box
-        var hitBodies = this.p2World.hitTest(position, [this.ownBrush.body])
+        var hitBodies = this.world.hitTest(position, [this.ownBrush.body])
 
         if (hitBodies.length) {
             // Move the mouse body to the cursor position
@@ -254,7 +280,7 @@ export default class World {
                 worldPivot: position,
                 collideConnected: false
             });
-            this.p2World.addConstraint(this.mouseConstraint)
+            this.world.addConstraint(this.mouseConstraint)
         }
     }
 
@@ -265,24 +291,24 @@ export default class World {
     }
 
     coursorUp(event) {
-        this.p2World.removeConstraint(this.mouseConstraint)
+        this.world.removeConstraint(this.mouseConstraint)
         this.mouseConstraint = null
     }
 
     mouseLeave(event) {
-        this.p2World.removeConstraint(this.mouseConstraint)
+        this.world.removeConstraint(this.mouseConstraint)
         this.mouseConstraint = null
     }
 
     newBrush({id}) {
         console.log("new! : " + id)
-        let brush = new Brush({ id, world: this.p2World })
+        let brush = new Brush({ id, world: this.world })
         this.brushes.set(id, brush)
     }
 
     leaveBrush({id}) {
         // Box löschen
-        this.p2World.removeBody(this.brushes.get(id).body)
+        this.world.removeBody(this.brushes.get(id).body)
         this.brushes.delete(id);
         console.log("left! : " + id)
     }
@@ -355,8 +381,8 @@ export default class World {
             x = -tmp
         }
 
-        this.p2World.gravity[0] = x
-        this.p2World.gravity[1] = -y
+        this.world.gravity[0] = x
+        this.world.gravity[1] = -y
     }
 
 }
