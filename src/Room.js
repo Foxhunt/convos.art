@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 
 import Brush from './Brush'
-import Canvas from './canvas'
+import Canvas from './Canvas'
 
 export default roomId => new Promise((resolve) => {
 
@@ -49,6 +49,55 @@ export default roomId => new Promise((resolve) => {
 		}) // ende emit init
 		resolve(ownBrush)
 	}) // ende onConnect
+
+	
+	//Neuen client und seine Box anlegen
+	socket.on('new', payload => canvas.newBrush(payload))
+
+	//Box eines Clients löschen der das Spiel verlassen hat
+	socket.on('leave', payload => canvas.leaveBrush(payload))
+
+	//Box Informationen vom Server erhalten
+	socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
+		// betroffene box ermitteln
+		let box = canvas.brushes.get(id)
+		//erhaltenen Informationen verarbeiten
+		if (box) {
+			box.body.position[0] = x
+			box.body.position[1] = y
+			box.body.angle = angle
+			box.body.velocity = velocity
+			box.body.angularVelocity = angularVelocity
+		}
+	})
+
+	socket.on('setFillStyle', ({ id, color }) => {
+		let box = canvas.brushes.get(id)
+		if (box) {
+			box.Fill = color
+		}
+	})
+
+	socket.on('setStrokeStyle', ({ id, color }) => {
+		let box = canvas.brushes.get(id)
+		if (box) {
+			box.Stroke = color
+		}
+	})
+
+	socket.on('setShapeType', ({ id, shapeType }) => {
+		let box = canvas.brushes.get(id)
+		if (box) {
+			box.Shape = shapeType
+		}
+	})
+
+	socket.on('setFillImage', ({ id, imageSrc }) => {
+		let box = canvas.brushes.get(id)
+		if (box) {
+			box.Image = imageSrc
+		}
+	})
 
 	//Box informationen an server senden
 	function toServer() {

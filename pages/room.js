@@ -38,7 +38,7 @@ class Room extends react.Component{
     }
 
     async componentDidMount () {
-        const { default: room } = await import("../src/room")
+        const { default: room } = await import("../src/Room")
         this.setState({
             brush: await room(this.props.router.query.roomId)
         })

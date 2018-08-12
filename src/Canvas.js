@@ -4,7 +4,7 @@ import Brush from './Brush'
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default class Canvas {
-    constructor(socket) {
+    constructor() {
         this.world = null
         this.mouseConstraint = null
         this.planeBody = null
@@ -19,7 +19,6 @@ export default class Canvas {
         this.height = this.canvas.height
 
         this.brushes = new Map()
-        this.socket = socket
         this.ownBrush = null
 
         this.fixedTimeStep = 1 / 60
@@ -31,7 +30,6 @@ export default class Canvas {
         this.initWorld()
         this.placeWalls()
         this.addMouseControlls()
-        this.initConnection()
         requestAnimationFrame(t => this.animate(t))
 
         if (typeof window.orientation !== "undefined") {
@@ -42,10 +40,6 @@ export default class Canvas {
     addOwnBrush(ownBrush){
         this.ownBrush = ownBrush
         this.brushes.set(ownBrush.id, ownBrush)
-    }
-
-    addBrush(brush) {
-        this.brushes.set(brush.id, brush)
     }
 
     removeBrush(brush) {
@@ -300,6 +294,10 @@ export default class Canvas {
         this.mouseConstraint = null
     }
 
+    addBrush(brush) {
+        this.brushes.set(brush.id, brush)
+    }
+
     newBrush({id}) {
         console.log("new! : " + id)
         let brush = new Brush({ id, world: this.world })
@@ -311,56 +309,6 @@ export default class Canvas {
         this.world.removeBody(this.brushes.get(id).body)
         this.brushes.delete(id);
         console.log("left! : " + id)
-    }
-
-    initConnection() {
-        //Neuen client und seine Box anlegen
-        this.socket.on('new', this.newBrush.bind(this))
-
-        //Box eines Clients löschen der das Spiel verlassen hat
-        this.socket.on('leave', this.leaveBrush.bind(this))
-
-        //Box Informationen vom Server erhalten
-        this.socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
-            // betroffene box ermitteln
-            let box = this.brushes.get(id)
-            //erhaltenen Informationen verarbeiten
-            if (box) {
-                box.body.position[0] = x
-                box.body.position[1] = y
-                box.body.angle = angle
-                box.body.velocity = velocity
-                box.body.angularVelocity = angularVelocity
-            }
-        })
-
-        this.socket.on('setFillStyle', ({ id, color }) => {
-            let box = this.brushes.get(id)
-            if (box) {
-                box.Fill = color
-            }
-        })
-
-        this.socket.on('setStrokeStyle', ({ id, color }) => {
-            let box = this.brushes.get(id)
-            if (box) {
-                box.Stroke = color
-            }
-        })
-
-        this.socket.on('setShapeType', ({ id, shapeType }) => {
-            let box = this.brushes.get(id)
-            if (box) {
-                box.Shape = shapeType
-            }
-        })
-
-        this.socket.on('setFillImage', ({ id, imageSrc }) => {
-            let box = this.brushes.get(id)
-            if (box) {
-                box.Image = imageSrc
-            }
-        })
     }
 
     handleOrientation(event) {
