@@ -1,5 +1,6 @@
 import p2 from 'p2'
 import Brush from './Brush'
+import Particles from "./Particles"
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
@@ -12,7 +13,7 @@ export default class Canvas {
         this.leftWallBody = null
         this.rightWallBody = null
         this.mouseBody = null
-        this.particles = []
+        this.particles = null
 
         this.canvas = document.getElementById("myCanvas")
         this.width = this.canvas.width
@@ -76,7 +77,7 @@ export default class Canvas {
         }
         this.drawWalls(ctx)
         this.findContacts()
-        this.drawParticles(ctx)
+        this.particles.draw(ctx)
         ctx.restore()
     }
 
@@ -112,48 +113,9 @@ export default class Canvas {
             let contactX = bodyAPosition[0] + contactPointA[0]
             let contactY = bodyAPosition[1] + contactPointA[1]
 
-            this.spawnParticle(contactX, contactY)
+            this.particles.spawn(contactX, contactY)
         }
     }
-
-    spawnParticle(x, y) {
-        const pShape = new p2.Particle({ radius: 3 })
-        const pBody = new p2.Body({
-            mass: 50,
-            position: [x, y],
-            velocity: [
-                140 * Math.cos(Math.PI * Math.random()),
-                140 * Math.cos(Math.PI * Math.random())
-            ]
-        })
-
-        pShape.collisionGroup = PARTICLES
-        pShape.collisionMask = PLANES | BRUSH
-
-        pBody.addShape(pShape)
-        this.world.addBody(pBody)
-
-        this.particles.push(pBody)
-
-        if (this.particles.length > 100) {
-            this.world.removeBody(this.particles.shift())
-        }
-    }
-
-    drawParticles(ctx) {
-        for (let particle of this.particles) {
-            ctx.beginPath()
-            let x = particle.interpolatedPosition[0]
-            let y = particle.interpolatedPosition[1]
-            ctx.save()
-            ctx.translate(x, y)
-            ctx.arc(0, 0, 2, 0, 2 * Math.PI)
-            ctx.fillStyle = "#ff00aa"
-            ctx.fill()
-            ctx.restore()
-        }
-    }
-
 
     initWorld() {
         if (window.screen.orientation.type == "landscape-primary") {
@@ -165,6 +127,8 @@ export default class Canvas {
                 gravity: [0, 0]
             })
         }
+
+        this.particles = new Particles(this.world)
     }
 
     placeWalls() {
