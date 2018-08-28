@@ -83,6 +83,8 @@ export default class Canvas {
 
     //Boden wände
     drawWalls(ctx) {
+        ctx.beginPath()
+        
         var y = this.planeBody.position[1]
         ctx.moveTo(-this.width, y)
         ctx.lineTo(this.width, y)
