@@ -29,6 +29,8 @@ class Room extends react.Component{
         super(props)
         autoBind(this)
 
+        this.canvas = new react.createRef()
+
         this.state = {
             showGui: true,
             brush: null
@@ -40,7 +42,7 @@ class Room extends react.Component{
     async componentDidMount () {
         const { default: room } = await import("../src/Room")
         this.setState({
-            brush: await room(this.props.router.query.roomId)
+            brush: await room(this.props.router.query.roomId, this.canvas.current)
         })
     }
 
@@ -54,6 +56,7 @@ class Room extends react.Component{
                     onPointerDown={this.onCursorDown}
                     onPointerMove={this.onCursorMove}
                     onPointerUp={this.onCursorUp}
+                    innerRef={this.canvas}
                 />
                 <GuiOverlay 
                     show={this.state.showGui}

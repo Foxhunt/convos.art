@@ -5,14 +5,14 @@ import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
 
 export default class Canvas {
-    constructor() {
+    constructor(htmlCanvas) {
         this.world = null
 
         this.particles = null
         this.environment = null
         this.mouseControlls = null
 
-        this.canvas = document.getElementById("myCanvas")
+        this.canvas = htmlCanvas
         this.width = this.canvas.width
         this.height = this.canvas.height
 

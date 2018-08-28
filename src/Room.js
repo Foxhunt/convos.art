@@ -3,14 +3,14 @@ import io from 'socket.io-client'
 import Brush from './Brush'
 import Canvas from './Canvas'
 
-export default roomId => new Promise((resolve) => {
+export default (roomId, htmlCanvas) => new Promise(resolve => {
 
 	let ownBrush = null
 	let ownId = null
 	
 	const socket = io({ query: { roomId } })
 	
-	const canvas = new Canvas(socket)
+	const canvas = new Canvas(htmlCanvas)
 
 	//Den server nach den bereits vorhandenen clients fragen
 	//wenn die verbindung aufgebaut wurde.
