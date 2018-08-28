@@ -28,21 +28,21 @@ const Button = styled.div`
 	border: 3px solid #000000;
 `
 
-export default ({ clickable, brush, toggleWebcam, setDraggable }) =>
+export default ({ clickable, canvas, toggleWebcam, setDraggable }) =>
     <Container
         onPointerDown={() => setDraggable(false)}
         onPointerUp={() => setDraggable(true)}
         clickable={clickable}>
         <Button
-            onClick={() => brush.Shape = "CIRCLE"}>
+            onClick={() => canvas.ownBrush.Shape = "CIRCLE"}>
             Circle
 					</Button>
         <Button
-            onClick={() => brush.Shape = "BOX"}>
+            onClick={() => canvas.ownBrush.Shape = "BOX"}>
             Box
 					</Button>
         <Button
-            onClick={() => brush.Shape = "SQUARE"}>
+            onClick={() => canvas.ownBrush.Shape = "SQUARE"}>
             Square
 					</Button>
         Fill
@@ -51,7 +51,7 @@ export default ({ clickable, brush, toggleWebcam, setDraggable }) =>
             color={this.fillStyle}
             onChange={
                 color => {
-                    brush.Fill = color.hex
+                    canvas.ownBrush.Fill = color.hex
                     this.fillStyle = color.hex
                 }
             } />
@@ -61,8 +61,18 @@ export default ({ clickable, brush, toggleWebcam, setDraggable }) =>
             color={this.strokeStyle}
             onChange={
                 color => {
-                    brush.Stroke = color.hex
+                    canvas.ownBrush.Stroke = color.hex
                     this.strokeStyle = color.hex
+                }
+            } />
+        Particles
+					<HuePicker
+            width={"100%"}
+            color={this.particleCollor}
+            onChange={
+                color => {
+                    canvas.particles.particleColor = color.hex
+                    this.particleCollor = color.hex
                 }
             } />
         <Button

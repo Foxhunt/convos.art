@@ -50,7 +50,7 @@ export default class Particles {
         })
 
         pShape.collisionGroup = PARTICLES
-        pShape.collisionMask = PLANES | BRUSH
+        pShape.collisionMask = BRUSH
 
         pBody.addShape(pShape)
         this.world.addBody(pBody)
