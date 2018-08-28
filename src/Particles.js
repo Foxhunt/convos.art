@@ -3,14 +3,15 @@ import p2 from 'p2'
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default class Particles {
-    constructor(world) {
-        this.world = world
+    constructor(canvas) {
+        this.world = canvas.world
         this.particles = []
         this.particleColor = "#ff00aa"
         this.maxParticles = 100
     }
 
     draw(ctx) {
+        this.findContacts()
         for (let particle of this.particles) {
             ctx.beginPath()
             let x = particle.interpolatedPosition[0]
@@ -21,6 +22,19 @@ export default class Particles {
             ctx.fillStyle = this.particleColor
             ctx.fill()
             ctx.restore()
+        }
+    }
+
+    findContacts() {
+        for (let i = 0; i < this.world.narrowphase.contactEquations.length; i++) {
+            let eq = this.world.narrowphase.contactEquations[i]
+            let bodyAPosition = eq.bodyA.position
+            let contactPointA = eq.contactPointA
+
+            let contactX = bodyAPosition[0] + contactPointA[0]
+            let contactY = bodyAPosition[1] + contactPointA[1]
+
+            this.spawn(contactX, contactY)
         }
     }
 

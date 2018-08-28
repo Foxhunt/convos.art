@@ -76,7 +76,6 @@ export default class Canvas {
             brush.render(ctx)
         }
         this.drawWalls(ctx)
-        this.findContacts()
         this.particles.draw(ctx)
         ctx.restore()
     }
@@ -104,19 +103,6 @@ export default class Canvas {
         ctx.moveTo(x, -this.height)
         ctx.lineTo(x, this.height)
         ctx.stroke()
-    }
-
-    findContacts() {
-        for (let i = 0; i < this.world.narrowphase.contactEquations.length; i++) {
-            let eq = this.world.narrowphase.contactEquations[i]
-            let bodyAPosition = eq.bodyA.position
-            let contactPointA = eq.contactPointA
-
-            let contactX = bodyAPosition[0] + contactPointA[0]
-            let contactY = bodyAPosition[1] + contactPointA[1]
-
-            this.particles.spawn(contactX, contactY)
-        }
     }
 
     initWorld() {
