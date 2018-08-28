@@ -72,7 +72,7 @@ export default class Canvas {
             brush.render(ctx)
         }
         this.environment.draw(ctx)
-        this.particles.draw(ctx)
+        this.particles.render(ctx)
         ctx.restore()
     }
 
