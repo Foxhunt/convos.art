@@ -1,19 +1,15 @@
 import p2 from 'p2'
 import Brush from './Brush'
 import Particles from "./Particles"
-
-import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
+import Environment from "./Environment"
 
 export default class Canvas {
     constructor() {
         this.world = null
         this.mouseConstraint = null
-        this.planeBody = null
-        this.roofBody = null
-        this.leftWallBody = null
-        this.rightWallBody = null
         this.mouseBody = null
         this.particles = null
+        this.environment = null
 
         this.canvas = document.getElementById("myCanvas")
         this.width = this.canvas.width
@@ -29,7 +25,6 @@ export default class Canvas {
         this.timeSeconds
 
         this.initWorld()
-        this.placeWalls()
         this.addMouseControlls()
         requestAnimationFrame(t => this.animate(t))
 
@@ -75,34 +70,9 @@ export default class Canvas {
         for (let brush of this.brushes.values()) {
             brush.render(ctx)
         }
-        this.drawWalls(ctx)
+        this.environment.draw(ctx)
         this.particles.draw(ctx)
         ctx.restore()
-    }
-
-    //Boden wände
-    drawWalls(ctx) {
-        ctx.beginPath()
-        
-        var y = this.planeBody.position[1]
-        ctx.moveTo(-this.width, y)
-        ctx.lineTo(this.width, y)
-        ctx.stroke()
-
-        y = this.roofBody.position[1]
-        ctx.moveTo(-this.width, y)
-        ctx.lineTo(this.width, y)
-        ctx.stroke()
-
-        var x = this.leftWallBody.position[0]
-        ctx.moveTo(x, -this.height)
-        ctx.lineTo(x, this.height)
-        ctx.stroke()
-
-        x = this.rightWallBody.position[0]
-        ctx.moveTo(x, -this.height)
-        ctx.lineTo(x, this.height)
-        ctx.stroke()
     }
 
     initWorld() {
@@ -117,55 +87,6 @@ export default class Canvas {
         }
 
         this.particles = new Particles(this.world)
-    }
-
-    placeWalls() {
-        // Add a plane
-        const planeBody = new p2.Body()
-        planeBody.addShape(new p2.Plane())
-        planeBody.shapes[0].collisionGroup = PLANES
-        planeBody.shapes[0].collisionMask = BRUSH
-
-        const roofBody = new p2.Body()
-        roofBody.addShape(new p2.Plane())
-        roofBody.shapes[0].collisionGroup = PLANES
-        roofBody.shapes[0].collisionMask = BRUSH
-
-        //wand links
-        const leftWallBody = new p2.Body()
-        leftWallBody.addShape(new p2.Plane())
-        leftWallBody.shapes[0].collisionGroup = PLANES
-        leftWallBody.shapes[0].collisionMask = BRUSH
-
-        //wand rechts
-        const rightWallBody = new p2.Body()
-        rightWallBody.addShape(new p2.Plane())
-        rightWallBody.shapes[0].collisionGroup = PLANES
-        rightWallBody.shapes[0].collisionMask = BRUSH
-
-        // planes hinzufügen
-        this.world.addBody(planeBody)
-        this.world.addBody(roofBody)
-        this.world.addBody(rightWallBody)
-        this.world.addBody(leftWallBody)
-
-        // positionen und rotationen setzten
-        planeBody.position[1] = -this.height / 2
-
-        roofBody.position[1] = this.height / 2
-        roofBody.angle = Math.PI
-
-        leftWallBody.position[0] = -this.width / 2
-        leftWallBody.angle = -(Math.PI / 2)
-
-
-        rightWallBody.position[0] = this.width / 2
-        rightWallBody.angle = Math.PI / 2
-
-        this.planeBody = planeBody
-        this.roofBody = roofBody
-        this.leftWallBody = leftWallBody
-        this.rightWallBody = rightWallBody
     }
 
     addMouseControlls() {
