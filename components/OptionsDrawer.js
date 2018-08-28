@@ -76,6 +76,10 @@ export default ({ clickable, canvas, toggleWebcam, setDraggable }) =>
                 }
             } />
         <Button
+            onClick={() => canvas.particles.enabled = !canvas.particles.enabled}>
+            toggle Particles
+        </Button>
+        <Button
             onClick={toggleWebcam}>
             toggle Webcam
         </Button>

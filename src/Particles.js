@@ -8,10 +8,11 @@ export default class Particles {
         this.particles = []
         this.particleColor = "#ff00aa"
         this.maxParticles = 100
+        this.enabled = true
     }
 
     draw(ctx) {
-        this.findContacts()
+        this.enabled && this.findContacts()
         for (let particle of this.particles) {
             ctx.beginPath()
             let x = particle.interpolatedPosition[0]
