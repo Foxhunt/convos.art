@@ -4,25 +4,43 @@ import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default class Particles {
     constructor(canvas) {
+        this.canvas = canvas
         this.world = canvas.world
         this.particles = []
         this.particleColor = "#ff00aa"
         this.maxParticles = 100
+        this.enabled = true
     }
 
-    draw(ctx) {
-        this.findContacts()
+    render(ctx) {
+        this.enabled && this.findContacts()
         for (let particle of this.particles) {
-            ctx.beginPath()
-            let x = particle.interpolatedPosition[0]
-            let y = particle.interpolatedPosition[1]
-            ctx.save()
-            ctx.translate(x, y)
-            ctx.arc(0, 0, 2, 0, 2 * Math.PI)
-            ctx.fillStyle = this.particleColor
-            ctx.fill()
-            ctx.restore()
+            if (this.isInBounds(particle)) {
+                this.drawParticle(ctx, particle)
+            } else {
+                const index = this.particles.indexOf(particle)
+                this.particles.splice(index, 1)
+                this.world.removeBody(particle)
+            }
         }
+    }
+
+    isInBounds(particle) {
+        const x = particle.interpolatedPosition[0]
+        const y = particle.interpolatedPosition[1]
+        return x >= -this.canvas.width/2 && x <= this.canvas.width/2 && y >= -this.canvas.height/2 && y <= this.canvas.height/2
+    }
+
+    drawParticle(ctx, particle) {
+        ctx.beginPath()
+        const x = particle.interpolatedPosition[0]
+        const y = particle.interpolatedPosition[1]
+        ctx.save()
+        ctx.translate(x, y)
+        ctx.arc(0, 0, 2, 0, 2 * Math.PI)
+        ctx.fillStyle = this.particleColor
+        ctx.fill()
+        ctx.restore()
     }
 
     findContacts() {
@@ -50,7 +68,7 @@ export default class Particles {
         })
 
         pShape.collisionGroup = PARTICLES
-        pShape.collisionMask = PLANES | BRUSH
+        pShape.collisionMask = BRUSH
 
         pBody.addShape(pShape)
         this.world.addBody(pBody)

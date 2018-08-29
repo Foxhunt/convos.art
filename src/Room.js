@@ -47,7 +47,7 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 					}
 				})
 		}) // ende emit init
-		resolve(ownBrush)
+		resolve(canvas)
 	}) // ende onConnect
 
 	

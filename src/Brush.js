@@ -10,9 +10,9 @@ export default class Brush {
         this.shape = null
         this.shapeType = null
 
-        this.fillStyle = "blue"
+        this.fillStyle = "#0000ff"
         this.fillImage = null
-        this.strokeStyle = "red"
+        this.strokeStyle = "#ff0000"
 
         this.body = new p2.Body({
             mass: 100,

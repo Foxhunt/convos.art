@@ -71,7 +71,6 @@ export default class GuiOverlay extends react.Component {
 		this.fillStyle = "#0000FF"
 		this.strokeStyle = "#0000FF"
 
-		this.canvas = null
 		this.cam = React.createRef()
 
 		this.dragDirection = ""
@@ -83,7 +82,7 @@ export default class GuiOverlay extends react.Component {
 		this.state = {
 			showWebcam: false,
 			showOptionsDrawer: false,
-			optionsDrawerPos: this.hideOptionsDrawerPos,
+			optionsDrawerPos: null,
 			camCapture: null,
 			isDragging: false,
 			draggable: true,
@@ -92,7 +91,7 @@ export default class GuiOverlay extends react.Component {
 	}
 
 	calculatepositions() {
-		this.showOptionsDrawerPos = { x: -this.canvas.offsetWidth * 0.33, y: 0 }
+		this.showOptionsDrawerPos = { x: -this.props.htmlCanvas.offsetWidth * 0.33, y: 0 }
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
 		this.dragBounds = {
 			left: this.showOptionsDrawerPos.x,
@@ -102,13 +101,15 @@ export default class GuiOverlay extends react.Component {
 	}
 
 	componentDidMount() {
-		this.canvas = document.getElementById('myCanvas')
-		this.calculatepositions()
 		window.addEventListener("resize", this.calculatepositions)
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener("resize", this.calculatepositions)
+	}
+
+	componentDidUpdate() {
+		this.props.htmlCanvas && !this.state.optionsDrawerPos && this.calculatepositions()
 	}
 
 	render() {
@@ -133,7 +134,7 @@ export default class GuiOverlay extends react.Component {
 						<OptionsDrawer
 							setDraggable={this.setDraggable}
 							clickable={this.props.show}
-							brush={this.props.brush}
+							canvas={this.props.canvas}
 							toggleWebcam={this.toggleWebcam} />
 					</DragWraper>
 				</Draggable>
@@ -224,12 +225,12 @@ export default class GuiOverlay extends react.Component {
 	}
 
 	saveCanvas(event) {
-		const imgURL = this.canvas.toDataURL('image/jpeg')
+		const imgURL = this.props.htmlCanvas.toDataURL('image/jpeg')
 		event.target.href = imgURL
 	}
 
 	captureWebcam() {
-		this.props.brush.Image = this.cam.current.getScreenshot()
+		this.props.canvas.ownBrush.Image = this.cam.current.getScreenshot()
 		this.setState({
 			showWebcam: !this.state.showWebcam
 		})
