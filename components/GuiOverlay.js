@@ -246,7 +246,7 @@ function toggleFullScreen() {
 
 	if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
 		requestFullScreen.call(docEl)
-		window.screen.orientation.lock("landscape").catch(err => console.error(err))
+		window.screen.orientation.lock("landscape-primary").catch(err => console.error(err))
 	}
 	else {
 		cancelFullScreen.call(doc)

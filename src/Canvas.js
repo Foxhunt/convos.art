@@ -29,7 +29,7 @@ export default class Canvas {
         requestAnimationFrame(t => this.animate(t))
 
         if (typeof window.orientation !== "undefined") {
-            window.addEventListener('deviceorientation', this.handleOrientation)
+            window.addEventListener('deviceorientation', event => this.handleOrientation(event))
         }
     }
 
