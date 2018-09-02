@@ -1,5 +1,7 @@
 import io from 'socket.io-client'
 
+import schemas from '../schemas'
+
 import Brush from './Brush'
 import Canvas from './Canvas'
 
@@ -58,16 +60,17 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 	socket.on('leave', payload => canvas.leaveBrush(payload))
 
 	//Box Informationen vom Server erhalten
-	socket.on('toClient', ({ id, x, y, angle, velocity, angularVelocity }) => {
+	socket.on('toClient', buffer => {
+		const data = schemas.toClientSchema.decode(buffer)
 		// betroffene box ermitteln
-		let box = canvas.brushes.get(id)
+		let box = canvas.brushes.get(data.id)
 		//erhaltenen Informationen verarbeiten
 		if (box) {
-			box.body.position[0] = x
-			box.body.position[1] = y
-			box.body.angle = angle
-			box.body.velocity = velocity
-			box.body.angularVelocity = angularVelocity
+			box.body.position[0] = data.x
+			box.body.position[1] = data.y
+			box.body.angle = data.angle
+			box.body.velocity = data.velocity
+			box.body.angularVelocity = data.angularVelocity
 		}
 	})
 
@@ -102,13 +105,15 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 	//Box informationen an server senden
 	function toServer() {
 		if (ownBrush) {
-			socket.emit('toServer', {
+			const data = {
 				x: ownBrush.body.interpolatedPosition[0],
 				y: ownBrush.body.interpolatedPosition[1],
 				angle: ownBrush.body.interpolatedAngle,
 				velocity: ownBrush.body.velocity,
 				angularVelocity: ownBrush.body.angularVelocity
-			})
+			}
+			const buffer = schemas.toServerSchema.encode(data)
+			socket.emit('toServer', buffer)
 		}
 	}
 

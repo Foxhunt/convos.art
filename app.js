@@ -3,6 +3,8 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const next = require('next')
 
+const schemas = require('./schemas')
+
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
@@ -49,7 +51,8 @@ io.on('connection', socket => {
 	})
 
 	//Box informationen vom Client erhalten
-	socket.on('toServer', data => {
+	socket.on('toServer', buffer => {
+		const data = schemas.toServerSchema.decode(buffer)
 		//suche die passende box und setze x, y und angle
 		box.x = data.x
 		box.y = data.y
@@ -85,14 +88,16 @@ io.on('connection', socket => {
 
 	//Box Informationen an clients senden
 	function toClients() {
-		socket.broadcast.to(roomId).emit('toClient', {
+		const data = {
 			id: box.id,
 			x: box.x,
 			y: box.y,
 			angle: box.angle,
 			velocity: box.velocity,
 			angularVelocity: box.angularVelocity
-		});
+		}
+		const buffer = schemas.toClientSchema.encode(data)
+		socket.broadcast.to(roomId).emit('toClient', buffer);
 	}
 
 	//Clients über das verlassen eines Cleints informieren
@@ -122,7 +127,7 @@ function Box(id, x, y, angle, velocity) {
 	this.x = x || 0
 	this.y = y || 5
 	this.angle = angle || 0
-	this.velocity = velocity || 0
+	this.velocity = velocity || {0: 0, 1: 0}
 	this.angularVelocity = 0
 	this.fillStyle = "blue"
 	this.strokeStyle = "red"
