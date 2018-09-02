@@ -9,7 +9,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
 
-var rooms = new Map();
+var rooms = new Map()
 
 //Socket konfg
 //###########
@@ -24,30 +24,30 @@ io.on('connection', socket => {
 	const boxes = getBoxesOfRoom(roomId)
 
 	//id zuweisen
-	const id = socket.id;
+	const id = socket.id
 
-	const box = new Box(id);
+	const box = new Box(id)
 
 	socket.join(roomId)
 
 	//neuen client anlegen
-	boxes.set(id, box);
+	boxes.set(id, box)
 
 	//über client benachrichtigen
-	console.log(`${id} joined ${roomId}. (${boxes.size})`);
+	console.log(`${id} joined ${roomId}. (${boxes.size})`)
 
 	//clients über neuen client informieren
 	socket.broadcast.to(roomId).emit('new', {
 		id: id
-	});
+	})
 
 	//clients beim neuen client initialisieren
 	socket.on('init', fn => {
-		let boxesArr = [];
+		let boxesArr = []
 		for(let value of boxes.values()){
-			boxesArr.push(value);
+			boxesArr.push(value)
 		}
-		fn(boxesArr);
+		fn(boxesArr)
 	})
 
 	//Box informationen vom Client erhalten
@@ -84,7 +84,7 @@ io.on('connection', socket => {
 	})
 
 	//periodischen senden von updates an die  Clients;
-	setInterval(toClients, 50);
+	const toClientsIntervall = setInterval(toClients, 50)
 
 	//Box Informationen an clients senden
 	function toClients() {
@@ -103,13 +103,14 @@ io.on('connection', socket => {
 	//Clients über das verlassen eines Cleints informieren
 	//so dass Sie den client entfernen können (leave event)
 	socket.on('disconnect', () => {
-		boxes.delete(id);
+		boxes.delete(id)
 		socket.broadcast.to(roomId).emit('leave', {
 			id: id
 		});
-		console.log(`Client ${id} disconnected. (${boxes.size})`);
-	});
-});
+		console.log(`Client ${id} disconnected. (${boxes.size})`)
+		clearInterval(toClientsIntervall)
+	})
+})
 
 function getBoxesOfRoom(roomId){
 	if(rooms.has(roomId)){
