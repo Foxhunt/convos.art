@@ -23,7 +23,7 @@ const Button = styled.div`
 	width: 100%;
 	height: 5%;
 
-	background-color: #aaaaaa;
+	background-color: ${({on}) => on ? "#00ef00" : "#ef0000" };
 
 	border: 3px solid #000000;
 `
@@ -35,7 +35,10 @@ export default class OptionsDrawer extends react.Component {
         this.state = {
             fillStyle: null,
             strokeStyle: null,
-            particleCollor: null
+            particleCollor: null,
+            loco: false,
+            particle: true,
+            Webcam: false
         }
 
         this.loco = false
@@ -64,15 +67,27 @@ export default class OptionsDrawer extends react.Component {
                 onPointerUp={() => this.props.setDraggable(true)}
                 clickable={this.props.clickable}>
                 <Button
-                    onClick={() => this.props.canvas.ownBrush.Shape = "CIRCLE"}>
+                    on={this.props.canvas.ownBrush.shapeType === "CIRCLE"}
+                    onClick={() => {
+                        this.props.canvas.ownBrush.Shape = "CIRCLE"
+                        this.forceUpdate()
+                        }}>
                     Circle
                 </Button>
                 <Button
-                    onClick={() => this.props.canvas.ownBrush.Shape = "BOX"}>
+                    on={this.props.canvas.ownBrush.shapeType === "BOX"}
+                    onClick={() => {
+                        this.props.canvas.ownBrush.Shape = "BOX"
+                        this.forceUpdate()
+                        }}>
                     Box
                 </Button>
                 <Button
-                    onClick={() => this.props.canvas.ownBrush.Shape = "SQUARE"}>
+                    on={this.props.canvas.ownBrush.shapeType === "SQUARE"}
+                    onClick={() => {
+                        this.props.canvas.ownBrush.Shape = "SQUARE"
+                        this.forceUpdate()
+                        }}>
                     Square
                 </Button>
                 Fill
@@ -106,32 +121,45 @@ export default class OptionsDrawer extends react.Component {
                         }
                     } />
                 <Button
-                    onClick={() => this.props.canvas.particles.enabled = !this.props.canvas.particles.enabled}>
+                    on={this.state.particle}
+                    onClick={() => this.toggleParticle()}>
                     toggle Particles
                 </Button>
                 <Button
+                    on={this.state.loco}
                     onClick={() => this.toggleLoco()}>
                     toggle Loco
                 </Button>
                 <Button
-                    onClick={this.props.toggleWebcam}>
+                    on={this.state.Webcam}
+                    onClick={() => this.toggleWebcam()}>
                     toggle Webcam
                 </Button>
             </Container>
     }
 
+    toggleWebcam(){
+        this.props.toggleWebcam()
+        this.setState({ Webcam: !this.state.Webcam })
+    }
+
+    toggleParticle() {
+        this.props.canvas.particles.enabled = !this.props.canvas.particles.enabled
+        this.setState({particle: this.props.canvas.particles.enabled})
+    }
+
     toggleLoco() {
-        if(this.loco) {
+        if(this.state.loco) {
+            this.setState({loco: false})
             clearInterval(this.loco)
             clearInterval(this.fillStyleIntervall)
             clearInterval(this.strokeStyleIntervall)
             clearInterval(this.particleCollorIntervall)
-            this.loco = !this.loco
             this.fillStyleIntervall = null
             this.strokeStyleIntervall = null
             this.particleCollorIntervall = null
         } else {
-            this.loco = !this.loco
+            this.setState({loco: true})
             this.fillStyleIntervall = setInterval(() => this.incrementFill(), 20 + Math.random() * 10)
             this.strokeStyleIntervall = setInterval(() => this.incrementStroke(), 20 + Math.random() * 10)
             this.particleCollorIntervall = setInterval(() => this.incrementParticle(), 20 + Math.random() * 10)
