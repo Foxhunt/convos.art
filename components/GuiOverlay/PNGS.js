@@ -1,10 +1,10 @@
+import React from "react"
 import styled from "styled-components"
-import react from "react"
 
-import DownloadPNG from "../static/download.png"
-import CameraPNG from "../static/screenshot.png"
-import FullScreenPNG from "../static/fullScreen.png"
-import ArrowPNG from "../static/backArrow.png"
+import DownloadPNG from "../../static/download.png"
+import CameraPNG from "../../static/screenshot.png"
+import FullScreenPNG from "../../static/fullScreen.png"
+import ArrowPNG from "../../static/backArrow.png"
 
 const Container = styled.div`
     pointer-events: none;

@@ -1,6 +1,9 @@
-import react from 'react'
+import React, { Component } from 'react'
 import styled from 'styled-components'
+
 import { HuePicker } from "react-color"
+
+import Button from "./button"
 
 const Container = styled.div`
 	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
@@ -19,16 +22,7 @@ const Container = styled.div`
 	background-color: #00ffff;
 `
 
-const Button = styled.div`
-	width: 100%;
-	height: 5%;
-
-	background-color: ${({on}) => on ? "#00ef00" : "#ef0000" };
-
-	border: 3px solid #000000;
-`
-
-export default class OptionsDrawer extends react.Component {
+export default class OptionsDrawer extends Component {
     constructor(props) {
         super(props)
 

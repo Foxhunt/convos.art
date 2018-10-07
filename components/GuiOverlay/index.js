@@ -1,11 +1,12 @@
-import react from 'react'
+import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import styled from 'styled-components'
+
 import ReactWebcam from "react-webcam"
 import Draggable from "react-draggable"
 
-import OptionsDrawer from "./OptionsDrawer"
-import Circle from "./DivCircle"
+import OptionsDrawer from "./Drawer"
+import Button from "./overlayButton"
 
 import * as PNGS from "./PNGS"
 
@@ -47,23 +48,23 @@ const GUI = styled.div`
 	opacity: ${({ show }) => show ? 0.9 : 0};
 `
 
-const ButtonRight = styled(Circle)`
+const ButtonRight = styled(Button)`
 	position: absolute;
 	top: 50%;
 	left: 100%;
 `
 
-const ButtonRightBot = styled(Circle)`
+const ButtonRightBot = styled(Button)`
 	top: 100%;
 	left: 100%;
 `
 
-const ButtonBot = styled(Circle)`
+const ButtonBot = styled(Button)`
 	top: 100%;
 	left: 50%;
 `
 
-export default class GuiOverlay extends react.Component {
+export default class GuiOverlay extends Component {
 	constructor(props) {
 		super(props)
 		autoBind(this)
