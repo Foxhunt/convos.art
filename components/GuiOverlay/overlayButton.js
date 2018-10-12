@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const circleSize = 11
+const circleSize = 6
 export default styled.a`
 	position: absolute;
 	pointer-events: ${({clickable})=> clickable ? "auto" : "none" };

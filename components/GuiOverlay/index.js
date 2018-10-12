@@ -92,7 +92,7 @@ export default class GuiOverlay extends Component {
 	}
 
 	calculatepositions() {
-		this.showOptionsDrawerPos = { x: -this.props.htmlCanvas.offsetWidth * 0.33, y: 0 }
+		this.showOptionsDrawerPos = { x: -this.props.htmlCanvas.offsetWidth * 0.20, y: 0 }
 		this.hideOptionsDrawerPos = { x: 0, y: 0 }
 		this.dragBounds = {
 			left: this.showOptionsDrawerPos.x,
@@ -226,7 +226,7 @@ export default class GuiOverlay extends Component {
 	}
 
 	saveCanvas(event) {
-		const imgURL = this.props.htmlCanvas.toDataURL('image/jpeg')
+		const imgURL = this.props.htmlCanvas.toDataURL('image/png')
 		event.target.href = imgURL
 	}
 

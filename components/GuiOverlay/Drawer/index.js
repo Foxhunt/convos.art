@@ -13,7 +13,7 @@ const Container = styled.div`
 
 	overflow: hidden;
 
-	width: 33vw;
+	width: 20vw;
 	height: 56.25vw;
 
 	max-width: calc(177.78vh / 3);
