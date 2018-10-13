@@ -8,7 +8,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
 
-    height: 100vh;
+    height: 100%;
 `
 
 export default class Index extends react.Component{
