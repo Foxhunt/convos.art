@@ -2,28 +2,15 @@ import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import styled from 'styled-components'
 
-import ReactWebcam from "react-webcam"
 import Draggable from "react-draggable"
 
 import OptionsDrawer from "./Drawer"
+import Webcam from "./webcam"
 import Button from "./overlayButton"
 
+import toggleFullScreen from "./toggleFullScreen"
+
 import * as PNGS from "./PNGS"
-
-const camSize = 40
-const Webcam = styled.div`
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	overflow: hidden;
-
-	width: ${camSize}%;
-	height: ${camSize * (16 / 9)}%;
-
-	transform: translate(-50%, -50%);
-	
-	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
-`
 
 const DragWraper = styled.div`
 	width: 100%;
@@ -139,16 +126,7 @@ export default class GuiOverlay extends Component {
 							toggleWebcam={this.toggleWebcam} />
 					</DragWraper>
 				</Draggable>
-				{
-					this.state.showWebcam &&
-					<Webcam>
-						<ReactWebcam
-							audio={false}
-							ref={this.cam}
-							style={{ width: `100%`, height: `100%` }}
-						/>
-					</Webcam>
-				}
+				{ this.state.showWebcam && <Webcam innerRef={ this.cam } /> }
 				<ButtonRightBot
 					clickable={this.props.show}
 					onClick={toggleFullScreen}>
@@ -237,20 +215,3 @@ export default class GuiOverlay extends Component {
 		})
 	}
 }
-
-function toggleFullScreen() {
-	var doc = window.document
-	var docEl = doc.documentElement
-
-	var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
-	var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen
-
-	if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-		requestFullScreen.call(docEl)
-		window.screen.orientation.lock("landscape-primary").catch(err => console.error(err))
-	}
-	else {
-		cancelFullScreen.call(doc)
-	}
-}
-
