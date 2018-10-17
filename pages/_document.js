@@ -21,7 +21,6 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
-          <title>convos</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no, minimal-ui" key="viewport" />
           <meta name="theme-color" content="orange" />
           {this.props.styleTags}
