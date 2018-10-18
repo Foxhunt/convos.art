@@ -59,7 +59,7 @@ export default class GuiOverlay extends Component {
 		this.fillStyle = "#0000FF"
 		this.strokeStyle = "#0000FF"
 
-		this.cam = React.createRef()
+		this.camRef = React.createRef()
 
 		this.dragDirection = ""
 
@@ -126,7 +126,7 @@ export default class GuiOverlay extends Component {
 							toggleWebcam={this.toggleWebcam} />
 					</DragWraper>
 				</Draggable>
-				{ this.state.showWebcam && <Webcam innerRef={ this.cam } /> }
+				{ this.state.showWebcam && <Webcam getRef={ this.camRef } /> }
 				<ButtonRightBot
 					clickable={this.props.show}
 					onClick={toggleFullScreen}>
@@ -209,7 +209,7 @@ export default class GuiOverlay extends Component {
 	}
 
 	captureWebcam() {
-		this.props.canvas.ownBrush.Image = this.cam.current.getScreenshot()
+		this.props.canvas.ownBrush.Image = this.camRef.current.getScreenshot()
 		this.setState({
 			showWebcam: !this.state.showWebcam
 		})

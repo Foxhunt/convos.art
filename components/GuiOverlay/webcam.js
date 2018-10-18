@@ -16,10 +16,10 @@ const Webcam = styled.div`
 	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
 `
 
-export default ({innerRef}) =>
+export default ({ getRef }) =>
     <Webcam>
         <ReactWebcam
             audio={false}
-            ref={ innerRef }
+            ref={ getRef }
             style={{ width: `100%`, height: `100%` }} />
     </Webcam>

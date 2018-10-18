@@ -55,7 +55,7 @@ class Room extends react.Component{
                     onPointerDown={this.onCursorDown}
                     onPointerMove={this.onCursorMove}
                     onPointerUp={this.onCursorUp}
-                    innerRef={ref =>
+                    ref={ref =>
                         !this.state.htmlCanvas && this.setState({htmlCanvas: ref})
                     }
                 />
