@@ -6,12 +6,21 @@ import Link from 'next/link'
 import CreateJoinRoom from "../components/CreateJoinRoom"
 
 const Container = styled.div`
+    width: 70%;
     height: 100%;
     
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+`
+
+const Logo = styled.img`
+    align-self: flex-start;
+`
+
+const CardLink = styled.a`
+    align-self: flex-end;
 `
 
 export default class Index extends react.Component {
@@ -27,11 +36,15 @@ export default class Index extends react.Component {
     render() {
         return (
             <Container>
-                <img src="/static/C.svg" />
+                <Logo src="/static/C.svg" />
                 <CreateJoinRoom
                     roomId={this.state.roomId}
                     onChange={this.handleInput} />
-                <Link href="http://marco.mojica.de">Marco Mojica</Link>
+                <Link href="http://marco.mojica.de">
+                    <CardLink>
+                        Marco Mojica
+                    </CardLink>
+                </Link>
             </Container>
         )
     }
