@@ -21,6 +21,7 @@ const Logo = styled.img`
 
 const CardLink = styled.a`
     align-self: flex-end;
+    text-decoration: none;
 `
 
 export default class Index extends react.Component {
@@ -40,7 +41,7 @@ export default class Index extends react.Component {
                 <CreateJoinRoom
                     roomId={this.state.roomId}
                     onChange={this.handleInput} />
-                <Link href="http://marco.mojica.de">
+                <Link href="http://marco.mojica.de" passHref>
                     <CardLink>
                         Marco Mojica
                     </CardLink>
