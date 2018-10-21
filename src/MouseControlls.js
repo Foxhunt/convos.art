@@ -5,7 +5,7 @@ export default class MouseControlls {
         this.world = canvas.world
         this.width = canvas.width
         this.height = canvas.height
-        this.canvas = canvas.canvas
+        this.canvas = canvas.htmlCanvas
 
         this.ownBrush = null
 

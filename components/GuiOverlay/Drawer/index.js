@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
+import { connect } from "react-redux"
+import { toggleDrawer, toggleWebcam } from "../../../store/actions"
+
 import { HuePicker } from "react-color"
 
 import Button from "./button"
@@ -23,7 +26,7 @@ const Container = styled.div`
 	background-color: #00ffff;
 `
 
-export default class OptionsDrawer extends Component {
+class OptionsDrawer extends Component {
     constructor(props) {
         super(props)
 
@@ -33,8 +36,7 @@ export default class OptionsDrawer extends Component {
             strokeStyle: null,
             particleCollor: null,
             loco: false,
-            particle: true,
-            Webcam: false
+            particle: true
         }
 
         this.loco = false
@@ -119,8 +121,8 @@ export default class OptionsDrawer extends Component {
                     toggle Loco
                 </Button>
                 <Button
-                    on={this.state.Webcam}
-                    onClick={() => this.toggleWebcam()}>
+                    on={this.props.showWebcam}
+                    onClick={this.props.toggleWebcam}>
                     toggle Webcam
                 </Button>
             </Container>
@@ -129,11 +131,6 @@ export default class OptionsDrawer extends Component {
     setShapeType(shapeType) {
         this.setState({shapeType})
         this.props.canvas.ownBrush.Shape = shapeType
-    }
-
-    toggleWebcam(){
-        this.props.toggleWebcam()
-        this.setState({ Webcam: !this.state.Webcam })
     }
 
     toggleParticle() {
@@ -183,3 +180,16 @@ export default class OptionsDrawer extends Component {
         this.props.canvas.particles.particleColor = hslToHex(hue, 1, 0.5)
     }
 }
+
+const mapStateToProps = state => ({
+	showWebcam: state.showWebcam,
+    canvas: state.canvas,
+    clickable: state.showGui
+})
+
+const mapDispatchToProps = {
+	toggleDrawer,
+	toggleWebcam
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OptionsDrawer)

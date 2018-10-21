@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { withRouter } from 'next/router'
 
 import { connect } from "react-redux"
-import { touchingCanvas, setCanvas } from "../store/actions"
+import { touchCanvas, releaseCanvas, setCanvas } from "../store/actions"
 
 import GuiOverlay from '../components/GuiOverlay'
 
@@ -47,36 +47,20 @@ class Room extends react.Component{
                     id="myCanvas"
                     width="1920"
                     height="1080"
-                    onPointerDown={this.onCursorDown}
-                    onPointerUp={this.onCursorUp}
+                    onPointerDown={this.props.touchCanvas}
+                    onPointerUp={this.props.releaseCanvas}
                     ref={this.htmlCanvas}
                 />
-                <GuiOverlay 
-                    show={this.props.showGui}
-                    htmlCanvas={this.htmlCanvas.current}
-                    canvas={this.props.canvas}
-                />
+                <GuiOverlay />
             </Background>
         )
     }
-
-    onCursorDown(){
-        this.props.touchingCanvas(true)
-    }
-
-    onCursorUp(){
-        this.props.touchingCanvas(false)
-    }
 }
 
-const mapStateToProps = state => ({
-    showGui: state.showGui,
-    canvas: state.canvas
-})
-
 const mapDispatchToProps = {
-    touchingCanvas,
+    touchCanvas,
+    releaseCanvas,
     setCanvas
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Room))
+export default withRouter(connect(undefined, mapDispatchToProps)(Room))

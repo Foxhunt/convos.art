@@ -1,3 +1,6 @@
 export const TOUCH_CANVAS = "TOUCH_CANVAS"
+export const RELEASE_CANVAS = "RELEASE_CANVAS"
 export const TOGGLE_DRAWER = "TOGGLE_DRAWER"
+export const SET_DRAWER = "SET_DRAWER"
+export const TOGGLE_WEBCAM = "TOGGLE_WEBCAM"
 export const SET_CANVAS = "SET_CANVAS"

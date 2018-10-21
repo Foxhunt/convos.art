@@ -12,9 +12,9 @@ export default class Canvas {
         this.environment = null
         this.mouseControlls = null
 
-        this.canvas = htmlCanvas
-        this.width = this.canvas.width
-        this.height = this.canvas.height
+        this.htmlCanvas = htmlCanvas
+        this.width = this.htmlCanvas.width
+        this.height = this.htmlCanvas.height
 
         this.brushes = new Map()
         this.ownBrush = null
@@ -63,7 +63,7 @@ export default class Canvas {
 	}
 
     render() {
-        const ctx = this.canvas.getContext("2d")
+        const ctx = this.htmlCanvas.getContext("2d")
         ctx.save()
         ctx.translate(this.width / 2, this.height / 2) // Translate to the center
         ctx.scale(1, -1)

@@ -3,7 +3,7 @@ import autoBind from 'react-autobind'
 import styled from 'styled-components'
 
 import { connect } from "react-redux"
-import { toggleDrawer } from "../../store/actions"
+import { toggleDrawer, setDrawer, toggleWebcam } from "../../store/actions"
 
 import Draggable from "react-draggable"
 
@@ -66,14 +66,12 @@ class GuiOverlay extends Component {
 
 		this.dragDirection = ""
 
-		this.hideOptionsDrawerPos = { x: 0, y: 0 }
-		this.showOptionsDrawerPos = { x: 0, y: 0 }
+		this.hideDrawerPos = { x: 0, y: 0 }
+		this.showDrawerPos = { x: 0, y: 0 }
 		this.dragBounds = { left: 0, right: 0 }
 
 		this.state = {
-			showWebcam: false,
-			showOptionsDrawer: false,
-			optionsDrawerPos: null,
+			drawerPos: null,
 			camCapture: null,
 			isDragging: false,
 			draggable: true,
@@ -82,13 +80,13 @@ class GuiOverlay extends Component {
 	}
 
 	calculatepositions() {
-		this.showOptionsDrawerPos = { x: -this.props.htmlCanvas.offsetWidth * 0.20, y: 0 }
-		this.hideOptionsDrawerPos = { x: 0, y: 0 }
+		this.showDrawerPos = { x: -this.props.canvas.htmlCanvas.offsetWidth * 0.20, y: 0 }
+		this.hideDrawerPos = { x: 0, y: 0 }
 		this.dragBounds = {
-			left: this.showOptionsDrawerPos.x,
-			right: this.hideOptionsDrawerPos.x
+			left: this.showDrawerPos.x,
+			right: this.hideDrawerPos.x
 		}
-		this.setState({ optionsDrawerPos: this.hideOptionsDrawerPos })
+		this.setState({ drawerPos: this.hideDrawerPos })
 	}
 
 	componentDidMount() {
@@ -100,47 +98,44 @@ class GuiOverlay extends Component {
 	}
 
 	componentDidUpdate() {
-		this.props.htmlCanvas && !this.state.optionsDrawerPos && this.calculatepositions()
+		this.props.canvas.htmlCanvas && !this.state.drawerPos && this.calculatepositions()
 	}
 
 	render() {
 		return (
 			<GUI
-				show={this.props.show}>
+				show={this.props.showGui}>
 				<Draggable
 					disabled={!this.state.draggable}
 					axis="x"
 					onDrag={this.handleDrag}
 					onStop={this.handleDragStop}
-					position={this.state.optionsDrawerPos}
+					position={this.state.drawerPos}
 					bounds={this.dragBounds}>
 					<DragWraper
 						isDragging={this.state.isDragging}>
 						<ButtonRight
-							clickable={this.props.show}>
+							clickable={this.props.showGui}>
 							<PNGS.Arrow
 								invert={this.state.dragAt}
 								isDragging={this.state.isDragging}/>
 						</ButtonRight>
 						<OptionsDrawer
-							setDraggable={this.setDraggable}
-							clickable={this.props.show}
-							canvas={this.props.canvas}
-							toggleWebcam={this.toggleWebcam} />
+							setDraggable={this.setDraggable} />
 					</DragWraper>
 				</Draggable>
-				{ this.state.showWebcam && <Webcam getRef={ this.camRef } /> }
+				{ this.props.showWebcam && <Webcam ref={ this.camRef } /> }
 				<ButtonRightBot
-					clickable={this.props.show}
+					clickable={this.props.showGui}
 					onClick={toggleFullScreen}>
 					{PNGS.FullScreen}
 				</ButtonRightBot>
 				<ButtonBot
-					clickable={this.props.show}
+					clickable={this.props.showGui}
 					onClick={this.takePicture}
 					download='canvas'>
 					{
-						this.state.showWebcam ?
+						this.props.showWebcam ?
 							PNGS.Camera
 							:
 							PNGS.Download
@@ -161,70 +156,71 @@ class GuiOverlay extends Component {
 		if (data.deltaX != 0) {
 			this.dragDirection = data.deltaX
 		}
-		this.setState({ dragAt: data.x / this.showOptionsDrawerPos.x })
+		this.setState({ dragAt: data.x / this.showDrawerPos.x })
 	}
 
 	handleDragStop(event) {
 		this.setState({ isDragging: false })
 		if (this.dragDirection > 0) {
 			this.dragDirection = 0
+			this.props.setDrawer(false)
 			return this.showOptionsDrawer(false)
 		}
 		if (this.dragDirection < 0) {
 			this.dragDirection = 0
+			this.props.setDrawer(true)
 			return this.showOptionsDrawer(true)
 		}
 		if (this.dragDirection == 0 && event.type == "mouseup") {
 			this.showOptionsDrawer(!this.props.showDrawer)
+			this.props.setDrawer(!this.props.showDrawer)
 		}
 	}
 
 	showOptionsDrawer(state) {
 		this.setState({
-			optionsDrawerPos:
+			drawerPos:
 				state ?
-					this.showOptionsDrawerPos
+					this.showDrawerPos
 					:
-					this.hideOptionsDrawerPos,
+					this.hideDrawerPos,
 			dragAt: state ? 1 : 0
-		})
-		this.props.toggleDrawer(state)
-	}
-
-	toggleWebcam() {
-		this.setState({
-			showWebcam: !this.state.showWebcam
 		})
 	}
 
 	takePicture(event) {
-		if (this.state.showWebcam) {
+		if (this.props.showWebcam) {
 			event.preventDefault()
 			this.captureWebcam()
 		} else {
-			this.saveCanvas(event)
+			this.captureCanvas(event)
 		}
 	}
 
-	saveCanvas(event) {
-		const imgURL = this.props.htmlCanvas.toDataURL('image/png')
+	captureCanvas(event) {
+		const imgURL = this.props.canvas.htmlCanvas.toDataURL('image/png')
 		event.target.href = imgURL
+		this.props.setDrawer(false)
 	}
 
 	captureWebcam() {
 		this.props.canvas.ownBrush.Image = this.camRef.current.getScreenshot()
-		this.setState({
-			showWebcam: !this.state.showWebcam
-		})
+		this.props.toggleWebcam()
+		this.props.setDrawer(false)
 	}
 }
 
 const mapStateToProps = state => ({
-	showDrawer: state.showDrawer
+	showGui: state.showGui,
+	showDrawer: state.showDrawer,
+	showWebcam: state.showWebcam,
+	canvas: state.canvas,
 })
 
 const mapDispatchToProps = {
-	toggleDrawer
+	toggleDrawer,
+	toggleWebcam,
+	setDrawer,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GuiOverlay)
