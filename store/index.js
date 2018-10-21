@@ -1,8 +1,13 @@
-import {createStore, applyMiddleware} from "redux"
-import logger from "redux-logger"
+import { createStore, applyMiddleware } from "redux"
 
 import reducer from "./reducer"
 
-export function initializeStore( initialState ) {
-    return createStore(reducer, initialState, applyMiddleware(logger))
+const middlewares = []
+
+if (process.env.NODE_ENV === `development`) {
+    const { logger } = require(`redux-logger`)
+
+    middlewares.push(logger);
 }
+
+export const initializeStore = initialState => createStore(reducer, initialState, applyMiddleware(...middlewares))
