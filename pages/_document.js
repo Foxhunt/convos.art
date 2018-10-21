@@ -1,16 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document'
-import { createGlobalStyle, ServerStyleSheet } from 'styled-components'
-
-const GlobalStyle = createGlobalStyle`
-  div#__next, html, body {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-
-    display: flex;
-    justify-content: center;
-  }
-`;
+import { ServerStyleSheet } from 'styled-components'
 
 export default class MyDocument extends Document {
   static getInitialProps ({ renderPage }) {
@@ -31,7 +20,6 @@ export default class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
-          <GlobalStyle />
         </body>
       </html>
     )
