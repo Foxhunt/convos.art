@@ -1,7 +1,11 @@
-import App, {Container} from 'next/app'
-import Head from 'next/head'
-import React from 'react'
-import { createGlobalStyle } from 'styled-components'
+import App, { Container } from "next/app"
+import React from "react"
+import Head from "next/head"
+
+import { Provider } from "react-redux"
+import withReduxStore from "../store/withReduxStore"
+
+import { createGlobalStyle } from "styled-components"
 
 const GlobalStyle = createGlobalStyle`
   div#__next, html, body {
@@ -14,27 +18,31 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export default class MyApp extends App {
-  static async getInitialProps ({ Component, router, ctx }) {
+class MyApp extends App {
+  static async getInitialProps({ Component, router, ctx }) {
     let pageProps = {}
 
     if (Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx)
     }
 
-    return {pageProps}
+    return { pageProps }
   }
 
-  render () {
-    const {Component, pageProps} = this.props
+  render() {
+    const { Component, pageProps, reduxStore } = this.props
     return (
       <Container>
         <GlobalStyle />
         <Head>
-            <title>convos</title>
+          <title>convos</title>
         </Head>
-        <Component {...pageProps} />
+        <Provider store={reduxStore} >
+          <Component {...pageProps} />
+        </Provider>
       </Container>
     )
   }
 }
+
+export default withReduxStore(MyApp)

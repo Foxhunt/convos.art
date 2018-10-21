@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import styled from 'styled-components'
 
+import { connect } from "react-redux"
+import { toggleDrawer } from "../../store/actions"
+
 import Draggable from "react-draggable"
 
 import OptionsDrawer from "./Drawer"
@@ -51,7 +54,7 @@ const ButtonBot = styled(Button)`
 	left: 50%;
 `
 
-export default class GuiOverlay extends Component {
+class GuiOverlay extends Component {
 	constructor(props) {
 		super(props)
 		autoBind(this)
@@ -172,7 +175,7 @@ export default class GuiOverlay extends Component {
 			return this.showOptionsDrawer(true)
 		}
 		if (this.dragDirection == 0 && event.type == "mouseup") {
-			this.showOptionsDrawer(!this.state.showOptionsDrawer)
+			this.showOptionsDrawer(!this.props.showDrawer)
 		}
 	}
 
@@ -183,9 +186,9 @@ export default class GuiOverlay extends Component {
 					this.showOptionsDrawerPos
 					:
 					this.hideOptionsDrawerPos,
-			showOptionsDrawer: state,
 			dragAt: state ? 1 : 0
 		})
+		this.props.toggleDrawer(state)
 	}
 
 	toggleWebcam() {
@@ -215,3 +218,13 @@ export default class GuiOverlay extends Component {
 		})
 	}
 }
+
+const mapStateToProps = state => ({
+	showDrawer: state.showDrawer
+})
+
+const mapDispatchToProps = {
+	toggleDrawer
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GuiOverlay)

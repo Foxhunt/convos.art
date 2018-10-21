@@ -3,6 +3,9 @@ import autoBind from 'react-autobind'
 import styled from 'styled-components'
 import { withRouter } from 'next/router'
 
+import { connect } from "react-redux"
+import { touchingCanvas, setCanvas } from "../store/actions"
+
 import GuiOverlay from '../components/GuiOverlay'
 
 const Background = styled.div`
@@ -28,22 +31,13 @@ class Room extends react.Component{
     constructor(props){
         super(props)
         autoBind(this)
-
         this.htmlCanvas = react.createRef()
-        
-        this.state = {
-            showGui: true,
-            canvas: null
-        }
-
-        this.CursorDown = false
     }
 
     async componentDidMount () {
         const { default: room } = await import("../src/Room")
-        this.setState({
-            canvas: await room(this.props.router.query.roomId, this.htmlCanvas.current)
-        })
+        const canvas = await room(this.props.router.query.roomId, this.htmlCanvas.current)
+        this.props.setCanvas(canvas)
     }
 
     render() {
@@ -54,39 +48,35 @@ class Room extends react.Component{
                     width="1920"
                     height="1080"
                     onPointerDown={this.onCursorDown}
-                    onPointerMove={this.onCursorMove}
                     onPointerUp={this.onCursorUp}
                     ref={this.htmlCanvas}
                 />
                 <GuiOverlay 
-                    show={this.state.showGui}
+                    show={this.props.showGui}
                     htmlCanvas={this.htmlCanvas.current}
-                    canvas={this.state.canvas}
+                    canvas={this.props.canvas}
                 />
             </Background>
         )
     }
 
     onCursorDown(){
-        this.CursorDown = true
-        this.hideGui()
+        this.props.touchingCanvas(true)
     }
 
     onCursorUp(){
-        this.CursorDown = false
-        this.hideGui()
+        this.props.touchingCanvas(false)
     }
-
-    onCursorMove(){
-        if(this.CursorDown){
-            this.hideGui()
-        }
-    }
-
-    hideGui(){
-        this.setState({showGui: !this.CursorDown})
-    }
-
 }
 
-export default withRouter(Room)
+const mapStateToProps = state => ({
+    showGui: state.showGui,
+    canvas: state.canvas
+})
+
+const mapDispatchToProps = {
+    touchingCanvas,
+    setCanvas
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Room))

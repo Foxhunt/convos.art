@@ -1,0 +1,3 @@
+export const TOUCH_CANVAS = "TOUCH_CANVAS"
+export const TOGGLE_DRAWER = "TOGGLE_DRAWER"
+export const SET_CANVAS = "SET_CANVAS"
