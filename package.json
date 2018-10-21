@@ -30,18 +30,5 @@
   "devDependencies": {
     "babel-plugin-styled-components": "^1.8.0",
     "nodemon": "^1.18.4"
-  },
-  "now": {
-    "alias": "convos",
-    "scale": {
-      "bru1": {
-        "min": 1,
-        "max": 1
-      },
-      "sfo1": {
-        "min": 1,
-        "max": 1
-      }
-    }
   }
 }
