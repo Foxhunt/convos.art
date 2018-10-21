@@ -1,5 +1,8 @@
 {
     "alias": "convos",
+    "github": {
+      "enabled": false
+    },
     "scale": {
       "bru1": {
         "min": 1,
