@@ -32,3 +32,27 @@ export const setCanvas = canvas => ({
     type: actionTypes.SET_CANVAS,
     canvas
 })
+
+export const setShapeType = shapeType => ({
+    type: actionTypes.SET_SHAPE_TYPE,
+    shapeType
+})
+
+export const setStrokeStyle = style => ({
+    type: actionTypes.SET_STROKE_STYLE,
+    style
+})
+
+export const setFillStyle = style => ({
+    type: actionTypes.SET_FILL_STYLE,
+    style
+})
+
+export const setParticleColor = color => ({
+    type: actionTypes.SET_PARTICLE_COLOR,
+    color
+})
+
+export const toggleParticles = () => ({
+    type: actionTypes.TOGGLE_PARTICLES
+})

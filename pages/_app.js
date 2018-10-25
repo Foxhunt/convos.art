@@ -38,7 +38,7 @@ class MyApp extends App {
           <title>convos</title>
         </Head>
         <Provider store={reduxStore} >
-          <Component {...pageProps} />
+          <Component {...pageProps} reduxStore={ reduxStore } />
         </Provider>
       </Container>
     )

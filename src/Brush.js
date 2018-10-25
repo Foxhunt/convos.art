@@ -2,7 +2,7 @@ import p2 from 'p2';
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
-    constructor({id, x = 0, y = 0, angle = 0, own = false, world, socket}){
+    constructor({id, x = 0, y = 0, angle = 0, own = false, world, socket, fillStyle = "#0000ff", strokeStyle = "#ff0000", Shape = "CIRCLE"}){
         this.id = id
         this.isOwnBox = own
         this.world = world
@@ -10,9 +10,9 @@ export default class Brush {
         this.shape = null
         this.shapeType = null
 
-        this.fillStyle = "#0000ff"
+        this.fillStyle = fillStyle
         this.fillImage = null
-        this.strokeStyle = "#ff0000"
+        this.strokeStyle = strokeStyle
 
         this.body = new p2.Body({
             mass: 100,
@@ -21,7 +21,7 @@ export default class Brush {
             angularVelocity: 1
         })
 
-        this.Shape = "CIRCLE"
+        this.Shape = Shape
         this.world.addBody(this.body)
     }
 

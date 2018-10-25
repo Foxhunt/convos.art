@@ -50,10 +50,60 @@ const inFullScreen = (state = false, action) => {
     }
 }
 
+const shapeType = (state = "CIRCLE", action) => {
+    switch (action.type) {
+        case actionTypes.SET_SHAPE_TYPE:
+            return action.shapeType
+        default:
+            return state
+    }
+}
+
+const strokeStyle = (state = "#ff0000", action) => {
+    switch (action.type) {
+        case actionTypes.SET_STROKE_STYLE:
+            return action.style
+        default:
+            return state
+    }
+}
+
+const fillStyle = (state = "#0000ff", action) => {
+    switch (action.type) {
+        case actionTypes.SET_FILL_STYLE:
+            return action.style
+        default:
+            return state
+    }
+}
+
+const particleColor = (state = "#ff00aa", action) => {
+    switch (action.type) {
+        case actionTypes.SET_PARTICLE_COLOR:
+            return action.color
+        default:
+            return state
+    }
+}
+
+const particles = (state = true, action) => {
+    switch (action.type) {
+        case actionTypes.TOGGLE_PARTICLES:
+            return !state
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     showGui,
     showDrawer,
     canvas,
     showWebcam,
-    inFullScreen
+    inFullScreen,
+    shapeType,
+    strokeStyle,
+    fillStyle,
+    particleColor,
+    particles
 })

@@ -5,10 +5,11 @@ import schemas from '../schemas'
 import Brush from './Brush'
 import Canvas from './Canvas'
 
-export default (roomId, htmlCanvas) => new Promise(resolve => {
+export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
 
 	let ownBrush = null
 	let ownId = null
+	const store = reduxStore
 	
 	const socket = io({ query: { roomId } })
 	
@@ -24,7 +25,17 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 
 		//get and set client ID
 		ownId = socket.id
-		ownBrush = new Brush({ id: ownId, own: true, world: canvas.world, socket })
+		const fillStyle = store.getState().fillStyle
+		const strokeStyle = store.getState().strokeStyle
+		const Shape = store.getState().shapeType
+		ownBrush = new Brush({ 
+			id: ownId,
+			own: true,
+			world: canvas.world,
+			socket,
+			fillStyle,
+			strokeStyle,
+			Shape })
 
 		// Add a box
 		canvas.addOwnBrush(ownBrush)
@@ -49,6 +60,7 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 					}
 				})
 		}) // ende emit init
+		subscribeToStore()
 		resolve(canvas)
 	}) // ende onConnect
 
@@ -119,4 +131,32 @@ export default (roomId, htmlCanvas) => new Promise(resolve => {
 
 	//Update loop
 	setInterval(toServer, 50)
+
+	function subscribeToStore() {
+		store.subscribe(handleStoreChanges)
+	}
+
+	function handleStoreChanges() {
+		const state = store.getState()
+
+		if(ownBrush.shapeType != state.shapeType) {
+			ownBrush.Shape = state.shapeType
+		}
+
+		if(ownBrush.strokeStyle != state.strokeStyle) {
+			ownBrush.Stroke = state.strokeStyle
+		}
+
+		if(ownBrush.fillStyle != state.fillStyle) {
+			ownBrush.Fill = state.fillStyle
+		}
+
+		if(canvas.particles.enabled != state.particles) {
+			canvas.particles.enabled = state.particles
+		}
+
+		if(canvas.particles.particleColor != state.particleColor) {
+			canvas.particles.particleColor = state.particleColor
+		}
+	}
 })

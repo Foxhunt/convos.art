@@ -3,7 +3,15 @@ import autoBind from "react-autobind"
 import styled from 'styled-components'
 
 import { connect } from "react-redux"
-import { toggleDrawer, toggleWebcam, toggleFullScreen } from "../../../store/actions"
+import { 
+    toggleDrawer,
+    toggleWebcam,
+    toggleFullScreen,
+    setShapeType,
+    setStrokeStyle,
+    setFillStyle,
+    setParticleColor,
+    toggleParticles } from "../../../store/actions"
 
 import { HuePicker } from "react-color"
 
@@ -65,53 +73,50 @@ class OptionsDrawer extends Component {
             <Container
                 show={this.props.showDrawer}>
                 <Button
-                    on={this.state.shapeType === "CIRCLE"}
-                    onClick={() => this.setShapeType("CIRCLE")}>
+                    on={this.props.shapeType === "CIRCLE"}
+                    onClick={() => this.props.setShapeType("CIRCLE")}>
                     Circle
                 </Button>
                 <Button
-                    on={this.state.shapeType === "BOX"}
-                    onClick={() => this.setShapeType("BOX")}>
+                    on={this.props.shapeType === "BOX"}
+                    onClick={() => this.props.setShapeType("BOX")}>
                     Box
                 </Button>
                 <Button
-                    on={this.state.shapeType === "SQUARE"}
-                    onClick={() => this.setShapeType("SQUARE")}>
+                    on={this.props.shapeType === "SQUARE"}
+                    onClick={() => this.props.setShapeType("SQUARE")}>
                     Square
                 </Button>
                 Fill
                 <HuePicker
                     width={"100%"}
-                    color={this.state.fillStyle}
+                    color={this.props.fillStyle}
                     onChange={
                         ({hsl}) => {
-                            this.props.canvas.ownBrush.Fill = hslToHex(hsl.h, hsl.s, hsl.l)
-                            this.setState({fillStyle: hsl})
+                            this.props.setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
                         }
                     } />
                 Stroke
                 <HuePicker
                     width={"100%"}
-                    color={this.state.strokeStyle}
+                    color={this.props.strokeStyle}
                     onChange={
                         ({hsl}) => {
-                            this.props.canvas.ownBrush.Stroke = hslToHex(hsl.h, hsl.s, hsl.l)
-                            this.setState({strokeStyle: hsl})
+                            this.props.setStrokeStyle(hslToHex(hsl.h, hsl.s, hsl.l))
                         }
                     } />
                 Particles
                 <HuePicker
                     width={"100%"}
-                    color={this.state.particleCollor}
+                    color={this.props.particleColor}
                     onChange={
                         ({hsl}) => {
-                            this.props.canvas.particles.particleColor = hslToHex(hsl.h, hsl.s, hsl.l)
-                            this.setState({particleCollor: hsl})
+                            this.props.setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))
                         }
                     } />
                 <Button
-                    on={this.state.particle}
-                    onClick={() => this.toggleParticle()}>
+                    on={this.props.particles}
+                    onClick={this.props.toggleParticles}>
                     toggle Particles
                 </Button>
                 <Button
@@ -142,16 +147,6 @@ class OptionsDrawer extends Component {
 		event.target.href = imgURL
 	}
 
-    setShapeType(shapeType) {
-        this.setState({shapeType})
-        this.props.canvas.ownBrush.Shape = shapeType
-    }
-
-    toggleParticle() {
-        this.props.canvas.particles.enabled = !this.props.canvas.particles.enabled
-        this.setState({particle: this.props.canvas.particles.enabled})
-    }
-
     toggleLoco() {
         if(this.state.loco) {
             this.setState({loco: false})
@@ -171,27 +166,24 @@ class OptionsDrawer extends Component {
     }
 
     incrementFill(){
-        let hue = this.state.fillStyle.h
+        let hue = hexToHSL(this.props.fillStyle).h
         hue += Math.random() * 20;
         hue = hue % 360
-        this.setState({ fillStyle: {h: hue, s:1, l: 0.5} })
-        this.props.canvas.ownBrush.Fill = hslToHex(hue, 1, 0.5)
+        this.props.setFillStyle(hslToHex(hue, 1, 0.5))
     }
 
     incrementStroke(){
-        let hue = this.state.strokeStyle.h
+        let hue = hexToHSL(this.props.strokeStyle).h
         hue += Math.random() * 20;
         hue = hue % 360
-        this.setState({ strokeStyle: {h: hue, s:1, l: 0.5} })
-        this.props.canvas.ownBrush.Stroke = hslToHex(hue, 1, 0.5)
+        this.props.setStrokeStyle(hslToHex(hue, 1, 0.5))
     }
 
     incrementParticle(){
-        let hue = this.state.particleCollor.h
+        let hue = hexToHSL(this.props.particleColor).h
         hue += Math.random() * 20;
         hue = hue % 360
-        this.setState({ particleCollor: {h: hue, s:1, l: 0.5} })
-        this.props.canvas.particles.particleColor = hslToHex(hue, 1, 0.5)
+        this.props.setParticleColor(hslToHex(hue, 1, 0.5))
     }
 }
 
@@ -200,13 +192,23 @@ const mapStateToProps = state => ({
     showDrawer: state.showDrawer,
     canvas: state.canvas,
     clickable: state.showGui,
-    inFullScreen: state.inFullScreen
+    inFullScreen: state.inFullScreen,
+    shapeType: state.shapeType,
+    strokeStyle: state.strokeStyle,
+    fillStyle: state.fillStyle,
+    particles: state.particles,
+    particleColor: state.particleColor
 })
 
 const mapDispatchToProps = {
 	toggleDrawer,
     toggleWebcam,
-    toggleFullScreen
+    toggleFullScreen,
+    setShapeType,
+    setStrokeStyle,
+    setFillStyle,
+    setParticleColor,
+    toggleParticles
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OptionsDrawer)

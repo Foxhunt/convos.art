@@ -36,7 +36,10 @@ class Room extends react.Component{
 
     async componentDidMount () {
         const { default: room } = await import("../src/Room")
-        const canvas = await room(this.props.router.query.roomId, this.htmlCanvas.current)
+        const canvas = await room(
+            this.props.router.query.roomId,
+            this.htmlCanvas.current,
+            this.props.reduxStore)
         this.props.setCanvas(canvas)
     }
 
@@ -49,8 +52,7 @@ class Room extends react.Component{
                     height="1080"
                     onPointerDown={this.props.touchCanvas}
                     onPointerUp={this.props.releaseCanvas}
-                    ref={this.htmlCanvas}
-                />
+                    ref={this.htmlCanvas} />
                 <GuiOverlay />
             </Background>
         )
