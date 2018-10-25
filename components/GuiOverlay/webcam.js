@@ -13,7 +13,7 @@ const Webcam = styled(ReactWebcam)`
 
 	transform: translate(-50%, -50%);
 	
-	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
+	pointer-events: none;
 `
 
 export default Webcam

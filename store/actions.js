@@ -1,5 +1,7 @@
 import * as actionTypes from "./actionTypes"
 
+import fullScreenToggle from "./toggleFullScreen"
+
 export const touchCanvas = () => ({
     type: actionTypes.TOUCH_CANVAS
 })
@@ -20,6 +22,11 @@ export const setDrawer = show => ({
 export const toggleWebcam = () => ({
     type: actionTypes.TOGGLE_WEBCAM
 })
+
+export const toggleFullScreen = () => {
+    fullScreenToggle()
+    return { type: actionTypes.TOGGLE_FULLSCREEN }
+}
 
 export const setCanvas = canvas => ({
     type: actionTypes.SET_CANVAS,

@@ -5,22 +5,9 @@ import styled from 'styled-components'
 import { connect } from "react-redux"
 import { toggleDrawer, setDrawer, toggleWebcam } from "../../store/actions"
 
-import Draggable from "react-draggable"
-
 import OptionsDrawer from "./Drawer"
 import Webcam from "./webcam"
 import Button from "./overlayButton"
-
-import toggleFullScreen from "./toggleFullScreen"
-
-import * as PNGS from "./PNGS"
-
-const DragWraper = styled.div`
-	width: 100%;
-	height: 100%;
-	
-	${({ isDragging }) => isDragging ? "" : "transition: transform 0.5s ease-in-out;"}
-`
 
 const GUI = styled.div`
 	position: absolute;
@@ -33,25 +20,13 @@ const GUI = styled.div`
 	max-width: 177.78vh;
 	max-height: 100vh;
 
-	transition: opacity 0.5s ease-in-out;
-
 	opacity: ${({ show }) => show ? 0.9 : 0};
+	transition: opacity 0.5s ease-in-out;
 `
 
-const ButtonRight = styled(Button)`
-	position: absolute;
-	top: 50%;
-	left: 100%;
-`
-
-const ButtonRightBot = styled(Button)`
-	top: 100%;
-	left: 100%;
-`
-
-const ButtonBot = styled(Button)`
-	top: 100%;
-	left: 50%;
+const ActionButton = styled(Button)`
+	top: 90%;
+	left: 90%;
 `
 
 class GuiOverlay extends Component {
@@ -105,102 +80,21 @@ class GuiOverlay extends Component {
 		return (
 			<GUI
 				show={this.props.showGui}>
-				<Draggable
-					disabled={!this.state.draggable}
-					axis="x"
-					onDrag={this.handleDrag}
-					onStop={this.handleDragStop}
-					position={this.state.drawerPos}
-					bounds={this.dragBounds}>
-					<DragWraper
-						isDragging={this.state.isDragging}>
-						<ButtonRight
-							clickable={this.props.showGui}>
-							<PNGS.Arrow
-								invert={this.state.dragAt}
-								isDragging={this.state.isDragging}/>
-						</ButtonRight>
-						<OptionsDrawer
-							setDraggable={this.setDraggable} />
-					</DragWraper>
-				</Draggable>
+				<OptionsDrawer />
 				{ this.props.showWebcam && <Webcam ref={ this.camRef } /> }
-				<ButtonRightBot
+				<ActionButton
 					clickable={this.props.showGui}
-					onClick={toggleFullScreen}>
-					{PNGS.FullScreen}
-				</ButtonRightBot>
-				<ButtonBot
-					clickable={this.props.showGui}
-					onClick={this.takePicture}
-					download='canvas'>
-					{
-						this.props.showWebcam ?
-							PNGS.Camera
-							:
-							PNGS.Download
-					}
-				</ButtonBot>
+					onClick={this.action} />
 			</GUI>
 		)
 	}
 
-	setDraggable(state) {
-		this.setState({ draggable: state })
-	}
-
-	handleDrag(event, data) {
-		if (!this.state.isDragging) {
-			this.setState({ isDragging: true })
-		}
-		if (data.deltaX != 0) {
-			this.dragDirection = data.deltaX
-		}
-		this.setState({ dragAt: data.x / this.showDrawerPos.x })
-	}
-
-	handleDragStop(event) {
-		this.setState({ isDragging: false })
-		if (this.dragDirection > 0) {
-			this.dragDirection = 0
-			this.props.setDrawer(false)
-			return this.showOptionsDrawer(false)
-		}
-		if (this.dragDirection < 0) {
-			this.dragDirection = 0
-			this.props.setDrawer(true)
-			return this.showOptionsDrawer(true)
-		}
-		if (this.dragDirection == 0 && event.type == "mouseup") {
-			this.showOptionsDrawer(!this.props.showDrawer)
-			this.props.setDrawer(!this.props.showDrawer)
-		}
-	}
-
-	showOptionsDrawer(state) {
-		this.setState({
-			drawerPos:
-				state ?
-					this.showDrawerPos
-					:
-					this.hideDrawerPos,
-			dragAt: state ? 1 : 0
-		})
-	}
-
-	takePicture(event) {
-		if (this.props.showWebcam) {
-			event.preventDefault()
+	action() {
+		if( this.props.showWebcam ){
 			this.captureWebcam()
 		} else {
-			this.captureCanvas(event)
+			this.props.toggleDrawer()
 		}
-	}
-
-	captureCanvas(event) {
-		const imgURL = this.props.canvas.htmlCanvas.toDataURL('image/png')
-		event.target.href = imgURL
-		this.props.setDrawer(false)
 	}
 
 	captureWebcam() {
@@ -212,7 +106,6 @@ class GuiOverlay extends Component {
 
 const mapStateToProps = state => ({
 	showGui: state.showGui,
-	showDrawer: state.showDrawer,
 	showWebcam: state.showWebcam,
 	canvas: state.canvas,
 })

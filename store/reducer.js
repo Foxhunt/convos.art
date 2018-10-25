@@ -41,9 +41,19 @@ const canvas = (state = null, action) => {
     }
 }
 
+const inFullScreen = (state = false, action) => {
+    switch (action.type) {
+        case actionTypes.TOGGLE_FULLSCREEN:
+            return !state
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     showGui,
     showDrawer,
     canvas,
-    showWebcam
+    showWebcam,
+    inFullScreen
 })

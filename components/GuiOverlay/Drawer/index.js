@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import autoBind from "react-autobind"
 import styled from 'styled-components'
 
 import { connect } from "react-redux"
-import { toggleDrawer, toggleWebcam } from "../../../store/actions"
+import { toggleDrawer, toggleWebcam, toggleFullScreen } from "../../../store/actions"
 
 import { HuePicker } from "react-color"
 
@@ -10,25 +11,25 @@ import Button from "./button"
 import { hslToHex, hexToHSL } from "./colorFunctions"
 
 const Container = styled.div`
-	pointer-events: ${({ clickable }) => clickable ? "auto" : "none"};
-
 	position: absolute;
-	left: 100%;
+    left: ${({show}) => show ? 80 : 100}%;
+
+    pointer-events: auto;
 
 	overflow: hidden;
 
-	width: 20vw;
-	height: 56.25vw;
-
-	max-width: calc(177.78vh / 3);
-	max-height: 100vh;
+	width: 20%;
+	height: 100%;
 
 	background-color: #00ffff;
+
+    transition: left 500ms;
 `
 
 class OptionsDrawer extends Component {
     constructor(props) {
         super(props)
+        autoBind(this)
 
         this.state = {
             shapeType: null,
@@ -62,9 +63,7 @@ class OptionsDrawer extends Component {
     render() {
         return this.canvasConnected &&
             <Container
-                onPointerDown={() => this.props.setDraggable(false)}
-                onPointerUp={() => this.props.setDraggable(true)}
-                clickable={this.props.clickable}>
+                show={this.props.showDrawer}>
                 <Button
                     on={this.state.shapeType === "CIRCLE"}
                     onClick={() => this.setShapeType("CIRCLE")}>
@@ -125,8 +124,23 @@ class OptionsDrawer extends Component {
                     onClick={this.props.toggleWebcam}>
                     toggle Webcam
                 </Button>
+                <Button
+                    download="canvas"
+                    onClick={this.captureCanvas}>
+                    download Canvas
+                </Button>
+                <Button
+                    on={this.props.inFullScreen}
+                    onClick={this.props.toggleFullScreen}>
+                    toggle FullScreen
+                </Button>
             </Container>
     }
+
+	captureCanvas(event) {
+		const imgURL = this.props.canvas.htmlCanvas.toDataURL('image/png')
+		event.target.href = imgURL
+	}
 
     setShapeType(shapeType) {
         this.setState({shapeType})
@@ -182,14 +196,17 @@ class OptionsDrawer extends Component {
 }
 
 const mapStateToProps = state => ({
-	showWebcam: state.showWebcam,
+    showWebcam: state.showWebcam,
+    showDrawer: state.showDrawer,
     canvas: state.canvas,
-    clickable: state.showGui
+    clickable: state.showGui,
+    inFullScreen: state.inFullScreen
 })
 
 const mapDispatchToProps = {
 	toggleDrawer,
-	toggleWebcam
+    toggleWebcam,
+    toggleFullScreen
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OptionsDrawer)

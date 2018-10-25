@@ -1,6 +1,15 @@
 import styled from "styled-components"
 
-export default styled.div`
+export default styled.a`
+	display: block;
+
+    text-decoration: none;
+	:visited, :link, :hover, :active {
+		cursor: auto; 
+		text-decoration: none;
+		color: #000;
+	}
+
 	width: 100%;
 	height: 5%;
 
