@@ -10,6 +10,7 @@ import {
     setShapeType,
     setStrokeStyle,
     setFillStyle,
+    setFillImage,
     setParticleColor,
     toggleParticles } from "../../../store/actions"
 
@@ -96,6 +97,10 @@ class OptionsDrawer extends Component {
                             this.props.setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
                         }
                     } />
+                File
+                <input
+                    type="file"
+                    onChange={this.setImage} />
                 Stroke
                 <HuePicker
                     width={"100%"}
@@ -140,6 +145,15 @@ class OptionsDrawer extends Component {
                     FullScreen
                 </Button>
             </Container>
+    }
+
+    setImage(event) {
+        const file = event.currentTarget.files[0]
+        const reader = new FileReader()
+        reader.onload = () => {
+            this.props.setFillImage(reader.result)
+        }
+        reader.readAsDataURL(file)
     }
 
 	captureCanvas(event) {
@@ -207,6 +221,7 @@ const mapDispatchToProps = {
     setShapeType,
     setStrokeStyle,
     setFillStyle,
+    setFillImage,
     setParticleColor,
     toggleParticles
 }

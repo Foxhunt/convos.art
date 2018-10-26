@@ -48,6 +48,11 @@ export const setFillStyle = style => ({
     style
 })
 
+export const setFillImage = image => ({
+    type: actionTypes.SET_FILL_IMAGE,
+    image
+})
+
 export const setParticleColor = color => ({
     type: actionTypes.SET_PARTICLE_COLOR,
     color

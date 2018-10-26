@@ -79,6 +79,17 @@ const fillStyle = (state = "#0000ff", action) => {
     }
 }
 
+const fillImage = (state = null, action) => {
+    switch (action.type) {
+        case actionTypes.SET_FILL_IMAGE:
+            return action.image
+        case actionTypes.SET_FILL_STYLE:
+            return null
+        default:
+            return state
+    }
+}
+
 const particleColor = (state = "#ff00aa", action) => {
     switch (action.type) {
         case actionTypes.SET_PARTICLE_COLOR:
@@ -106,6 +117,7 @@ export default combineReducers({
     shapeType,
     strokeStyle,
     fillStyle,
+    fillImage,
     particleColor,
     particles
 })

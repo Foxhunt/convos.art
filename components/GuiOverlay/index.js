@@ -3,7 +3,7 @@ import autoBind from 'react-autobind'
 import styled from 'styled-components'
 
 import { connect } from "react-redux"
-import { toggleDrawer, setDrawer, toggleWebcam } from "../../store/actions"
+import { toggleDrawer, setDrawer, toggleWebcam, setFillImage } from "../../store/actions"
 
 import OptionsDrawer from "./Drawer"
 import Webcam from "./webcam"
@@ -99,7 +99,7 @@ class GuiOverlay extends Component {
 	}
 
 	captureWebcam() {
-		this.props.canvas.ownBrush.Image = this.camRef.current.getScreenshot()
+		this.props.setFillImage(this.camRef.current.getScreenshot())
 		this.props.toggleWebcam()
 		this.props.setDrawer(false)
 	}
@@ -115,6 +115,7 @@ const mapDispatchToProps = {
 	toggleDrawer,
 	toggleWebcam,
 	setDrawer,
+	setFillImage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GuiOverlay)

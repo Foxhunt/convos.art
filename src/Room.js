@@ -151,6 +151,10 @@ export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
 			ownBrush.Fill = state.fillStyle
 		}
 
+		if(ownBrush.fillImage != state.fillImage) {
+			ownBrush.Image = state.fillImage
+		}
+
 		if(canvas.particles.enabled != state.particles) {
 			canvas.particles.enabled = state.particles
 		}
