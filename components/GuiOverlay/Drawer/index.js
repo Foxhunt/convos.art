@@ -16,6 +16,7 @@ import {
 
 import { HuePicker } from "react-color"
 
+import ImgaeUpload from "./imageUpload"
 import Button from "./button"
 import { hslToHex, hexToHSL } from "./colorFunctions"
 
@@ -89,6 +90,10 @@ class OptionsDrawer extends Component {
                     Square
                 </Button>
                 Fill
+                <ImgaeUpload
+                    onChange={this.setImage} >
+                    File
+                </ImgaeUpload>
                 <HuePicker
                     width={"100%"}
                     color={this.props.fillStyle}
@@ -97,10 +102,6 @@ class OptionsDrawer extends Component {
                             this.props.setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
                         }
                     } />
-                File
-                <input
-                    type="file"
-                    onChange={this.setImage} />
                 Stroke
                 <HuePicker
                     width={"100%"}
