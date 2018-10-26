@@ -18,6 +18,8 @@ const showDrawer = (state = false, action) => {
             return !state
         case actionTypes.SET_DRAWER:
             return action.show
+        case actionTypes.TOUCH_CANVAS:
+            return false
         default:
             return state
     }

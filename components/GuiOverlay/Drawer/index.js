@@ -29,9 +29,9 @@ const Container = styled.div`
 	width: 20%;
 	height: 100%;
 
-	background-color: #00ffff;
+	background-color: #03A9F4;
 
-    transition: left 500ms;
+    transition: left 0.4s ease-out;
 `
 
 class OptionsDrawer extends Component {
@@ -117,27 +117,27 @@ class OptionsDrawer extends Component {
                 <Button
                     on={this.props.particles}
                     onClick={this.props.toggleParticles}>
-                    toggle Particles
+                    Particles
                 </Button>
                 <Button
                     on={this.state.loco}
                     onClick={() => this.toggleLoco()}>
-                    toggle Loco
+                    Loco
                 </Button>
                 <Button
                     on={this.props.showWebcam}
                     onClick={this.props.toggleWebcam}>
-                    toggle Webcam
+                    Webcam
                 </Button>
                 <Button
                     download="canvas"
                     onClick={this.captureCanvas}>
-                    download Canvas
+                    Snapshot
                 </Button>
                 <Button
                     on={this.props.inFullScreen}
                     onClick={this.props.toggleFullScreen}>
-                    toggle FullScreen
+                    FullScreen
                 </Button>
             </Container>
     }

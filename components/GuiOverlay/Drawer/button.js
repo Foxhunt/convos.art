@@ -2,18 +2,23 @@ import styled from "styled-components"
 
 export default styled.a`
 	display: block;
+	
+	width: 100%;
+	height: 5%;
 
-    text-decoration: none;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+
+	background-color: ${({on}) => on ? "#00dc00" : "#e80000" };
+
 	:visited, :link, :hover, :active {
 		cursor: auto; 
 		text-decoration: none;
 		color: #000;
 	}
 
-	width: 100%;
-	height: 5%;
-
-	background-color: ${({on}) => on ? "#00ef00" : "#ef0000" };
-
-	border: 3px solid #000000;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 `

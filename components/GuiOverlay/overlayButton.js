@@ -12,5 +12,5 @@ export default styled.a`
 	width: ${circleSize}%;
 	height: ${circleSize*(16/9)}%;
 
-	background-color: #ffffff;
+	background-color: #d4d4d4;
 `

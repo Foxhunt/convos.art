@@ -10,7 +10,7 @@ import GuiOverlay from '../components/GuiOverlay'
 
 const Background = styled.div`
 display: flex;
-background-color: #00ff00;
+background-color: #d4d4d4;
 justify-content: center;
 align-items: center;
 
@@ -19,7 +19,7 @@ height: 100vh;
 `
 
 const Canvas = styled.canvas`
-background-color: yellow;
+background-color: #ffffff;
 width: 100vw;
 height: 56.25vw;
 
