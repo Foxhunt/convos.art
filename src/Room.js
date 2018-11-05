@@ -5,7 +5,7 @@ import schemas from '../schemas'
 import Brush from './Brush'
 import Canvas from './Canvas'
 
-export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
+export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 
 	let ownBrush = null
 	let ownId = null
@@ -13,7 +13,7 @@ export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
 	
 	const socket = io({ query: { roomId } })
 	
-	const canvas = new Canvas(htmlCanvas)
+	const canvas = new Canvas(pixiContainer)
 
 	//Den server nach den bereits vorhandenen clients fragen
 	//wenn die verbindung aufgebaut wurde.
@@ -32,6 +32,7 @@ export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
 			id: ownId,
 			own: true,
 			world: canvas.world,
+			pixiApp: canvas.app,
 			socket,
 			fillStyle,
 			strokeStyle,
@@ -50,7 +51,7 @@ export default (roomId, htmlCanvas, reduxStore) => new Promise(resolve => {
 					strokeStyle, shapeType, fillImage,
 				}) => {
 					if (id !== ownId) {
-						const brush = new Brush({ id, x, y, angle, world: canvas.world })
+						const brush = new Brush({ id, x, y, angle, world: canvas.world, pixiApp: canvas.app })
 						brush.Fill = fillStyle
 						brush.Stroke = strokeStyle
 						brush.Shape = shapeType

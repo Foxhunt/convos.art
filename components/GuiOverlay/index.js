@@ -56,7 +56,7 @@ class GuiOverlay extends Component {
 	}
 
 	calculatepositions() {
-		this.showDrawerPos = { x: -this.props.canvas.htmlCanvas.offsetWidth * 0.20, y: 0 }
+		this.showDrawerPos = { x: -this.props.canvas.pixiContainer.offsetWidth * 0.20, y: 0 }
 		this.hideDrawerPos = { x: 0, y: 0 }
 		this.dragBounds = {
 			left: this.showDrawerPos.x,

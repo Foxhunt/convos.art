@@ -5,7 +5,7 @@ export default class MouseControlls {
         this.world = canvas.world
         this.width = canvas.width
         this.height = canvas.height
-        this.canvas = canvas.htmlCanvas
+        this.pixiContainer = canvas.pixiContainer
 
         this.ownBrush = null
 
@@ -21,19 +21,19 @@ export default class MouseControlls {
         this.world.addBody(this.mouseBody)
 
         //Get mouse Position and create a mouse object
-        this.canvas.addEventListener('mousedown', event => this.coursorDown(event))
-        this.canvas.addEventListener('touchstart', event => this.coursorDown(event))
+        this.pixiContainer.addEventListener('mousedown', event => this.coursorDown(event))
+        this.pixiContainer.addEventListener('touchstart', event => this.coursorDown(event))
 
         // Sync the mouse body to be at the cursor position
-        this.canvas.addEventListener('mousemove', event => this.coursorMove(event))
-        this.canvas.addEventListener('touchmove', event => this.coursorMove(event))
+        this.pixiContainer.addEventListener('mousemove', event => this.coursorMove(event))
+        this.pixiContainer.addEventListener('touchmove', event => this.coursorMove(event))
 
         // Remove the mouse constraint on mouse up
-        this.canvas.addEventListener('mouseup', event => this.coursorUp(event))
-        this.canvas.addEventListener('touchend', event => this.coursorUp(event))
+        this.pixiContainer.addEventListener('mouseup', event => this.coursorUp(event))
+        this.pixiContainer.addEventListener('touchend', event => this.coursorUp(event))
 
         // Beim verlassen der Maus wird die Box an Position gehalten
-        this.canvas.addEventListener('mouseleave', event => this.mouseLeave(event))
+        this.pixiContainer.addEventListener('mouseleave', event => this.mouseLeave(event))
     }
 
     //event handler für User Interaktion
@@ -78,7 +78,7 @@ export default class MouseControlls {
     // Convert a canvas coordiante to physics coordinate
     getPhysicsCoord(Event) {
         Event.preventDefault()
-        var rect = this.canvas.getBoundingClientRect()
+        var rect = this.pixiContainer.getBoundingClientRect()
 
         if (Event.touches) {
             var x = Event.touches[0].clientX - rect.left
