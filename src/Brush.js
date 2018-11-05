@@ -1,11 +1,13 @@
 import p2 from 'p2';
+import * as PIXI from "pixi.js"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
-    constructor({id, x = 0, y = 0, angle = 0, own = false, world, socket, fillStyle = "#0000ff", strokeStyle = "#ff0000", Shape = "CIRCLE", fillImage = null}){
+    constructor({id, x = 0, y = 0, angle = 0, own = false, world, pixiApp, socket, fillStyle = "#0000ff", strokeStyle = "#ff0000", Shape = "CIRCLE", fillImage = null}){
         this.id = id
         this.isOwnBox = own
         this.world = world
+        this.pixiApp = pixiApp
         this.socket = socket
         this.shape = null
         this.shapeType = null
@@ -21,6 +23,9 @@ export default class Brush {
             angularVelocity: 1
         })
 
+        this.graphic = new PIXI.Graphics()
+        this.pixiApp.stage.addChild(this.graphic)
+
         this.Shape = Shape
         this.world.addBody(this.body)
     }
@@ -28,12 +33,14 @@ export default class Brush {
     set Fill(color){
         this.fillStyle = color
         this.fillImage = null
+        this.drawShape()
         if (this.socket)
             this.socket.emit('setFillStyle', color)
     }
 
     set Stroke(color){
         this.strokeStyle = color
+        this.drawShape()
         if (this.socket)
             this.socket.emit('setStrokeStyle', color)
     }
@@ -58,11 +65,9 @@ export default class Brush {
         }
         this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
-        setTimeout(() => {
-            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
-        }, 1000)
         this.body.addShape(this.shape)
         this.updateShape()
+        this.drawShape()
         if (this.socket)
             this.socket.emit('setShapeType', shapeType)
     }
@@ -82,9 +87,10 @@ export default class Brush {
         }
     }
 
-    render(ctx){
+    render(){
+        this.graphic.position.x = this.body.position[0]
+        this.graphic.position.y = this.body.position[1]
         this.adjustSize()
-        this.draw(ctx)
     }
 
     adjustSize(){
@@ -97,7 +103,6 @@ export default class Brush {
             case "SQUARE": this.adjustSquare(factor)
             break
         }
-        
         this.updateShape()
     }
 
@@ -139,61 +144,28 @@ export default class Brush {
             this.shape.updateArea()
     }
 
-    draw(ctx){
-        ctx.beginPath()
-        let x = this.body.interpolatedPosition[0]
-        let y = this.body.interpolatedPosition[1]
-        ctx.save()
-        ctx.translate(x, y)
-        ctx.rotate(this.body.interpolatedAngle)
-        ctx.strokeStyle = this.strokeStyle
-        this.drawShape(ctx)
-        ctx.fillStyle = this.fillStyle
-        ctx.lineWidth = 4
-        ctx.fill()
-        ctx.stroke()
-        ctx.restore()
-    }
-
-    drawShape(ctx){
+    drawShape(){
+        this.graphic.clear()
+        this.graphic.beginFill(parseInt(this.fillStyle.replace(/^#/, ''), 16))
+        this.graphic.lineStyle(3, parseInt(this.strokeStyle.replace(/^#/, ''), 16))
         switch (this.shapeType) {
-            case "CIRCLE": this.drawCircle(ctx)
+            case "CIRCLE": this.drawCircle()
             break
             case "BOX":
-            case "SQUARE": this.drawRect(ctx)
+            case "SQUARE": this.drawRect()
             break
         }
     }
 
-    drawCircle(ctx){
-        if(this.fillImage){
-            ctx.beginPath()
-            ctx.arc(0, 0, this.shape.radius, 0, Math.PI*2)
-            ctx.clip()
-
-            const ratioW = this.shape.radius*2 / this.fillImage.width
-            const ratioH = this.shape.radius*2 / this.fillImage.height
-
-            ctx.beginPath()
-            ctx.drawImage(this.fillImage,
-                -this.shape.radius,
-                -this.shape.radius,
-                this.fillImage.width*ratioW,
-                this.fillImage.height*ratioH)
-        }else{
-            ctx.arc(0, 0, this.shape.radius, 0, Math.PI*2)
-        }
+    drawCircle(){
+        this.graphic.drawCircle(0, 0, this.shape.radius)
+        this.graphic.endFill()
     }
 
-    drawRect(ctx){
-        if(this.fillImage){
-            ctx.drawImage(this.fillImage,
-                -this.shape.width / 2,
-                -this.shape.height / 2,
-                this.shape.width,
-                this.shape.height)
-        }else{
-            ctx.rect(-this.shape.width / 2, -this.shape.height / 2, this.shape.width, this.shape.height)
-        }
+    drawRect(){
+        const width = this.shape.width
+        const height = this.shape.height
+        this.graphic.drawRect(-width / 2, -height / 2, width, height)
+        this.graphic.endFill()
     }
 }

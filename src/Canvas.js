@@ -4,9 +4,10 @@ import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
+import { setParticleColor } from '../store/actions';
 
 export default class Canvas {
-    constructor(htmlCanvas) {
+    constructor(pixiContainer) {
         this.app = new PIXI.Application({
             width: 1920,
             height: 1080,
@@ -15,29 +16,39 @@ export default class Canvas {
             preserveDrawingBuffer: true
         })
 
-        this.world = null
-
-        this.particles = null
-        this.environment = null
-        this.mouseControlls = null
-
-        this.htmlCanvas = htmlCanvas
-        this.width = this.htmlCanvas.width
-        this.height = this.htmlCanvas.height
+        this.pixiContainer = pixiContainer
+        this.width = this.pixiContainer.width
+        this.height = this.pixiContainer.height
 
         this.brushes = new Map()
         this.ownBrush = null
 
-        this.fixedTimeStep = 1 / 60
-        this.maxSubSteps = 1
-        this.lastTimeSeconds
-        this.deltaTime
-        this.timeSeconds
+        this.world =  new p2.World()
+        this.particles = new Particles(this)
+        this.environment = new Environment(this)
+        this.mouseControlls = new MouseControlls(this)
 
-        this.init()
+        if (window.screen.orientation.type == "landscape-primary") {
+            this.world.gravity = [0, -90]
+        } else {
+            this.world.gravity = [0, 0]
+        }
 
         if (typeof window.orientation !== "undefined") {
             window.addEventListener('deviceorientation', event => this.handleOrientation(event))
+        }
+
+        this.pixiContainer.appendChild(this.app.view)
+        this.app.stage.position.x = this.app.renderer.width / 2
+        this.app.stage.position.y = this.app.renderer.height / 2
+        this.app.stage.scale.y = -1
+        this.app.ticker.add( delta => this.step(delta))
+    }
+
+    step(delta){
+        this.world.step(1/60)
+        for(const brush of this.brushes.values()){
+            brush.render()
         }
     }
 
@@ -51,64 +62,13 @@ export default class Canvas {
         this.brushes.delete(brush.id)
     }
 
-    step(fixedTimeStep, deltaTime, maxSubSteps) {
-        this.world.step(fixedTimeStep, deltaTime, maxSubSteps)
-    }
-
-    animate(t) {
-		requestAnimationFrame(t => this.animate(t))
-
-		this.timeSeconds = t / 1000
-		this.lastTimeSeconds = this.lastTimeSeconds || this.timeSeconds
-
-		this.deltaTime = this.timeSeconds - this.lastTimeSeconds
-
-		// Move physics bodies forward in time
-		this.step(this.fixedTimeStep, this.deltaTime, this.maxSubSteps)
-
-		// Render scene
-		this.render()
-	}
-
-    render() {
-        const ctx = this.htmlCanvas.getContext("2d")
-        ctx.save()
-        ctx.translate(this.width / 2, this.height / 2) // Translate to the center
-        ctx.scale(1, -1)
-        // Draw all bodies
-        for (let brush of this.brushes.values()) {
-            brush.render(ctx)
-        }
-        this.environment.draw(ctx)
-        this.particles.render(ctx)
-        ctx.restore()
-    }
-
-    init() {
-        if (window.screen.orientation.type == "landscape-primary") {
-            this.world = new p2.World({
-                gravity: [0, -90]
-            })
-        } else {
-            this.world = new p2.World({
-                gravity: [0, 0]
-            })
-        }
-
-        this.particles = new Particles(this)
-        this.environment = new Environment(this)
-        this.mouseControlls = new MouseControlls(this)
-
-        this.htmlCanvas.appendChild(this.app.view)
-    }
-
     addBrush(brush) {
         this.brushes.set(brush.id, brush)
     }
 
     newBrush({id}) {
         console.log("new! : " + id)
-        let brush = new Brush({ id, world: this.world })
+        let brush = new Brush({ id, world: this.world, pixiApp: this.app })
         this.brushes.set(id, brush)
     }
 
@@ -137,5 +97,4 @@ export default class Canvas {
         this.world.gravity[0] = x
         this.world.gravity[1] = -y
     }
-
 }
