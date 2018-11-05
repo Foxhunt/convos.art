@@ -1,4 +1,5 @@
 import p2 from 'p2'
+import * as PIXI from "pixi.js"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
@@ -6,6 +7,14 @@ import MouseControlls from "./MouseControlls"
 
 export default class Canvas {
     constructor(htmlCanvas) {
+        this.app = new PIXI.Application({
+            width: 1920,
+            height: 1080,
+            clearBeforeRender: false,
+            transparent: true,
+            preserveDrawingBuffer: true
+        })
+
         this.world = null
 
         this.particles = null
@@ -25,8 +34,7 @@ export default class Canvas {
         this.deltaTime
         this.timeSeconds
 
-        this.initWorld()
-        requestAnimationFrame(t => this.animate(t))
+        this.init()
 
         if (typeof window.orientation !== "undefined") {
             window.addEventListener('deviceorientation', event => this.handleOrientation(event))
@@ -76,7 +84,7 @@ export default class Canvas {
         ctx.restore()
     }
 
-    initWorld() {
+    init() {
         if (window.screen.orientation.type == "landscape-primary") {
             this.world = new p2.World({
                 gravity: [0, -90]
@@ -90,6 +98,8 @@ export default class Canvas {
         this.particles = new Particles(this)
         this.environment = new Environment(this)
         this.mouseControlls = new MouseControlls(this)
+
+        this.htmlCanvas.appendChild(this.app.view)
     }
 
     addBrush(brush) {
@@ -109,10 +119,7 @@ export default class Canvas {
         console.log("left! : " + id)
     }
 
-    handleOrientation(event) {
-        let x = event.gamma  // In degree in the range [-180,180]
-        let y = event.beta // In degree in the range [-90,90]
-
+    handleOrientation({gamma: x, beta: y}) {
         // Because we don't want to have the device upside down
         // We constrain the x value to the range [-90,90]
         if (window.screen.orientation.type == "landscape-primary") {
