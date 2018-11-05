@@ -47,7 +47,6 @@ class Room extends react.Component{
         return (
             <Background>
                 <Canvas
-                    id="myCanvas"
                     width="1920"
                     height="1080"
                     onPointerDown={this.props.touchCanvas}
