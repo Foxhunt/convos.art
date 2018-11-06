@@ -46,7 +46,7 @@ export default class Canvas {
     }
 
     step(delta){
-        this.world.step(1/60)
+        this.world.step(1/60, 1/60 * delta, 1)
         for(const brush of this.brushes.values()){
             brush.render()
         }

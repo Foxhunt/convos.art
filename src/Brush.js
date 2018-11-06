@@ -88,8 +88,9 @@ export default class Brush {
     }
 
     render(){
-        this.graphic.position.x = this.body.position[0]
-        this.graphic.position.y = this.body.position[1]
+        this.graphic.position.x = this.body.interpolatedPosition[0]
+        this.graphic.position.y = this.body.interpolatedPosition[1]
+        this.graphic.rotation = this.body.angle
         this.adjustSize()
     }
 
