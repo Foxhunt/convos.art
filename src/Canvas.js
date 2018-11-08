@@ -50,6 +50,7 @@ export default class Canvas {
         for(const brush of this.brushes.values()){
             brush.render()
         }
+        this.particles.render()
     }
 
     addOwnBrush(ownBrush){
