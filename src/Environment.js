@@ -1,4 +1,5 @@
 import p2 from 'p2'
+import { Graphics } from "pixi.js"
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
 export default class Environment {
@@ -10,6 +11,9 @@ export default class Environment {
         this.roofBody = null
         this.leftWallBody = null
         this.rightWallBody = null
+
+        this.environmentGrafic = new Graphics()
+        canvas.app.stage.addChild(this.environmentGrafic)
 
         this.placeWalls()
     }
@@ -63,32 +67,14 @@ export default class Environment {
         this.rightWallBody = rightWallBody
     }
 
-    draw(ctx) {
-        this.drawWalls(ctx)
+    render() {
+        this.drawWalls()
     }
 
     //Boden wände
-    drawWalls(ctx) {
-        ctx.beginPath()
-
-        var y = this.planeBody.position[1]
-        ctx.moveTo(-this.width, y)
-        ctx.lineTo(this.width, y)
-        ctx.stroke()
-
-        y = this.roofBody.position[1]
-        ctx.moveTo(-this.width, y)
-        ctx.lineTo(this.width, y)
-        ctx.stroke()
-
-        var x = this.leftWallBody.position[0]
-        ctx.moveTo(x, -this.height)
-        ctx.lineTo(x, this.height)
-        ctx.stroke()
-
-        x = this.rightWallBody.position[0]
-        ctx.moveTo(x, -this.height)
-        ctx.lineTo(x, this.height)
-        ctx.stroke()
+    drawWalls() {
+        this.environmentGrafic.clear()
+            .lineStyle(2, 0, 1, 0)
+            .drawRect(-this.width / 2, -this.height / 2, this.width, this.height)
     }
 }
