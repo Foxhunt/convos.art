@@ -65,6 +65,9 @@ export default class Brush {
         }
         this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
+        setTimeout(() => {
+            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+        }, 1000)
         this.body.addShape(this.shape)
         this.updateShape()
         this.drawShape()
@@ -143,6 +146,8 @@ export default class Brush {
 
         if (this.shape.updateArea)
             this.shape.updateArea()
+
+        this.drawShape()
     }
 
     drawShape(){

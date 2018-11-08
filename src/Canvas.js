@@ -17,8 +17,8 @@ export default class Canvas {
         })
 
         this.pixiContainer = pixiContainer
-        this.width = this.pixiContainer.width
-        this.height = this.pixiContainer.height
+        this.width = 1920
+        this.height = 1080
 
         this.brushes = new Map()
         this.ownBrush = null
