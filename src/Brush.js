@@ -1,5 +1,5 @@
-import p2 from 'p2';
-import * as PIXI from "pixi.js"
+import p2 from 'p2'
+import { Graphics } from "pixi.js"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
@@ -23,7 +23,7 @@ export default class Brush {
             angularVelocity: 1
         })
 
-        this.graphic = new PIXI.Graphics()
+        this.graphic = new Graphics()
         this.pixiApp.stage.addChild(this.graphic)
 
         this.Shape = Shape
@@ -161,17 +161,16 @@ export default class Brush {
             case "SQUARE": this.drawRect()
             break
         }
+        this.graphic.endFill()
     }
 
     drawCircle(){
         this.graphic.drawCircle(0, 0, this.shape.radius)
-        this.graphic.endFill()
     }
 
     drawRect(){
         const width = this.shape.width
         const height = this.shape.height
         this.graphic.drawRect(-width / 2, -height / 2, width, height)
-        this.graphic.endFill()
     }
 }
