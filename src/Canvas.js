@@ -1,14 +1,13 @@
 import p2 from 'p2'
-import * as PIXI from "pixi.js"
+import { Application } from "pixi.js"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
-import { setParticleColor } from '../store/actions';
 
 export default class Canvas {
     constructor(pixiContainer) {
-        this.app = new PIXI.Application({
+        this.app = new Application({
             width: 1920,
             height: 1080,
             clearBeforeRender: false,
@@ -51,6 +50,7 @@ export default class Canvas {
             brush.render()
         }
         this.particles.render()
+        this.environment.render()
     }
 
     addOwnBrush(ownBrush){
