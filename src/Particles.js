@@ -1,5 +1,5 @@
 import p2 from 'p2'
-import * as PIXI from "pixi.js"
+import { Graphics } from "pixi.js"
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
@@ -12,7 +12,7 @@ export default class Particles {
         this.maxParticles = 100
         this.enabled = true
 
-        this.particleGrafic = new PIXI.Graphics()
+        this.particleGrafic = new Graphics()
         this.canvas.app.stage.addChild(this.particleGrafic)
     }
 
