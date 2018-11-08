@@ -78,12 +78,17 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 		// betroffene box ermitteln
 		let box = canvas.brushes.get(data.id)
 		//erhaltenen Informationen verarbeiten
-		if (box) {
-			box.body.position[0] = data.x
-			box.body.position[1] = data.y
-			box.body.angle = data.angle
-			box.body.velocity = data.velocity
-			box.body.angularVelocity = data.angularVelocity
+
+		const ownFact = 0.5
+		if (box && box.id !== socket.id) {
+			box.body.position[0] = data.x * (1 - ownFact) + box.body.position[0] * ownFact
+			box.body.position[1] = data.y * (1 - ownFact) + box.body.position[1] * ownFact
+			box.body.angle = data.angle * (1 - ownFact) + box.body.angle * ownFact
+			box.body.angularVelocity = data.angularVelocity * (1 - ownFact) + box.body.angularVelocity * ownFact
+			box.body.velocity = {
+				0: (data.velocity[0] * (1 - ownFact) + box.body.velocity[0] * ownFact),
+				1: (data.velocity[1] * (1 - ownFact) + box.body.velocity[1] * ownFact)
+			}
 		}
 	})
 
