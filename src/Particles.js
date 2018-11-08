@@ -1,5 +1,6 @@
 import p2 from 'p2'
-import { Graphics } from "pixi.js"
+import { particles, Graphics, Sprite } from "pixi.js"
+const { ParticleContainer } = particles
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
@@ -12,13 +13,24 @@ export default class Particles {
         this.maxParticles = 100
         this.enabled = true
 
-        this.particleGrafic = new Graphics()
-        this.canvas.app.stage.addChild(this.particleGrafic)
+        this.particleTexture = this.canvas.app.renderer.generateTexture(
+            new Graphics()
+            .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
+            .drawCircle(0, 0, 2))
+
+        this.particleContainer = new ParticleContainer(this.maxParticles, {alpha:true})
+        this.canvas.app.stage.addChild(this.particleContainer)
+    }
+
+    set ParticleColor(color){
+        this.particleColor = color
+        this.particleTexture = this.canvas.app.renderer.generateTexture(
+            new Graphics()
+            .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
+            .drawCircle(0, 0, 2))
     }
 
     render() {
-        this.particleGrafic.clear()
-        this.particleGrafic.beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16))
         this.enabled && this.findContacts()
         for (let particle of this.particles) {
             if (this.isInBounds(particle)) {
@@ -27,9 +39,9 @@ export default class Particles {
                 const index = this.particles.indexOf(particle)
                 this.particles.splice(index, 1)
                 this.world.removeBody(particle)
+                this.particleContainer.removeChild(particle.sprite)
             }
         }
-        this.particleGrafic.endFill()
     }
 
     isInBounds(particle) {
@@ -39,9 +51,8 @@ export default class Particles {
     }
 
     drawParticle(particle) {
-        const x = particle.interpolatedPosition[0]
-        const y = particle.interpolatedPosition[1]
-        this.particleGrafic.drawCircle(x, y, 2)
+        particle.sprite.x = particle.interpolatedPosition[0]
+        particle.sprite.y = particle.interpolatedPosition[1]
     }
 
     findContacts() {
@@ -74,10 +85,19 @@ export default class Particles {
         pBody.addShape(pShape)
         this.world.addBody(pBody)
 
+        const particleSprite = new Sprite(this.particleTexture)
+        particleSprite.x = x
+        particleSprite.y = y
+
+        pBody.sprite = particleSprite
+
         this.particles.push(pBody)
+        this.particleContainer.addChild(particleSprite)
 
         if (this.particles.length > this.maxParticles) {
-            this.world.removeBody(this.particles.shift())
+            const paarticle = this.particles.shift()
+            this.world.removeBody(paarticle)
+            this.particleContainer.removeChild(paarticle.sprite)
         }
     }
 

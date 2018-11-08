@@ -161,7 +161,7 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 		}
 
 		if(canvas.particles.particleColor != state.particleColor) {
-			canvas.particles.particleColor = state.particleColor
+			canvas.particles.ParticleColor = state.particleColor
 		}
 	}
 })
