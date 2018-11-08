@@ -130,10 +130,10 @@ function Box(id, x, y, angle, velocity) {
 	this.angle = angle || 0
 	this.velocity = velocity || {0: 0, 1: 0}
 	this.angularVelocity = 0
-	this.fillStyle = "blue"
-	this.strokeStyle = "red"
-	this.shapeType = ""
-	this.fillImage = ""
+	this.fillStyle = "#0000ff"
+	this.strokeStyle = "#ff0000"
+	this.shapeType = "CIRCLE"
+	this.fillImage = null
 }
 
 nextApp.prepare().then(() => {
