@@ -1,4 +1,5 @@
 import p2 from 'p2'
+import * as PIXI from "pixi.js"
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
 
@@ -10,19 +11,25 @@ export default class Particles {
         this.particleColor = "#ff00aa"
         this.maxParticles = 100
         this.enabled = true
+
+        this.particleGrafic = new PIXI.Graphics()
+        this.canvas.app.stage.addChild(this.particleGrafic)
     }
 
-    render(ctx) {
+    render() {
+        this.particleGrafic.clear()
+        this.particleGrafic.beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16))
         this.enabled && this.findContacts()
         for (let particle of this.particles) {
             if (this.isInBounds(particle)) {
-                this.drawParticle(ctx, particle)
+                this.drawParticle(particle)
             } else {
                 const index = this.particles.indexOf(particle)
                 this.particles.splice(index, 1)
                 this.world.removeBody(particle)
             }
         }
+        this.particleGrafic.endFill()
     }
 
     isInBounds(particle) {
@@ -31,16 +38,10 @@ export default class Particles {
         return x >= -this.canvas.width/2 && x <= this.canvas.width/2 && y >= -this.canvas.height/2 && y <= this.canvas.height/2
     }
 
-    drawParticle(ctx, particle) {
-        ctx.beginPath()
+    drawParticle(particle) {
         const x = particle.interpolatedPosition[0]
         const y = particle.interpolatedPosition[1]
-        ctx.save()
-        ctx.translate(x, y)
-        ctx.arc(0, 0, 2, 0, 2 * Math.PI)
-        ctx.fillStyle = this.particleColor
-        ctx.fill()
-        ctx.restore()
+        this.particleGrafic.drawCircle(x, y, 2)
     }
 
     findContacts() {
