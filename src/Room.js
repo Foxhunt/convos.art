@@ -79,7 +79,7 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 		let box = canvas.brushes.get(data.id)
 		//erhaltenen Informationen verarbeiten
 
-		const ownFact = 0.5
+		const ownFact = 0.7
 		if (box && box.id !== socket.id) {
 			box.body.position[0] = data.x * (1 - ownFact) + box.body.position[0] * ownFact
 			box.body.position[1] = data.y * (1 - ownFact) + box.body.position[1] * ownFact
