@@ -69,13 +69,14 @@ export default class Particles {
     }
 
     spawn(x, y) {
+        const rng = 2 * Math.PI * Math.random()
         const pShape = new p2.Particle({ radius: 3 })
         const pBody = new p2.Body({
             mass: 50,
             position: [x, y],
             velocity: [
-                140 * Math.cos(Math.PI * Math.random()),
-                140 * Math.cos(Math.PI * Math.random())
+                120 * Math.sin(rng),
+                120 * Math.cos(rng)
             ]
         })
 
