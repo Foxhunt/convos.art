@@ -157,7 +157,7 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 			ownBrush.Fill = state.fillStyle
 		}
 
-		if(ownBrush.fillImage != state.fillImage) {
+		if(ownBrush.fillImageSrc != state.fillImage) {
 			ownBrush.Image = state.fillImage
 		}
 

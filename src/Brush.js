@@ -1,5 +1,5 @@
 import p2 from 'p2'
-import { Graphics } from "pixi.js"
+import { Container, Graphics, Sprite, Texture } from "pixi.js"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
@@ -12,6 +12,8 @@ export default class Brush {
         this.shape = null
         this.shapeType = null
 
+        this.fillImageSrc = null
+
         this.fillStyle = fillStyle
         this.fillImage = fillImage
         this.strokeStyle = strokeStyle
@@ -23,8 +25,13 @@ export default class Brush {
             angularVelocity: 1
         })
 
+        this.container = new Container()
+        this.pixiApp.stage.addChild(this.container)
+
         this.graphic = new Graphics()
-        this.pixiApp.stage.addChild(this.graphic)
+        this.container.addChild(this.graphic)
+
+        this.sprite = null
 
         this.Shape = Shape
         this.world.addBody(this.body)
@@ -48,7 +55,14 @@ export default class Brush {
     set Image(src){
         const img = new Image()
         img.src = src
+        this.fillImageSrc = src
         this.fillImage = img
+
+        this.sprite = new Sprite(Texture.from(img))
+        this.sprite.mask = this.graphic
+
+        this.container.addChild(this.sprite)
+
         if (this.socket)
             this.socket.emit('setFillImage', src)
     }
@@ -69,7 +83,6 @@ export default class Brush {
             this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         }, 1000)
         this.body.addShape(this.shape)
-        this.updateShape()
         this.drawShape()
         if (this.socket)
             this.socket.emit('setShapeType', shapeType)
@@ -91,15 +104,16 @@ export default class Brush {
     }
 
     render(){
-        this.graphic.position.x = this.body.interpolatedPosition[0]
-        this.graphic.position.y = this.body.interpolatedPosition[1]
-        this.graphic.rotation = this.body.angle
+        this.container.position.x = this.body.interpolatedPosition[0]
+        this.container.position.y = this.body.interpolatedPosition[1]
+        this.container.rotation = this.body.angle
         this.adjustSize()
+        this.updateShape()
+        this.drawShape()
     }
 
     adjustSize(){
         const factor = this.calculateSizeFactor()
-
         switch (this.shapeType) {
             case "CIRCLE": this.adjustCircle(factor)
             break
@@ -107,7 +121,6 @@ export default class Brush {
             case "SQUARE": this.adjustSquare(factor)
             break
         }
-        this.updateShape()
     }
 
     adjustCircle(factor){
@@ -146,8 +159,6 @@ export default class Brush {
 
         if (this.shape.updateArea)
             this.shape.updateArea()
-
-        this.drawShape()
     }
 
     drawShape(){
