@@ -4,6 +4,7 @@ import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
+import Recorder from "./Recorder"
 
 export default class Canvas {
     constructor(pixiContainer) {
@@ -14,6 +15,19 @@ export default class Canvas {
             transparent: true,
             preserveDrawingBuffer: true
         })
+
+        this.app.stage.interactive = true
+
+        const recorder = new Recorder(this.app.view)
+
+        setTimeout(() => {
+            recorder.start(1000)
+            console.log("recording!")
+            setTimeout(() => {
+                recorder.stop()
+                console.log("stopped recording!")
+            }, 30 * 1000)
+        }, 1000)
 
         this.pixiContainer = pixiContainer
         this.width = 1920
