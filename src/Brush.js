@@ -1,5 +1,5 @@
 import p2 from 'p2'
-import { Container, Graphics, Sprite, Texture } from "pixi.js"
+import { Container, Graphics, Sprite, Texture, filters } from "pixi.js"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
 export default class Brush {
@@ -25,7 +25,10 @@ export default class Brush {
             angularVelocity: 1
         })
 
+        const filter = new filters.BlurFilter(4)
+
         this.container = new Container()
+        this.container.filters = [filter]
         this.pixiApp.stage.addChild(this.container)
 
         this.graphic = new Graphics()
@@ -59,6 +62,8 @@ export default class Brush {
         this.fillImage = img
 
         this.sprite = new Sprite(Texture.from(img))
+        this.sprite.x = this.sprite.x / 2
+        this.sprite.y = this.sprite.y / 2
         this.sprite.mask = this.graphic
 
         this.container.addChild(this.sprite)
