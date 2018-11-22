@@ -25,10 +25,7 @@ export default class Brush {
             angularVelocity: 1
         })
 
-        const filter = new filters.BlurFilter(4)
-
         this.container = new Container()
-        this.container.filters = [filter]
         this.pixiApp.stage.addChild(this.container)
 
         this.graphic = new Graphics()
@@ -43,6 +40,13 @@ export default class Brush {
     set Fill(color){
         this.fillStyle = color
         this.fillImage = null
+        if(this.sprite){
+            this.sprite.destroy(true)
+            this.sprite = null
+            this.graphic.destroy(true)
+            this.graphic = new Graphics()
+            this.container.addChild(this.graphic)
+        }
         this.drawShape()
         if (this.socket)
             this.socket.emit('setFillStyle', color)
@@ -56,14 +60,22 @@ export default class Brush {
     }
 
     set Image(src){
-        const img = new Image()
-        img.src = src
+        if(this.sprite){
+            this.sprite.destroy()
+        }
+        this.fillImage = new Image()
+        this.fillImage.src = src
         this.fillImageSrc = src
-        this.fillImage = img
 
-        this.sprite = new Sprite(Texture.from(img))
-        this.sprite.x = this.sprite.x / 2
-        this.sprite.y = this.sprite.y / 2
+        this.sprite = Sprite.from(this.fillImage)
+        this.sprite.anchor.set(0.5)
+
+        this.sprite.texture.baseTexture.on("update", texture => {
+            const factor = this.graphic.height / texture.height
+            this.sprite.width = texture.width * factor
+            this.sprite.height = texture.height * factor
+        })
+
         this.sprite.mask = this.graphic
 
         this.container.addChild(this.sprite)
