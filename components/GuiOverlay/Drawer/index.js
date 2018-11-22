@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import autoBind from "react-autobind"
 import styled from 'styled-components'
+import download from 'downloadjs'
 
 import { connect } from "react-redux"
 import { 
@@ -136,7 +137,6 @@ class OptionsDrawer extends Component {
                     Webcam
                 </Button>
                 <Button
-                    download="canvas"
                     onClick={this.captureCanvas}>
                     Snapshot
                 </Button>
@@ -157,9 +157,9 @@ class OptionsDrawer extends Component {
         reader.readAsDataURL(file)
     }
 
-	captureCanvas(event) {
+	captureCanvas() {
 		const imgURL = this.props.canvas.htmlCanvas.toDataURL('image/png')
-		event.target.href = imgURL
+		download(imgURL, 'canvas', 'image/png')
 	}
 
     toggleLoco() {
