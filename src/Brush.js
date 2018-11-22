@@ -119,22 +119,18 @@ export default class Brush {
 
     adjustSize(){
         const factor = this.calculateSizeFactor()
-        switch (this.shapeType) {
-            case "CIRCLE": this.adjustCircle(factor)
-            break
-            case "BOX":
-            case "SQUARE": this.adjustSquare(factor)
-            break
+        this.adjustScale(factor)
+        if (this.shapeType === "BOX" || this.shapeType === "SQUARE") {
+            this.adjustVertices(factor)
         }
     }
 
-    adjustCircle(factor){
-        this.shape.radius = 50 * factor
+    adjustScale(factor){
+        this.container.scale.x = factor
+        this.container.scale.y = factor
     }
 
-    adjustSquare(factor){
-        this.shape.width = factor * this.width 
-        this.shape.height = factor * this.height 
+    adjustVertices(factor){
         this.shape.vertices.forEach((vertex, index, array) => {
             array[index][0] = factor * this.vertices[index][0]
             array[index][1] = factor * this.vertices[index][1]
