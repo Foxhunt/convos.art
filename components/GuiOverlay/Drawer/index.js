@@ -158,7 +158,7 @@ class OptionsDrawer extends Component {
     }
 
 	captureCanvas() {
-		const imgURL = this.props.canvas.htmlCanvas.toDataURL('image/png')
+		const imgURL = this.props.canvas.app.view.toDataURL('image/png')
 		download(imgURL, 'canvas', 'image/png')
 	}
 

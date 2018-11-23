@@ -74,7 +74,7 @@ class GuiOverlay extends Component {
 	}
 
 	componentDidUpdate() {
-		this.props.canvas.htmlCanvas && !this.state.drawerPos && this.calculatepositions()
+		this.props.canvas.app.view && !this.state.drawerPos && this.calculatepositions()
 	}
 
 	render() {
