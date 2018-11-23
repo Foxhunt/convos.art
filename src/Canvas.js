@@ -75,7 +75,7 @@ export default class Canvas {
 
     leaveBrush({id}) {
         // Box löschen
-        this.world.removeBody(this.brushes.get(id).body)
+        this.brushes.get(id).delete()
         this.brushes.delete(id);
         console.log("left! : " + id)
     }

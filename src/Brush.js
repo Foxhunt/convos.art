@@ -34,6 +34,10 @@ export default class Brush {
         this.sprite = null
 
         this.Shape = Shape
+        this.shape.collisionMask = 0x0000
+        setTimeout(() => {
+            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+        }, 1000)
         this.world.addBody(this.body)
     }
 
@@ -96,9 +100,7 @@ export default class Brush {
         }
         this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
-        setTimeout(() => {
-            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
-        }, 1000)
+        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         this.body.addShape(this.shape)
         this.drawShape()
         if (this.socket)
@@ -124,29 +126,24 @@ export default class Brush {
         this.container.position.x = this.body.interpolatedPosition[0]
         this.container.position.y = this.body.interpolatedPosition[1]
         this.container.rotation = this.body.angle
-        this.adjustSize()
+        
+        const factor = this.calculateSizeFactor()
+        this.container.scale.set(factor)
+        this.adjustShape(factor)
         this.updateShape()
         this.drawShape()
     }
 
-    adjustSize(){
-        const factor = this.calculateSizeFactor()
-        this.adjustScale(factor)
+    adjustShape(factor){
         if (this.shapeType === "BOX" || this.shapeType === "SQUARE") {
-            this.adjustVertices(factor)
+            this.shape.vertices.forEach((vertex, index, array) => {
+                array[index][0] = factor * this.vertices[index][0]
+                array[index][1] = factor * this.vertices[index][1]
+            })
+        } else {
+            this.shape.radius = 50 * factor
+            console.log(`circle radius = ${this.shape.radius}`)
         }
-    }
-
-    adjustScale(factor){
-        this.container.scale.x = factor
-        this.container.scale.y = factor
-    }
-
-    adjustVertices(factor){
-        this.shape.vertices.forEach((vertex, index, array) => {
-            array[index][0] = factor * this.vertices[index][0]
-            array[index][1] = factor * this.vertices[index][1]
-        })
     }
 
     calculateSizeFactor(){
@@ -189,12 +186,17 @@ export default class Brush {
     }
 
     drawCircle(){
-        this.graphic.drawCircle(0, 0, this.shape.radius)
+        this.graphic.drawCircle(0, 0, 50)
     }
 
     drawRect(){
         const width = this.shape.width
         const height = this.shape.height
         this.graphic.drawRect(-width / 2, -height / 2, width, height)
+    }
+
+    delete(){
+        this.world.removeBody(this.body)
+        this.container.destroy(true)
     }
 }
