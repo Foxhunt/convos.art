@@ -18,10 +18,13 @@ export default class Canvas {
             height: 1080,
             clearBeforeRender: false,
             transparent: true,
-            preserveDrawingBuffer: true
+            preserveDrawingBuffer: true,
+            antialias: true,
+            forceFXAA: true,
+            roundPixels: true
         })
 
-        this.app.stage.filters = [new filters.CRTFilter()]
+        this.app.stage.filters = []
 
         this.pixiContainer = pixiContainer
         this.width = 1920
@@ -53,7 +56,7 @@ export default class Canvas {
     }
 
     step(delta){
-        this.world.step(1/60, 1/60 * delta, 1)
+        this.world.step(1/60, 1/60 * delta)
         for(const brush of this.brushes.values()){
             brush.render()
         }
