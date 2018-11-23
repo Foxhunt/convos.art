@@ -74,11 +74,7 @@ export default class Brush {
         this.sprite = Sprite.from(this.fillImage)
         this.sprite.anchor.set(0.5)
 
-        this.sprite.texture.baseTexture.on("update", texture => {
-            const factor = this.graphic.height / texture.height
-            this.sprite.width = texture.width * factor
-            this.sprite.height = texture.height * factor
-        })
+        this.sprite.texture.baseTexture.on("update", texture => this.setSpriteDimensions(texture))
 
         this.sprite.mask = this.graphic
 
@@ -103,8 +99,18 @@ export default class Brush {
         this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         this.body.addShape(this.shape)
         this.drawShape()
+
+        if (this.fillImage)
+            this.setSpriteDimensions(this.sprite.texture)
+        
         if (this.socket)
             this.socket.emit('setShapeType', shapeType)
+    }
+
+    setSpriteDimensions(texture){
+        const factor = this.graphic.height / texture.height
+        this.sprite.width =  texture.width * factor
+        this.sprite.height =  texture.height * factor
     }
 
     setCircleShape(radius){
@@ -131,7 +137,6 @@ export default class Brush {
         this.container.scale.set(factor)
         this.adjustShape(factor)
         this.updateShape()
-        this.drawShape()
     }
 
     adjustShape(factor){
