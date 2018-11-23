@@ -14,6 +14,7 @@
     "next": "^7.0.2",
     "next-images": "^1.0.1",
     "p2": "^0.7.1",
+    "pixi-filters": "^2.6.1",
     "pixi.js": "^4.8.2",
     "react": "^16.6.3",
     "react-autobind": "^1.0.6",

@@ -1,6 +1,12 @@
 import p2 from 'p2'
-import { Container, Graphics, Sprite, Texture, filters } from "pixi.js"
+import { Container, Graphics, Sprite, filters as nativeFilters } from "pixi.js"
+import * as extraFilters from "pixi-filters"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
+
+const filters = {
+    ...nativeFilters,
+    ...extraFilters
+}
 
 export default class Brush {
     constructor({id, x = 0, y = 0, angle = 0, own = false, world, pixiApp, socket, fillStyle = "#0000ff", strokeStyle = "#ff0000", Shape = "CIRCLE", fillImage = null}){
@@ -27,6 +33,8 @@ export default class Brush {
 
         this.container = new Container()
         this.pixiApp.stage.addChild(this.container)
+
+        this.container.filters = []
 
         this.graphic = new Graphics()
         this.container.addChild(this.graphic)

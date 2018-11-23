@@ -1,9 +1,15 @@
 import p2 from 'p2'
-import { Application } from "pixi.js"
+import { Application, filters as nativeFilters } from "pixi.js"
+import * as extraFilters from "pixi-filters"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
+
+const filters = {
+    ...nativeFilters,
+    ...extraFilters
+}
 
 export default class Canvas {
     constructor(pixiContainer) {
@@ -14,6 +20,8 @@ export default class Canvas {
             transparent: true,
             preserveDrawingBuffer: true
         })
+
+        this.app.stage.filters = [new filters.CRTFilter()]
 
         this.pixiContainer = pixiContainer
         this.width = 1920
