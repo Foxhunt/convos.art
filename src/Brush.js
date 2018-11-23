@@ -142,7 +142,6 @@ export default class Brush {
             })
         } else {
             this.shape.radius = 50 * factor
-            console.log(`circle radius = ${this.shape.radius}`)
         }
     }
 
