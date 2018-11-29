@@ -7,6 +7,10 @@
     "start": "cross-env NODE_ENV=production node app.js",
     "deploy": "now & now ln & now rm convos -sy"
   },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Foxhunt/Convos.git"
+  },
   "dependencies": {
     "cross-env": "^5.2.0",
     "downloadjs": "^1.4.7",
