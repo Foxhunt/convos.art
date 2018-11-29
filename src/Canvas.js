@@ -1,10 +1,16 @@
 import p2 from 'p2'
-import { Application } from "pixi.js"
+import { Application, filters as nativeFilters } from "pixi.js"
+import * as extraFilters from "pixi-filters"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
 import Recorder from "./Recorder"
+
+const {  } = {
+    ...nativeFilters,
+    ...extraFilters
+}
 
 export default class Canvas {
     constructor(pixiContainer) {
@@ -13,12 +19,17 @@ export default class Canvas {
             height: 1080,
             clearBeforeRender: false,
             transparent: true,
-            preserveDrawingBuffer: true
+            preserveDrawingBuffer: true,
+            antialias: true,
+            forceFXAA: true,
+            roundPixels: true
         })
 
-        this.app.stage.interactive = true
+        this.app.stage.filters = []
 
-        const recorder = new Recorder(this.app.view)
+        this.pixiContainer = pixiContainer
+        this.width = 1920
+        this.height = 1080
 
         setTimeout(() => {
             recorder.start(1000)
@@ -59,7 +70,7 @@ export default class Canvas {
     }
 
     step(delta){
-        this.world.step(1/60, 1/60 * delta, 1)
+        this.world.step(1/60, 1/60 * delta)
         for(const brush of this.brushes.values()){
             brush.render()
         }
@@ -89,7 +100,7 @@ export default class Canvas {
 
     leaveBrush({id}) {
         // Box löschen
-        this.world.removeBody(this.brushes.get(id).body)
+        this.brushes.get(id).delete()
         this.brushes.delete(id);
         console.log("left! : " + id)
     }

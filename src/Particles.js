@@ -1,5 +1,5 @@
 import p2 from 'p2'
-import { particles, Graphics, Sprite } from "pixi.js"
+import { particles, Graphics, Sprite, BaseTexture } from "pixi.js"
 const { ParticleContainer } = particles
 
 import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
@@ -10,13 +10,14 @@ export default class Particles {
         this.world = canvas.world
         this.particles = []
         this.particleColor = "#ff00aa"
-        this.maxParticles = 100
+        this.maxParticles = 250
         this.enabled = true
 
-        this.particleTexture = this.canvas.app.renderer.generateTexture(
-            new Graphics()
+        this.graphic = new Graphics()
             .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
-            .drawCircle(0, 0, 2))
+            .drawCircle(0, 0, 2)
+
+        this.particleTexture = this.graphic.generateCanvasTexture()
 
         this.particleContainer = new ParticleContainer(this.maxParticles, {alpha:true})
         this.canvas.app.stage.addChild(this.particleContainer)
@@ -24,15 +25,16 @@ export default class Particles {
 
     set ParticleColor(color){
         this.particleColor = color
-        this.particleTexture = this.canvas.app.renderer.generateTexture(
-            new Graphics()
+        this.graphic
             .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
-            .drawCircle(0, 0, 2))
+            .drawCircle(0, 0, 2)
+
+        this.particleTexture.baseTexture = this.graphic.generateCanvasTexture().baseTexture
     }
 
     render() {
         this.enabled && this.findContacts()
-        for (let particle of this.particles) {
+        for (const particle of this.particles) {
             if (this.isInBounds(particle)) {
                 this.drawParticle(particle)
             } else {
@@ -40,6 +42,7 @@ export default class Particles {
                 this.particles.splice(index, 1)
                 this.world.removeBody(particle)
                 this.particleContainer.removeChild(particle.sprite)
+                particle.sprite.destroy()
             }
         }
     }
@@ -96,9 +99,10 @@ export default class Particles {
         this.particleContainer.addChild(particleSprite)
 
         if (this.particles.length > this.maxParticles) {
-            const paarticle = this.particles.shift()
-            this.world.removeBody(paarticle)
-            this.particleContainer.removeChild(paarticle.sprite)
+            const particle = this.particles.shift()
+            this.world.removeBody(particle)
+            this.particleContainer.removeChild(particle.sprite)
+            particle.sprite.destroy()
         }
     }
 

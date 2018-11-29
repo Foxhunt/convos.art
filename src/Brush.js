@@ -1,6 +1,12 @@
 import p2 from 'p2'
-import { Container, Graphics, Sprite, Texture } from "pixi.js"
+import { Container, Graphics, Sprite, filters as nativeFilters } from "pixi.js"
+import * as extraFilters from "pixi-filters"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
+
+const {  } = {
+    ...nativeFilters,
+    ...extraFilters
+}
 
 export default class Brush {
     constructor({id, x = 0, y = 0, angle = 0, own = false, world, pixiApp, socket, fillStyle = "#0000ff", strokeStyle = "#ff0000", Shape = "CIRCLE", fillImage = null}){
@@ -15,7 +21,8 @@ export default class Brush {
         this.fillImageSrc = null
 
         this.fillStyle = fillStyle
-        this.fillImage = fillImage
+        this.fillSprite = null
+        this.fillImageSrc = null
         this.strokeStyle = strokeStyle
 
         this.body = new p2.Body({
@@ -28,18 +35,28 @@ export default class Brush {
         this.container = new Container()
         this.pixiApp.stage.addChild(this.container)
 
+        this.container.filters = []
+
         this.graphic = new Graphics()
         this.container.addChild(this.graphic)
 
-        this.sprite = null
-
         this.Shape = Shape
+        this.shape.collisionMask = 0x0000
+        setTimeout(() => {
+            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
+        }, 1000)
         this.world.addBody(this.body)
     }
 
     set Fill(color){
         this.fillStyle = color
-        this.fillImage = null
+        if(this.fillSprite){
+            this.fillSprite.destroy(true)
+            this.fillSprite = null
+            this.graphic.destroy(true)
+            this.graphic = new Graphics()
+            this.container.addChild(this.graphic)
+        }
         this.drawShape()
         if (this.socket)
             this.socket.emit('setFillStyle', color)
@@ -53,15 +70,21 @@ export default class Brush {
     }
 
     set Image(src){
-        const img = new Image()
-        img.src = src
+        if(this.fillSprite){
+            this.fillSprite.destroy()
+        }
+        const image = new Image()
+        image.src = src
         this.fillImageSrc = src
-        this.fillImage = img
 
-        this.sprite = new Sprite(Texture.from(img))
-        this.sprite.mask = this.graphic
+        this.fillSprite = Sprite.from(image)
+        this.fillSprite.anchor.set(0.5)
 
-        this.container.addChild(this.sprite)
+        this.fillSprite.texture.baseTexture.on("update", texture => this.setSpriteDimensions(texture))
+
+        this.fillSprite.mask = this.graphic
+
+        this.container.addChild(this.fillSprite)
 
         if (this.socket)
             this.socket.emit('setFillImage', src)
@@ -79,13 +102,21 @@ export default class Brush {
         }
         this.shapeType = shapeType
         this.shape.collisionGroup = BRUSH
-        setTimeout(() => {
-            this.shape.collisionMask = BRUSH | PLANES | PARTICLES
-        }, 1000)
+        this.shape.collisionMask = BRUSH | PLANES | PARTICLES
         this.body.addShape(this.shape)
         this.drawShape()
+
+        if (this.fillSprite)
+            this.setSpriteDimensions(this.fillSprite.texture)
+        
         if (this.socket)
             this.socket.emit('setShapeType', shapeType)
+    }
+
+    setSpriteDimensions(texture){
+        const factor = this.graphic.height / texture.height
+        this.fillSprite.width =  texture.width * factor
+        this.fillSprite.height =  texture.height * factor
     }
 
     setCircleShape(radius){
@@ -107,33 +138,22 @@ export default class Brush {
         this.container.position.x = this.body.interpolatedPosition[0]
         this.container.position.y = this.body.interpolatedPosition[1]
         this.container.rotation = this.body.angle
-        this.adjustSize()
-        this.updateShape()
-        this.drawShape()
-    }
-
-    adjustSize(){
+        
         const factor = this.calculateSizeFactor()
-        switch (this.shapeType) {
-            case "CIRCLE": this.adjustCircle(factor)
-            break
-            case "BOX":
-            case "SQUARE": this.adjustSquare(factor)
-            break
+        this.container.scale.set(factor)
+        this.adjustShape(factor)
+        this.updateShape()
+    }
+
+    adjustShape(factor){
+        if (this.shapeType === "BOX" || this.shapeType === "SQUARE") {
+            this.shape.vertices.forEach((vertex, index, array) => {
+                array[index][0] = factor * this.vertices[index][0]
+                array[index][1] = factor * this.vertices[index][1]
+            })
+        } else {
+            this.shape.radius = 50 * factor
         }
-    }
-
-    adjustCircle(factor){
-        this.shape.radius = 50 * factor
-    }
-
-    adjustSquare(factor){
-        this.shape.width = factor * this.width 
-        this.shape.height = factor * this.height 
-        this.shape.vertices.forEach((vertex, index, array) => {
-            array[index][0] = factor * this.vertices[index][0]
-            array[index][1] = factor * this.vertices[index][1]
-        })
     }
 
     calculateSizeFactor(){
@@ -176,12 +196,17 @@ export default class Brush {
     }
 
     drawCircle(){
-        this.graphic.drawCircle(0, 0, this.shape.radius)
+        this.graphic.drawCircle(0, 0, 50)
     }
 
     drawRect(){
         const width = this.shape.width
         const height = this.shape.height
         this.graphic.drawRect(-width / 2, -height / 2, width, height)
+    }
+
+    delete(){
+        this.world.removeBody(this.body)
+        this.container.destroy(true)
     }
 }
