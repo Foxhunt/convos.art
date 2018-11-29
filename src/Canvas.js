@@ -6,7 +6,7 @@ import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
 
-const filters = {
+const {  } = {
     ...nativeFilters,
     ...extraFilters
 }

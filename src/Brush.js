@@ -3,7 +3,7 @@ import { Container, Graphics, Sprite, filters as nativeFilters } from "pixi.js"
 import * as extraFilters from "pixi-filters"
 import { BRUSH, PARTICLES, PLANES } from './CollisionGroups';
 
-const filters = {
+const {  } = {
     ...nativeFilters,
     ...extraFilters
 }
