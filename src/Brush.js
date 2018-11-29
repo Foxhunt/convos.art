@@ -20,6 +20,7 @@ export default class Brush {
 
         this.fillStyle = fillStyle
         this.fillSprite = null
+        this.fillImageSrc = null
         this.strokeStyle = strokeStyle
 
         this.body = new p2.Body({
@@ -72,6 +73,7 @@ export default class Brush {
         }
         const image = new Image()
         image.src = src
+        this.fillImageSrc = src
 
         this.fillSprite = Sprite.from(image)
         this.fillSprite.anchor.set(0.5)
