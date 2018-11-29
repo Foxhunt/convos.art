@@ -42,6 +42,8 @@ class OptionsDrawer extends Component {
         super(props)
         autoBind(this)
 
+        this.recorder = null
+
         this.state = {
             shapeType: null,
             fillStyle: null,
@@ -67,6 +69,10 @@ class OptionsDrawer extends Component {
                 fillStyle: hexToHSL(this.props.canvas.ownBrush.fillStyle),
                 strokeStyle: hexToHSL(this.props.canvas.ownBrush.strokeStyle),
                 particleCollor: hexToHSL(this.props.canvas.particles.particleColor)
+            })
+            
+            import("../../../src/Recorder").then(({ default: Recorder }) => {
+                this.recorder = new Recorder(this.props.canvas.app.view)
             })
         }
     }
@@ -141,11 +147,22 @@ class OptionsDrawer extends Component {
                     Snapshot
                 </Button>
                 <Button
+                    onClick={this.record}>
+                    Record
+                </Button>
+                <Button
                     on={this.props.inFullScreen}
                     onClick={this.props.toggleFullScreen}>
                     FullScreen
                 </Button>
             </Container>
+    }
+
+    record(){
+        this.recorder.start(1000)
+        setTimeout(() => {
+            this.recorder.stop()
+        }, 30 * 1000)
     }
 
     setImage(event) {

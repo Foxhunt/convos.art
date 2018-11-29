@@ -5,7 +5,6 @@ import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
-import Recorder from "./Recorder"
 
 const {  } = {
     ...nativeFilters,
@@ -30,15 +29,6 @@ export default class Canvas {
         this.pixiContainer = pixiContainer
         this.width = 1920
         this.height = 1080
-
-        setTimeout(() => {
-            recorder.start(1000)
-            console.log("recording!")
-            setTimeout(() => {
-                recorder.stop()
-                console.log("stopped recording!")
-            }, 30 * 1000)
-        }, 1000)
 
         this.pixiContainer = pixiContainer
         this.width = 1920
