@@ -19,12 +19,14 @@ height: 100vh;
 `
 
 const PixiContainer = styled.div`
+    position: absolute;
+    overflow: hidden;
     background-color: #ffffff;
     width: 100vw;
     height: 56.25vw;
 
-    max-height: 100vh;
     max-width: 177.78vh;
+    max-height: 100vh;
 
     canvas {
         width: 100%;
