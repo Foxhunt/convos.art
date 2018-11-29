@@ -176,7 +176,7 @@ class OptionsDrawer extends Component {
 
 	captureCanvas() {
 		const imgURL = this.props.canvas.app.view.toDataURL('image/png')
-		download(imgURL, 'canvas', 'image/png')
+		download(imgURL, 'convos', 'image/png')
 	}
 
     toggleLoco() {

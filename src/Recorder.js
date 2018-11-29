@@ -23,7 +23,7 @@ export default class Recorder extends MediaRecorder {
     exportVideo(){
         const blob = new Blob(this.chunks, {type: "video/webm"})
         if(blob.size > 0){
-            download(blob, "Video.webm", "video/webm")
+            download(blob, "convos.webm", "video/webm")
         }
     }
 }
