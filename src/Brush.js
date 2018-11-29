@@ -18,10 +18,8 @@ export default class Brush {
         this.shape = null
         this.shapeType = null
 
-        this.fillImageSrc = null
-
         this.fillStyle = fillStyle
-        this.fillImage = fillImage
+        this.fillSprite = null
         this.strokeStyle = strokeStyle
 
         this.body = new p2.Body({
@@ -39,8 +37,6 @@ export default class Brush {
         this.graphic = new Graphics()
         this.container.addChild(this.graphic)
 
-        this.sprite = null
-
         this.Shape = Shape
         this.shape.collisionMask = 0x0000
         setTimeout(() => {
@@ -51,10 +47,9 @@ export default class Brush {
 
     set Fill(color){
         this.fillStyle = color
-        this.fillImage = null
-        if(this.sprite){
-            this.sprite.destroy(true)
-            this.sprite = null
+        if(this.fillSprite){
+            this.fillSprite.destroy(true)
+            this.fillSprite = null
             this.graphic.destroy(true)
             this.graphic = new Graphics()
             this.container.addChild(this.graphic)
@@ -72,21 +67,20 @@ export default class Brush {
     }
 
     set Image(src){
-        if(this.sprite){
-            this.sprite.destroy()
+        if(this.fillSprite){
+            this.fillSprite.destroy()
         }
-        this.fillImage = new Image()
-        this.fillImage.src = src
-        this.fillImageSrc = src
+        const image = new Image()
+        image.src = src
 
-        this.sprite = Sprite.from(this.fillImage)
-        this.sprite.anchor.set(0.5)
+        this.fillSprite = Sprite.from(image)
+        this.fillSprite.anchor.set(0.5)
 
-        this.sprite.texture.baseTexture.on("update", texture => this.setSpriteDimensions(texture))
+        this.fillSprite.texture.baseTexture.on("update", texture => this.setSpriteDimensions(texture))
 
-        this.sprite.mask = this.graphic
+        this.fillSprite.mask = this.graphic
 
-        this.container.addChild(this.sprite)
+        this.container.addChild(this.fillSprite)
 
         if (this.socket)
             this.socket.emit('setFillImage', src)
@@ -108,8 +102,8 @@ export default class Brush {
         this.body.addShape(this.shape)
         this.drawShape()
 
-        if (this.fillImage)
-            this.setSpriteDimensions(this.sprite.texture)
+        if (this.fillSprite)
+            this.setSpriteDimensions(this.fillSprite.texture)
         
         if (this.socket)
             this.socket.emit('setShapeType', shapeType)
@@ -117,8 +111,8 @@ export default class Brush {
 
     setSpriteDimensions(texture){
         const factor = this.graphic.height / texture.height
-        this.sprite.width =  texture.width * factor
-        this.sprite.height =  texture.height * factor
+        this.fillSprite.width =  texture.width * factor
+        this.fillSprite.height =  texture.height * factor
     }
 
     setCircleShape(radius){
