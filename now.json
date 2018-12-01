@@ -1,9 +1,6 @@
 {
-    "alias": "convos",
+    "alias": ["convos.art", "www.convos.art", "convos"],
     "version": 1,
-    "github": {
-      "enabled": false
-    },
     "scale": {
       "bru1": {
         "min": 1,
