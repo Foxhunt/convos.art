@@ -10,7 +10,6 @@ export default class Recorder extends MediaRecorder {
     handleData(event){
         if (event.data && event.data.size > 0){
             this.chunks.push(event.data)
-            console.log("data!")
         }
     }
 

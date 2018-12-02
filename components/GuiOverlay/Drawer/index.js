@@ -13,6 +13,7 @@ import {
     setFillStyle,
     setFillImage,
     setParticleColor,
+    toggleRecording,
     toggleParticles } from "../../../store/actions"
 
 import { HuePicker } from "react-color"
@@ -147,6 +148,7 @@ class OptionsDrawer extends Component {
                     Snapshot
                 </Button>
                 <Button
+                    on={this.props.recording}
                     onClick={this.record}>
                     Record
                 </Button>
@@ -159,10 +161,12 @@ class OptionsDrawer extends Component {
     }
 
     record(){
-        this.recorder.start(1000)
-        setTimeout(() => {
+        this.props.toggleRecording()
+        if(!this.props.recording){
+            this.recorder.start(100)
+        }else{
             this.recorder.stop()
-        }, 30 * 1000)
+        }
     }
 
     setImage(event) {
@@ -229,7 +233,8 @@ const mapStateToProps = state => ({
     strokeStyle: state.strokeStyle,
     fillStyle: state.fillStyle,
     particles: state.particles,
-    particleColor: state.particleColor
+    particleColor: state.particleColor,
+    recording: state.recording
 })
 
 const mapDispatchToProps = {
@@ -241,7 +246,8 @@ const mapDispatchToProps = {
     setFillStyle,
     setFillImage,
     setParticleColor,
-    toggleParticles
+    toggleParticles,
+    toggleRecording
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OptionsDrawer)

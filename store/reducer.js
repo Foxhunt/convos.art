@@ -108,6 +108,15 @@ const particles = (state = true, action) => {
     }
 }
 
+const recording = (state = false, action) => {
+    switch(action.type){
+        case actionTypes.TOGGLE_RECORDING:
+            return !state
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     showGui,
     showDrawer,
@@ -119,5 +128,6 @@ export default combineReducers({
     fillStyle,
     fillImage,
     particleColor,
-    particles
+    particles,
+    recording
 })
