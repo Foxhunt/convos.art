@@ -18,6 +18,8 @@ export default class Brush {
         this.shape = null
         this.shapeType = null
 
+        this.fillImageSrc = null
+
         this.fillStyle = fillStyle
         this.fillSprite = null
         this.fillImageSrc = null

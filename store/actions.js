@@ -61,3 +61,7 @@ export const setParticleColor = color => ({
 export const toggleParticles = () => ({
     type: actionTypes.TOGGLE_PARTICLES
 })
+
+export const toggleRecording = () => ({
+    type: actionTypes.TOGGLE_RECORDING
+})

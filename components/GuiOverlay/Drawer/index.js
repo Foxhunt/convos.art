@@ -13,6 +13,7 @@ import {
     setFillStyle,
     setFillImage,
     setParticleColor,
+    toggleRecording,
     toggleParticles } from "../../../store/actions"
 
 import { HuePicker } from "react-color"
@@ -42,6 +43,8 @@ class OptionsDrawer extends Component {
         super(props)
         autoBind(this)
 
+        this.recorder = null
+
         this.state = {
             shapeType: null,
             fillStyle: null,
@@ -67,6 +70,10 @@ class OptionsDrawer extends Component {
                 fillStyle: hexToHSL(this.props.canvas.ownBrush.fillStyle),
                 strokeStyle: hexToHSL(this.props.canvas.ownBrush.strokeStyle),
                 particleCollor: hexToHSL(this.props.canvas.particles.particleColor)
+            })
+            
+            import("../../../src/Recorder").then(({ default: Recorder }) => {
+                this.recorder = new Recorder(this.props.canvas.app.view)
             })
         }
     }
@@ -141,11 +148,25 @@ class OptionsDrawer extends Component {
                     Snapshot
                 </Button>
                 <Button
+                    on={this.props.recording}
+                    onClick={this.record}>
+                    Record
+                </Button>
+                <Button
                     on={this.props.inFullScreen}
                     onClick={this.props.toggleFullScreen}>
                     FullScreen
                 </Button>
             </Container>
+    }
+
+    record(){
+        this.props.toggleRecording()
+        if(!this.props.recording){
+            this.recorder.start(100)
+        }else{
+            this.recorder.stop()
+        }
     }
 
     setImage(event) {
@@ -159,7 +180,7 @@ class OptionsDrawer extends Component {
 
 	captureCanvas() {
 		const imgURL = this.props.canvas.app.view.toDataURL('image/png')
-		download(imgURL, 'canvas', 'image/png')
+		download(imgURL, 'convos', 'image/png')
 	}
 
     toggleLoco() {
@@ -212,7 +233,8 @@ const mapStateToProps = state => ({
     strokeStyle: state.strokeStyle,
     fillStyle: state.fillStyle,
     particles: state.particles,
-    particleColor: state.particleColor
+    particleColor: state.particleColor,
+    recording: state.recording
 })
 
 const mapDispatchToProps = {
@@ -224,7 +246,8 @@ const mapDispatchToProps = {
     setFillStyle,
     setFillImage,
     setParticleColor,
-    toggleParticles
+    toggleParticles,
+    toggleRecording
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OptionsDrawer)
