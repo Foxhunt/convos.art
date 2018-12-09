@@ -1,4 +1,4 @@
-import p2 from 'p2'
+import { Body, Particle, vec2 } from 'p2'
 import { particles, Graphics, Sprite, BaseTexture } from "pixi.js"
 const { ParticleContainer } = particles
 
@@ -10,8 +10,11 @@ export default class Particles {
         this.world = canvas.world
         this.particles = []
         this.particleColor = "#ff00aa"
-        this.maxParticles = 250
+        this.maxParticles = 1000
+        this.maxAge = 5000
         this.enabled = true
+
+        this.pointerPosition = null
 
         this.graphic = new Graphics()
             .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
@@ -33,11 +36,14 @@ export default class Particles {
     }
 
     render() {
+        this.pointerPosition && this.applyForce(this.pointerPosition)
         this.enabled && this.findContacts()
         for (const particle of this.particles) {
             if (this.isInBounds(particle)) {
                 this.drawParticle(particle)
-            } else {
+            } 
+
+            if (Date.now() - particle.spawnTime > this.maxAge) {
                 const index = this.particles.indexOf(particle)
                 this.particles.splice(index, 1)
                 this.world.removeBody(particle)
@@ -45,6 +51,20 @@ export default class Particles {
                 particle.sprite.destroy()
             }
         }
+    }
+
+    applyForce(position){
+        this.particles.forEach(particle => {
+            const direction = []
+            vec2.sub(direction, position, particle.position)
+            vec2.normalize(direction, direction)
+
+            const impulse = 300
+
+            vec2.mul(direction, direction, [impulse, impulse])
+
+            particle.applyImpulse(direction)
+        })
     }
 
     isInBounds(particle) {
@@ -73,8 +93,8 @@ export default class Particles {
 
     spawn(x, y) {
         const rng = 2 * Math.PI * Math.random()
-        const pShape = new p2.Particle({ radius: 3 })
-        const pBody = new p2.Body({
+        const pShape = new Particle({ radius: 3 })
+        const pBody = new Body({
             mass: 50,
             position: [x, y],
             velocity: [
@@ -94,6 +114,7 @@ export default class Particles {
         particleSprite.y = y
 
         pBody.sprite = particleSprite
+        pBody.spawnTime = Date.now()
 
         this.particles.push(pBody)
         this.particleContainer.addChild(particleSprite)

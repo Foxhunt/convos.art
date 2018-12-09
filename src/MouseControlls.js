@@ -7,10 +7,14 @@ export default class MouseControlls {
         this.height = canvas.height
         this.pixiContainer = canvas.pixiContainer
 
+        this.particles = canvas.particles
+
         this.ownBrush = null
 
         this.mouseConstraint = null
         this.mouseBody = null
+
+        this.down = false
 
         this.addMouseControlls()
     }
@@ -38,11 +42,12 @@ export default class MouseControlls {
 
     //event handler für User Interaktion
     coursorDown(event) {
+        this.down = true
         // Convert the canvas coordinate to physics coordinates
-        var position = this.getPhysicsCoord(event)
+        const position = this.getPhysicsCoord(event)
 
         // Check if the cursor is inside the box
-        var hitBodies = this.world.hitTest(position, [this.ownBrush.body])
+        const hitBodies = this.world.hitTest(position, [this.ownBrush.body])
 
         if (hitBodies.length) {
             // Move the mouse body to the cursor position
@@ -56,36 +61,51 @@ export default class MouseControlls {
                 collideConnected: false
             });
             this.world.addConstraint(this.mouseConstraint)
+        } else {
+            this.particles.pointerPosition = position
         }
     }
 
     coursorMove(event) {
-        var position = this.getPhysicsCoord(event)
+        const position = this.getPhysicsCoord(event)
         this.mouseBody.position[0] = position[0]
         this.mouseBody.position[1] = position[1]
+
+        if(this.mouseConstraint || !this.down) {
+            this.particles.pointerPosition = null
+        } else {
+            this.particles.pointerPosition = position
+        }
     }
 
-    coursorUp(event) {
+    coursorUp() {
+        this.down = false
         this.world.removeConstraint(this.mouseConstraint)
         this.mouseConstraint = null
+        this.particles.pointerPosition = null
     }
 
-    mouseLeave(event) {
+    mouseLeave() {
+        this.down = false
         this.world.removeConstraint(this.mouseConstraint)
         this.mouseConstraint = null
+        this.particles.pointerPosition = null
     }
 
     // Convert a canvas coordiante to physics coordinate
     getPhysicsCoord(Event) {
         Event.preventDefault()
-        var rect = this.pixiContainer.getBoundingClientRect()
+        const rect = this.pixiContainer.getBoundingClientRect()
+
+        let x;
+        let y;
 
         if (Event.touches) {
-            var x = Event.touches[0].clientX - rect.left
-            var y = Event.touches[0].clientY - rect.top
+            x = Event.touches[0].clientX - rect.left
+            y = Event.touches[0].clientY - rect.top
         } else {
-            var x = Event.clientX - rect.left
-            var y = Event.clientY - rect.top
+            x = Event.clientX - rect.left
+            y = Event.clientY - rect.top
         }
         x = (x - rect.width / 2) * (this.width / rect.width)
         y = (y - rect.height / 2) * -(this.height / rect.height)
