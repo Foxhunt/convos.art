@@ -6,7 +6,7 @@
     "version": 1,
     "scale": {
       "bru1": {
-        "min": 1,
+        "min": 0,
         "max": 1
       },
       "sfo1": {
