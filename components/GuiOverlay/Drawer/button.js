@@ -12,12 +12,6 @@ export default styled.div`
 
 	background-color: ${({on}) => on ? "#00dc00" : "#e80000" };
 
-	:visited, :link, :hover, :active {
-		cursor: auto; 
-		text-decoration: none;
-		color: #000;
-	}
-
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

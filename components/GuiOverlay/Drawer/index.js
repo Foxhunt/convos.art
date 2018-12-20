@@ -20,6 +20,7 @@ import { HuePicker } from "react-color"
 
 import ImgaeUpload from "./imageUpload"
 import Button from "./button"
+import ShapeSelection from "./shapeSelection"
 import { hslToHex, hexToHSL } from "./colorFunctions"
 
 const Container = styled.div`
@@ -33,7 +34,14 @@ const Container = styled.div`
 	width: 20%;
 	height: 100%;
 
-	background-color: #03A9F4;
+	background-color: #232323;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 0.7em;
+
+    color: #FFFFFF;
 
     transition: left 0.4s ease-out;
 `
@@ -71,10 +79,13 @@ class OptionsDrawer extends Component {
                 strokeStyle: hexToHSL(this.props.canvas.ownBrush.strokeStyle),
                 particleCollor: hexToHSL(this.props.canvas.particles.particleColor)
             })
+
+            if(typeof MediaRecorder !== 'undefined'){
+                import("../../../src/Recorder").then(({ default: Recorder }) => {
+                    this.recorder = new Recorder(this.props.canvas.app.view)
+                })
+            }
             
-            import("../../../src/Recorder").then(({ default: Recorder }) => {
-                this.recorder = new Recorder(this.props.canvas.app.view)
-            })
         }
     }
 
@@ -82,21 +93,9 @@ class OptionsDrawer extends Component {
         return this.canvasConnected &&
             <Container
                 show={this.props.showDrawer}>
-                <Button
-                    on={this.props.shapeType === "CIRCLE"}
-                    onClick={() => this.props.setShapeType("CIRCLE")}>
-                    Circle
-                </Button>
-                <Button
-                    on={this.props.shapeType === "BOX"}
-                    onClick={() => this.props.setShapeType("BOX")}>
-                    Box
-                </Button>
-                <Button
-                    on={this.props.shapeType === "SQUARE"}
-                    onClick={() => this.props.setShapeType("SQUARE")}>
-                    Square
-                </Button>
+                <ShapeSelection
+                    shapeType={this.props.shapeType}
+                    setShapeType={this.props.setShapeType} />
                 Fill
                 <ImgaeUpload
                     onChange={this.setImage} >
