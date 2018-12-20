@@ -42,7 +42,7 @@ export default class Canvas {
         this.environment = new Environment(this)
         this.mouseControlls = new MouseControlls(this)
 
-        if (window.screen.orientation.type == "landscape-primary") {
+        if (window.matchMedia("(orientation: landscape)").matches) {
             this.world.gravity = [0, -90]
         } else {
             this.world.gravity = [0, 0]
