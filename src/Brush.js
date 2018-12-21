@@ -135,6 +135,15 @@ export default class Brush {
     }
 
     render(){
+
+        if(Math.abs(this.body.position[0]) > this.pixiApp.view.width/2 + 100){
+            this.body.position[0] = -this.body.position[0]
+        }
+
+        if(Math.abs(this.body.position[1]) > this.pixiApp.view.height/2 + 100){
+            this.body.position[1] = -this.body.position[1]
+        }
+
         this.container.position.x = this.body.interpolatedPosition[0]
         this.container.position.y = this.body.interpolatedPosition[1]
         this.container.rotation = this.body.angle
