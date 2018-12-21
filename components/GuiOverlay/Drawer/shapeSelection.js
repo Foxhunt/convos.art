@@ -16,7 +16,7 @@ const Container = styled.div`
 const shapeStyle = css`
     height: 44%;
 
-    fill: ${({on})=> on === "true" ? "#ffffff" : "#C4C4C4"};
+    fill: ${({on})=> on === "true" ? "#FF8B8B" : "#C4C4C4"};
 `
 
 export default ({shapeType, setShapeType}) =>
