@@ -18,9 +18,9 @@ import {
 
 import { HuePicker } from "react-color"
 
-import ImgaeUpload from "./imageUpload"
 import Button from "./button"
 import ShapeSelection from "./shapeSelection"
+import ShapeConfiguration from "./shapeConfiguration"
 import { hslToHex, hexToHSL } from "./colorFunctions"
 
 const Container = styled.div`
@@ -96,28 +96,7 @@ class OptionsDrawer extends Component {
                 <ShapeSelection
                     shapeType={this.props.shapeType}
                     setShapeType={this.props.setShapeType} />
-                Fill
-                <ImgaeUpload
-                    onChange={this.setImage} >
-                    File
-                </ImgaeUpload>
-                <HuePicker
-                    width={"100%"}
-                    color={this.props.fillStyle}
-                    onChange={
-                        ({hsl}) => {
-                            this.props.setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
-                        }
-                    } />
-                Stroke
-                <HuePicker
-                    width={"100%"}
-                    color={this.props.strokeStyle}
-                    onChange={
-                        ({hsl}) => {
-                            this.props.setStrokeStyle(hslToHex(hsl.h, hsl.s, hsl.l))
-                        }
-                    } />
+                <ShapeConfiguration />
                 Particles
                 <HuePicker
                     width={"100%"}
@@ -166,15 +145,6 @@ class OptionsDrawer extends Component {
         }else{
             this.recorder.stop()
         }
-    }
-
-    setImage(event) {
-        const file = event.currentTarget.files[0]
-        const reader = new FileReader()
-        reader.onload = () => {
-            this.props.setFillImage(reader.result)
-        }
-        reader.readAsDataURL(file)
     }
 
 	captureCanvas() {
@@ -229,8 +199,6 @@ const mapStateToProps = state => ({
     clickable: state.showGui,
     inFullScreen: state.inFullScreen,
     shapeType: state.shapeType,
-    strokeStyle: state.strokeStyle,
-    fillStyle: state.fillStyle,
     particles: state.particles,
     particleColor: state.particleColor,
     recording: state.recording
