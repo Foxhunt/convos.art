@@ -28,6 +28,14 @@ export const toggleFullScreen = () => {
     return { type: actionTypes.TOGGLE_FULLSCREEN }
 }
 
+export const toggleStrokeConfig = () => ({
+    type: actionTypes.TOGGLE_STROKE_CONFIG
+})
+
+export const toggleFillConfig = () => ({
+    type: actionTypes.TOGGLE_FILL_CONFIG
+})
+
 export const setCanvas = canvas => ({
     type: actionTypes.SET_CANVAS,
     canvas
