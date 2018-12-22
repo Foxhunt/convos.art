@@ -3,10 +3,13 @@ import autoBind from "react-autobind"
 import styled, { css } from "styled-components"
 
 import { connect } from "react-redux"
-import { 
+import {
     setStrokeStyle,
     setFillStyle,
-    setFillImage } from "../../../store/actions"
+    setFillImage,
+    toggleFillConfig,
+    toggleStrokeConfig
+} from "../../../store/actions"
 
 import { HuePicker } from "react-color"
 import { hslToHex } from "./colorFunctions"
@@ -38,15 +41,25 @@ const FillConfig = styled(StrokeConfig)`
     border-left: 1px solid #FFFFFF;
 `
 
-const ShapeCSS = css`
+const EllipseStroke = styled(EllipseStrokeSVG).attrs(({stroke})=>({
+    stroke: stroke
+}))`
     height: 57%;
     width: 43%;
+    stroke-width: 10;
 `
+
+const EllipseFill = styled(EllipseFillSVG).attrs(({fill})=>({
+    fill: fill
+}))`
+    height: 57%;
+    width: 43%;
+` 
 
 const ArrowCSS = css`
     height: 8%;
 
-    transform: scale(${({active})=>active ? "-1" : "1"});
+    transform: scale(${({active})=> active === "true" ? "1" : "-1"});
 `
 
 const Config = styled.div`
@@ -60,32 +73,45 @@ class ShapeConfiguration extends Component {
     }
 
     render(){
+
+        const color = this.props.showFillConfig ? this.props.fillStyle : this.props.strokeStyle
+        const onColorChange = this.props.showFillConfig ? this.setFillStyle : this.setStrokeStyle
+
         return <>
             <Description>
-                <StrokeConfig>
-                    <EllipseStrokeSVG
-                        css={ShapeCSS} />
+                <StrokeConfig
+                    onClick={this.props.toggleStrokeConfig}>
+                    <EllipseStroke
+                        stroke={this.props.strokeStyle}/>
                     <ArrowSVG
-                        active
+                        active={this.props.showStrokeConfig.toString()}
                         css={ArrowCSS} />
                 </StrokeConfig>
-                <FillConfig>
-                    <EllipseFillSVG
-                        css={ShapeCSS} />
+                <FillConfig
+                    onClick={this.props.toggleFillConfig}>
+                    <EllipseFill
+                        fill={this.props.fillStyle}/>
                     <ArrowSVG
-                        active
+                        active={this.props.showFillConfig.toString()}
                         css={ArrowCSS} />
                 </FillConfig>
             </Description>
             <Config>
-                <HuePicker 
-                    width={"100%"}
-                    color={this.props.fillStyle}
-                    onChange={this.setFillStyle} />
-                <ImgaeUpload 
-                    onChange={this.setFillImage}>
-                Image
-                </ImgaeUpload>
+                {
+                    this.props.showFillConfig &&
+                    <ImgaeUpload
+                        onChange={this.setFillImage}>
+                        Image
+                    </ImgaeUpload>
+                }
+                {
+                    (this.props.showStrokeConfig || this.props.showFillConfig) &&
+                    <HuePicker
+                        color={color}
+                        onChange={onColorChange}
+                        disableAlpha
+                        width="100%" />
+                }
             </Config>
         </>
     }
@@ -110,13 +136,17 @@ class ShapeConfiguration extends Component {
 
 const mapStateToProps = state => ({
     fillStyle: state.fillStyle,
-    strokeStyle: state.strokeStyle
+    strokeStyle: state.strokeStyle,
+    showFillConfig: state.showFillConfig,
+    showStrokeConfig: state.showStrokeConfig
 })
 
 const mapDispatchToProps = {
     setStrokeStyle,
     setFillStyle,
-    setFillImage
+    setFillImage,
+    toggleFillConfig,
+    toggleStrokeConfig
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShapeConfiguration)
