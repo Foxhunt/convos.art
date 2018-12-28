@@ -1,8 +1,8 @@
 import { Body, Particle, vec2 } from 'p2'
-import { particles, Graphics, Sprite, BaseTexture } from "pixi.js"
+import { particles, Graphics, Sprite } from "pixi.js"
 const { ParticleContainer } = particles
 
-import { BRUSH, PLANES, PARTICLES } from './CollisionGroups'
+import { BRUSH, PARTICLES } from './CollisionGroups'
 
 export default class Particles {
     constructor(canvas) {
