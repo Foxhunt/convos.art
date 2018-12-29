@@ -11,6 +11,8 @@ const {  } = {
     ...extraFilters
 }
 
+import AlphaFilter from "./AlphaFilter"
+
 export default class Canvas {
     constructor(pixiContainer) {
         this.app = new Application({
@@ -24,7 +26,7 @@ export default class Canvas {
             roundPixels: true
         })
 
-        this.app.stage.filters = []
+        this.app.stage.filters = [new AlphaFilter(0.02)]
 
         this.pixiContainer = pixiContainer
         this.width = 1920
