@@ -36,6 +36,10 @@ export const toggleFillConfig = () => ({
     type: actionTypes.TOGGLE_FILL_CONFIG
 })
 
+export const toggleParticleConfig = () => ({
+    type: actionTypes.TOGGLE_PARTICLE_CONFIG
+})
+
 export const setCanvas = canvas => ({
     type: actionTypes.SET_CANVAS,
     canvas

@@ -1,6 +1,5 @@
 import { combineReducers } from "redux"
 import * as actionTypes from "./actionTypes"
-import { stat } from "fs";
 
 const showGui = (state = true, action) => {
     switch (action.type) {
@@ -52,6 +51,15 @@ const showStrokeConfig = (state = false, action) => {
             return !state
         case actionTypes.TOGGLE_FILL_CONFIG:
             return false
+        default:
+            return state
+    }
+}
+
+const showParticleConfig = (state = false, action) => {
+    switch (action.type) {
+        case actionTypes.TOGGLE_PARTICLE_CONFIG:
+            return !state
         default:
             return state
     }
@@ -147,6 +155,7 @@ export default combineReducers({
     showWebcam,
     showFillConfig,
     showStrokeConfig,
+    showParticleConfig,
     inFullScreen,
     shapeType,
     strokeStyle,

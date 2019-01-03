@@ -21,6 +21,7 @@ import { HuePicker } from "react-color"
 import Button from "./button"
 import ShapeSelection from "./shapeSelection"
 import ShapeConfiguration from "./shapeConfiguration"
+import ParticleConfiguration from "./particleConfiguration"
 import { hslToHex, hexToHSL } from "./colorFunctions"
 
 const Container = styled.div`
@@ -97,15 +98,7 @@ class OptionsDrawer extends Component {
                     shapeType={this.props.shapeType}
                     setShapeType={this.props.setShapeType} />
                 <ShapeConfiguration />
-                Particles
-                <HuePicker
-                    width={"100%"}
-                    color={this.props.particleColor}
-                    onChange={
-                        ({hsl}) => {
-                            this.props.setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))
-                        }
-                    } />
+                <ParticleConfiguration />
                 <Button
                     on={this.props.particles}
                     onClick={this.props.toggleParticles}>
@@ -200,7 +193,6 @@ const mapStateToProps = state => ({
     inFullScreen: state.inFullScreen,
     shapeType: state.shapeType,
     particles: state.particles,
-    particleColor: state.particleColor,
     recording: state.recording
 })
 
@@ -212,7 +204,6 @@ const mapDispatchToProps = {
     setStrokeStyle,
     setFillStyle,
     setFillImage,
-    setParticleColor,
     toggleParticles,
     toggleRecording
 }
