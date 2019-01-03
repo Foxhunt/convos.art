@@ -11,8 +11,8 @@ import {
     toggleStrokeConfig
 } from "../../../store/actions"
 
-import { HuePicker } from "react-color"
 import { hslToHex } from "./colorFunctions"
+import ColorPicker from "./colorPicker"
 
 import EllipseStrokeSVG from "../../../static/Ellipse_stroke.svg"
 import EllipseFillSVG from "../../../static/Ellipse_fill.svg"
@@ -62,10 +62,6 @@ const ArrowCSS = css`
     transform: scale(${({active})=> active === "true" ? "1" : "-1"});
 `
 
-const Config = styled.div`
-
-`
-
 class ShapeConfiguration extends Component {
     constructor(props) {
         super(props)
@@ -96,7 +92,13 @@ class ShapeConfiguration extends Component {
                         css={ArrowCSS} />
                 </FillConfig>
             </Description>
-            <Config>
+            <>
+                {
+                    (this.props.showStrokeConfig || this.props.showFillConfig) &&
+                    <ColorPicker
+                        color={color}
+                        onChange={onColorChange}/>
+                }
                 {
                     this.props.showFillConfig &&
                     <ImgaeUpload
@@ -104,15 +106,7 @@ class ShapeConfiguration extends Component {
                         Image
                     </ImgaeUpload>
                 }
-                {
-                    (this.props.showStrokeConfig || this.props.showFillConfig) &&
-                    <HuePicker
-                        color={color}
-                        onChange={onColorChange}
-                        disableAlpha
-                        width="100%" />
-                }
-            </Config>
+            </>
         </>
     }
 
