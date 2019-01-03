@@ -28,6 +28,10 @@ const Description = styled.div`
     border-bottom: 1px solid #FFFFFF;
 `
 
+const Config = styled.div`
+    border-bottom: 1px solid #FFFFFF;
+`
+
 const StrokeConfig = styled.div`
     width: 50%;
     height: 100%;
@@ -92,21 +96,20 @@ class ShapeConfiguration extends Component {
                         css={ArrowCSS} />
                 </FillConfig>
             </Description>
-            <>
-                {
-                    (this.props.showStrokeConfig || this.props.showFillConfig) &&
-                    <ColorPicker
-                        color={color}
-                        onChange={onColorChange}/>
-                }
-                {
-                    this.props.showFillConfig &&
-                    <ImgaeUpload
-                        onChange={this.setFillImage}>
-                        Image
-                    </ImgaeUpload>
-                }
-            </>
+            { (this.props.showStrokeConfig || this.props.showFillConfig) &&
+                <Config>
+                        <ColorPicker
+                            color={color}
+                            onChange={onColorChange}/>
+                    {
+                        this.props.showFillConfig &&
+                        <ImgaeUpload
+                            onChange={this.setFillImage}>
+                            Image
+                        </ImgaeUpload>
+                    }
+                </Config>
+            }
         </>
     }
 
