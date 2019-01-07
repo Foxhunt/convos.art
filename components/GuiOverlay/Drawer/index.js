@@ -6,17 +6,13 @@ import download from 'downloadjs'
 import { connect } from "react-redux"
 import { 
     toggleDrawer,
-    toggleWebcam,
     toggleFullScreen,
     setShapeType,
     setStrokeStyle,
     setFillStyle,
     setFillImage,
-    setParticleColor,
     toggleRecording,
     toggleParticles } from "../../../store/actions"
-
-import { HuePicker } from "react-color"
 
 import Button from "./button"
 import ShapeSelection from "./shapeSelection"
@@ -110,11 +106,6 @@ class OptionsDrawer extends Component {
                     Loco
                 </Button>
                 <Button
-                    on={this.props.showWebcam}
-                    onClick={this.props.toggleWebcam}>
-                    Webcam
-                </Button>
-                <Button
                     onClick={this.captureCanvas}>
                     Snapshot
                 </Button>
@@ -186,7 +177,6 @@ class OptionsDrawer extends Component {
 }
 
 const mapStateToProps = state => ({
-    showWebcam: state.showWebcam,
     showDrawer: state.showDrawer,
     canvas: state.canvas,
     clickable: state.showGui,
@@ -198,7 +188,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
 	toggleDrawer,
-    toggleWebcam,
     toggleFullScreen,
     setShapeType,
     setStrokeStyle,

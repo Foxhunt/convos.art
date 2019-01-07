@@ -4,7 +4,7 @@ import styled from "styled-components"
 import { Saturation, Hue } from 'react-color/lib/components/common'
 
 const Container = styled.div`
-  height: 7vw;
+  height: 4vw;
 `
 
 const SaturationDiv = styled.div`
@@ -19,7 +19,7 @@ const HueDiv = styled.div`
 `
 
 const HuePointer = styled.div`
-  height: 1.05vw;
+  height: 0.55vw;
   width: 0.5vw;
   background: white;
   transform: translate(-50%);

@@ -8,7 +8,8 @@ import {
     setFillStyle,
     setFillImage,
     toggleFillConfig,
-    toggleStrokeConfig
+    toggleStrokeConfig,
+    toggleWebcam
 } from "../../../store/actions"
 
 import { hslToHex } from "./colorFunctions"
@@ -19,16 +20,13 @@ import EllipseFillSVG from "../../../static/Ellipse_fill.svg"
 import ArrowSVG from "../../../static/arrow.svg"
 
 import ImgaeUpload from "./imageUpload"
+import Button from "./button"
 
 const Description = styled.div`
     height: 13%;
 
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #FFFFFF;
-`
-
-const Config = styled.div`
     border-bottom: 1px solid #FFFFFF;
 `
 
@@ -97,18 +95,24 @@ class ShapeConfiguration extends Component {
                 </FillConfig>
             </Description>
             { (this.props.showStrokeConfig || this.props.showFillConfig) &&
-                <Config>
                         <ColorPicker
                             color={color}
                             onChange={onColorChange}/>
-                    {
-                        this.props.showFillConfig &&
-                        <ImgaeUpload
-                            onChange={this.setFillImage}>
-                            Image
-                        </ImgaeUpload>
-                    }
-                </Config>
+            }
+            {
+                this.props.showFillConfig &&
+                <>
+                    <ImgaeUpload
+                        onChange={this.setFillImage}>
+                        Image
+                    </ImgaeUpload>
+                    <Button
+                        backgroundColor={"#C4C4C4"}
+                        on={this.props.showWebcam}
+                        onClick={this.props.toggleWebcam}>
+                        Webcam
+                    </Button>
+                </>
             }
         </>
     }
@@ -135,7 +139,8 @@ const mapStateToProps = state => ({
     fillStyle: state.fillStyle,
     strokeStyle: state.strokeStyle,
     showFillConfig: state.showFillConfig,
-    showStrokeConfig: state.showStrokeConfig
+    showStrokeConfig: state.showStrokeConfig,
+    showWebcam: state.showWebcam
 })
 
 const mapDispatchToProps = {
@@ -143,7 +148,8 @@ const mapDispatchToProps = {
     setFillStyle,
     setFillImage,
     toggleFillConfig,
-    toggleStrokeConfig
+    toggleStrokeConfig,
+    toggleWebcam
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShapeConfiguration)

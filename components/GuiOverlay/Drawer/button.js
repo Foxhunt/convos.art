@@ -1,18 +1,38 @@
 import styled from "styled-components"
 
-export default styled.div`
-	display: block;
-	
+const Button = styled.div`
 	width: 100%;
 	height: 5%;
+
+	padding-left: 8%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 
-	background-color: ${({on}) => on ? "#00dc00" : "#e80000" };
+	background-color: ${({on, backgroundColor}) => on ? "#FF8B8B" : backgroundColor };
+`
 
+const Text = styled.div`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	${({isSubButon}) => isSubButon ? "color: #232323;" : ""}
 `
+
+export default ({on, onClick, children, backgroundColor = "#232323"}) => (
+	<Button
+		backgroundColor={ backgroundColor }
+		on={ on }
+		onClick={ onClick }>
+		<Text
+			isSubButon={ backgroundColor !== "#232323" }>
+			{ children }
+		</Text>
+	</Button>
+)
