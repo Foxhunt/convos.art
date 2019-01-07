@@ -15,6 +15,7 @@ export default class MyDocument extends Document {
         <Head>
           <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no, minimal-ui" key="viewport" />
           <meta name="theme-color" content="orange" />
+          <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" />
           {this.props.styleTags}
         </Head>
         <body>
