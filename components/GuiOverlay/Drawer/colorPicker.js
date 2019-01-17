@@ -5,6 +5,8 @@ import { Saturation, Hue } from 'react-color/lib/components/common'
 
 const Container = styled.div`
   height: 4vw;
+  
+	border-bottom: 1px solid #ffffff;
 `
 
 const SaturationDiv = styled.div`

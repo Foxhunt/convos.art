@@ -12,6 +12,8 @@ import {
 import { hslToHex } from "./colorFunctions"
 import ColorPicker from "./colorPicker"
 
+import Button from "./button"
+
 import ArrowSVG from "../../../static/arrow.svg"
 
 const Description = styled.div`
@@ -20,10 +22,6 @@ const Description = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #FFFFFF;
-`
-
-const Config = styled.div`
     border-bottom: 1px solid #FFFFFF;
 `
 
@@ -53,11 +51,16 @@ class ShapeConfiguration extends Component {
                         css={ArrowCSS} />
             </Description>
             { this.props.showParticleConfig &&
-                <Config>
-                        <ColorPicker
-                            color={this.props.particleColor}
-                            onChange={this.setParticleColor}/>
-                </Config>
+                <>
+                    <ColorPicker
+                        color={this.props.particleColor}
+                        onChange={this.setParticleColor}/>
+                    <Button
+                        on={this.props.particles}
+                        onClick={this.props.toggleParticles}>
+                        Particles
+                    </Button>
+                </>
             }
         </>
     }

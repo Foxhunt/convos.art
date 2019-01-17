@@ -7,20 +7,16 @@ const Input = styled.input`
 `
 
 const Label = styled.label`
+    width: 100%;
+    height: 5%;
+    
+    padding-left: 8%;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    width: 100%;
-    height: 100%;
-
-    padding-left: 8%;
-	width: 100%;
-	height: 5%;
-
-	border-bottom: 1px solid #000000;
-	border-left: 1px solid #000000;
-	border-right: 1px solid #000000;
+	border-bottom: 1px solid #ffffff;
 
 	background-color: #C4C4C4;
 `

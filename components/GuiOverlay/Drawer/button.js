@@ -10,9 +10,7 @@ const Button = styled.div`
     justify-content: space-between;
     align-items: center;
 
-	border-bottom: 1px solid #000000;
-	border-left: 1px solid #000000;
-	border-right: 1px solid #000000;
+	border-bottom: 1px solid #ffffff;
 
 	background-color: ${({on, backgroundColor}) => on ? "#FF8B8B" : backgroundColor };
 `
