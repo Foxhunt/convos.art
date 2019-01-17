@@ -23,7 +23,7 @@ const Text = styled.div`
 	${({isSubButon}) => isSubButon ? "color: #232323;" : ""}
 `
 
-export default ({on, onClick, children, backgroundColor = "#232323"}) => (
+export default ({on, onClick, children, backgroundColor = "#232323"}) =>
 	<Button
 		backgroundColor={ backgroundColor }
 		on={ on }
@@ -33,4 +33,3 @@ export default ({on, onClick, children, backgroundColor = "#232323"}) => (
 			{ children }
 		</Text>
 	</Button>
-)

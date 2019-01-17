@@ -1,5 +1,4 @@
-import React, { Component } from "react"
-import autoBind from "react-autobind"
+import React from "react"
 import styled, { css } from "styled-components"
 
 import { connect } from "react-redux"
@@ -35,40 +34,35 @@ const ArrowCSS = css`
     transform: scale(${({active})=> active === "true" ? "1" : "-1"});
 `
 
-class ShapeConfiguration extends Component {
-    constructor(props) {
-        super(props)
-        autoBind(this)
-    }
-
-    render(){
-        return <>
-            <Description
-              onClick={this.props.toggleParticleConfig} >
-              <Text>Particles</Text>
-              <ArrowSVG
-                        active={this.props.showParticleConfig.toString()}
-                        css={ArrowCSS} />
-            </Description>
-            { this.props.showParticleConfig &&
-                <>
-                    <ColorPicker
-                        color={this.props.particleColor}
-                        onChange={this.setParticleColor}/>
-                    <Button
-                        on={this.props.particles}
-                        onClick={this.props.toggleParticles}>
-                        Particles
-                    </Button>
-                </>
-            }
-        </>
-    }
-    
-    setParticleColor({hsl}) {
-            this.props.setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))
-    }
-}
+const ShapeConfiguration = ({
+    particles,
+    particleColor,
+    showParticleConfig,
+    setParticleColor,
+    toggleParticles,
+    toggleParticleConfig
+}) =>
+    <>
+        <Description
+        onClick={toggleParticleConfig} >
+        <Text>Particles</Text>
+        <ArrowSVG
+                    active={showParticleConfig.toString()}
+                    css={ArrowCSS} />
+        </Description>
+        { showParticleConfig &&
+            <>
+                <ColorPicker
+                    color={particleColor}
+                    onChange={({hsl}) => setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))}/>
+                <Button
+                    on={particles}
+                    onClick={toggleParticles}>
+                    Particles
+                </Button>
+            </>
+        }
+    </>
 
 const mapStateToProps = state => ({
   particles: state.particles,
