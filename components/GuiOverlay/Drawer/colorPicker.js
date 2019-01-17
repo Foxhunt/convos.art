@@ -1,4 +1,3 @@
-import { Component } from 'react'
 import { CustomPicker } from 'react-color'
 import styled from "styled-components"
 import { Saturation, Hue } from 'react-color/lib/components/common'
@@ -27,22 +26,19 @@ const HuePointer = styled.div`
   transform: translate(-50%);
 `
 
-class MyColorPicker extends Component {
-  render() {
-    return <Container>
-      <SaturationDiv>
-        <Saturation
-          {...this.props}
-          onChange={this.props.onChange} />
-      </SaturationDiv>
-      <HueDiv>
-        <Hue 
-          {...this.props}
-          pointer={HuePointer}
-          onChange={this.props.onChange} />
-      </HueDiv>
-    </Container>
-  }
-}
+const MyColorPicker = props =>
+  <Container>
+    <SaturationDiv>
+      <Saturation
+        {...props}
+        onChange={props.onChange} />
+    </SaturationDiv>
+    <HueDiv>
+      <Hue 
+        {...props}
+        pointer={HuePointer}
+        onChange={props.onChange} />
+    </HueDiv>
+  </Container>
 
 export default CustomPicker(MyColorPicker);
