@@ -1,5 +1,4 @@
-import React, { Component } from "react"
-import autoBind from "react-autobind"
+import React from "react"
 import styled, { css } from "styled-components"
 
 import { connect } from "react-redux"
@@ -64,75 +63,73 @@ const ArrowCSS = css`
     transform: scale(${({active})=> active === "true" ? "1" : "-1"});
 `
 
-class ShapeConfiguration extends Component {
-    constructor(props) {
-        super(props)
-        autoBind(this)
-    }
-
-    render(){
-
-        const color = this.props.showFillConfig ? this.props.fillStyle : this.props.strokeStyle
-        const onColorChange = this.props.showFillConfig ? this.setFillStyle : this.setStrokeStyle
-
-        return <>
-            <Description>
-                <StrokeConfig
-                    onClick={this.props.toggleStrokeConfig}>
-                    <EllipseStroke
-                        stroke={this.props.strokeStyle}/>
-                    <ArrowSVG
-                        active={this.props.showStrokeConfig.toString()}
-                        css={ArrowCSS} />
-                </StrokeConfig>
-                <FillConfig
-                    onClick={this.props.toggleFillConfig}>
-                    <EllipseFill
-                        fill={this.props.fillStyle}/>
-                    <ArrowSVG
-                        active={this.props.showFillConfig.toString()}
-                        css={ArrowCSS} />
-                </FillConfig>
-            </Description>
-            { (this.props.showStrokeConfig || this.props.showFillConfig) &&
-                        <ColorPicker
-                            color={color}
-                            onChange={onColorChange}/>
-            }
-            {
-                this.props.showFillConfig &&
-                <>
-                    <ImgaeUpload
-                        onChange={this.setFillImage}>
-                        Image
-                    </ImgaeUpload>
-                    <Button
-                        backgroundColor={"#C4C4C4"}
-                        on={this.props.showWebcam}
-                        onClick={this.props.toggleWebcam}>
-                        Webcam
-                    </Button>
-                </>
-            }
-        </>
-    }
-
-    setFillImage(event) {
+const ShapeConfiguration = ({
+    fillStyle,
+    strokeStyle,
+    showFillConfig,
+    showStrokeConfig,
+    showWebcam,
+    setStrokeStyle,
+    setFillStyle,
+    setFillImage,
+    toggleFillConfig,
+    toggleStrokeConfig,
+    toggleWebcam
+}) => {
+    const readFile = event => {
         const file = event.currentTarget.files[0]
         const reader = new FileReader()
         reader.onload = () => {
-            this.props.setFillImage(reader.result)
+            setFillImage(reader.result)
         }
         reader.readAsDataURL(file)
     }
-    
-    setFillStyle({hsl}) {
-            this.props.setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
-    }
 
-    setStrokeStyle({hsl}) {
-            this.props.setStrokeStyle(hslToHex(hsl.h, hsl.s, hsl.l))
-    }
+    const color = showFillConfig ? fillStyle : strokeStyle
+    const onColorChange = showFillConfig ?
+        ({hsl}) => setFillStyle(hslToHex(hsl.h, hsl.s, hsl.l))
+        :
+        ({hsl}) => setStrokeStyle(hslToHex(hsl.h, hsl.s, hsl.l))
+
+    return (<>
+        <Description>
+            <StrokeConfig
+                onClick={toggleStrokeConfig}>
+                <EllipseStroke
+                    stroke={strokeStyle}/>
+                <ArrowSVG
+                    active={showStrokeConfig.toString()}
+                    css={ArrowCSS} />
+            </StrokeConfig>
+            <FillConfig
+                onClick={toggleFillConfig}>
+                <EllipseFill
+                    fill={fillStyle}/>
+                <ArrowSVG
+                    active={showFillConfig.toString()}
+                    css={ArrowCSS} />
+            </FillConfig>
+        </Description>
+        { (showStrokeConfig || showFillConfig) &&
+            <ColorPicker
+                color={color}
+                onChange={onColorChange}/>
+        }
+        { showFillConfig &&
+            <>
+                <ImgaeUpload
+                    onChange={readFile}>
+                    Image
+                </ImgaeUpload>
+                <Button
+                    backgroundColor={"#C4C4C4"}
+                    on={showWebcam}
+                    onClick={toggleWebcam}>
+                    Webcam
+                </Button>
+            </>
+        }
+    </>)
 }
 
 const mapStateToProps = state => ({
