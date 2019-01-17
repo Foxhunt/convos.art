@@ -7,8 +7,6 @@ import { connect } from "react-redux"
 import { 
     toggleDrawer,
     toggleFullScreen,
-    setShapeType,
-    setFillImage,
     toggleRecording 
 } from "../../../store/actions"
 
@@ -72,9 +70,7 @@ class OptionsDrawer extends Component {
         return this.canvasConnected &&
             <Container
                 show={this.props.showDrawer}>
-                <ShapeSelection
-                    shapeType={this.props.shapeType}
-                    setShapeType={this.props.setShapeType} />
+                <ShapeSelection />
                 <ShapeConfiguration />
                 <ParticleConfiguration />
                 <Button
@@ -114,14 +110,12 @@ const mapStateToProps = state => ({
     canvas: state.canvas,
     clickable: state.showGui,
     inFullScreen: state.inFullScreen,
-    shapeType: state.shapeType,
     recording: state.recording
 })
 
 const mapDispatchToProps = {
 	toggleDrawer,
     toggleFullScreen,
-    setShapeType,
     toggleRecording
 }
 

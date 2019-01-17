@@ -4,6 +4,10 @@ import EllipseSVG from "../../../static/Ellipse.svg"
 import RectangleSVG from "../../../static/Rectangle.svg"
 import Rectangle2SVG from "../../../static/Rectangle 2.svg"
 
+import { connect } from "react-redux"
+import { 
+    setShapeType
+} from "../../../store/actions"
 
 const Container = styled.div`
     height: 10%;
@@ -19,7 +23,7 @@ const shapeStyle = css`
     fill: ${({on})=> on === "true" ? "#FF8B8B" : "#C4C4C4"};
 `
 
-export default ({shapeType, setShapeType}) =>
+const ShapeSelection = ({shapeType, setShapeType}) =>
   <Container>
     <RectangleSVG
         css={shapeStyle}
@@ -34,3 +38,13 @@ export default ({shapeType, setShapeType}) =>
         on={(shapeType === "BOX").toString()}
         onClick={() => setShapeType("BOX")} />
   </Container>
+
+const mapStateToProps = state => ({
+    shapeType: state.shapeType
+})
+
+const mapDispatchToProps = {
+    setShapeType
+} 
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShapeSelection)
