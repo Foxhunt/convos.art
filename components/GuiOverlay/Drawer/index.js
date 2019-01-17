@@ -45,11 +45,6 @@ class OptionsDrawer extends Component {
 
         this.recorder = null
 
-        this.loco = false
-        this.fillStyleIntervall = null
-        this.strokeStyleIntervall = null
-        this.particleCollorIntervall = null
-
         this.canvasConnected = false
     }
 
@@ -62,7 +57,6 @@ class OptionsDrawer extends Component {
                     this.recorder = new Recorder(this.props.canvas.app.view)
                 })
             }
-            
         }
     }
 

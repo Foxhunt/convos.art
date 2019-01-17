@@ -29,7 +29,7 @@ const Text = styled.div`
     color: #232323;
 `
 
-export default ({ onChange, children, id =`upLd${Math.random()}` }) => (
+export default ({ onChange, children, id =`upLd${Math.random()}` }) =>
     <>
         <Input
             id={id}
@@ -43,4 +43,3 @@ export default ({ onChange, children, id =`upLd${Math.random()}` }) => (
             </Text>
         </Label>
     </>
-)

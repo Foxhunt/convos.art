@@ -10,17 +10,17 @@ const Container = styled.form`
     align-items: center;
 `
 
-export default props =>
+export default ({ roomId, onChange }) =>
     <Container>
         Enter a Name to create or join a Room.
         <input
             type='text'
-            value={props.roomId}
-            onChange={props.onChange} />
+            value={ roomId }
+            onChange={ onChange } />
         <Link
             prefetch
-            href={`/room?roomId=${props.roomId}`}
-            as={`/room/${props.roomId}`}>
+            href={`/room?roomId=${ roomId }`}
+            as={`/room/${ roomId }`}>
             <button>Create//Join</button>
         </Link>
     </Container>
