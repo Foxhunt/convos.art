@@ -1,6 +1,8 @@
 {
     "name": "convos",
-    "alias": ["convos.art", "www.convos.art", "convos"],
+    "alias": [
+      "convos.art"
+    ],
     "version": 1,
     "scale": {
       "bru1": {
