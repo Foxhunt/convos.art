@@ -122,7 +122,7 @@ const ShapeConfiguration = ({
                     Image
                 </ImgaeUpload>
                 <Button
-                    backgroundColor={"#C4C4C4"}
+                    isSubButon
                     on={showWebcam}
                     onClick={toggleWebcam}>
                     Webcam

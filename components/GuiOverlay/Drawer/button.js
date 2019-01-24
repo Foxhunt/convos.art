@@ -12,7 +12,7 @@ const Button = styled.div`
 
 	border-bottom: 1px solid #ffffff;
 
-	background-color: ${({on, backgroundColor}) => on ? "#FF8B8B" : backgroundColor };
+	background-color: ${({on, isSubButon}) => on ? "#FF8B8B" : isSubButon ? "#C4C4C4" : "#232323" };
 `
 
 const Text = styled.div`
@@ -23,13 +23,13 @@ const Text = styled.div`
 	${({isSubButon}) => isSubButon ? "color: #232323;" : ""}
 `
 
-export default ({on, onClick, children, backgroundColor = "#232323"}) =>
+export default ({on, onClick, children, isSubButon}) =>
 	<Button
-		backgroundColor={ backgroundColor }
+		isSubButon={ isSubButon }
 		on={ on }
 		onClick={ onClick }>
 		<Text
-			isSubButon={ backgroundColor !== "#232323" }>
+			isSubButon={ isSubButon }>
 			{ children }
 		</Text>
 	</Button>
