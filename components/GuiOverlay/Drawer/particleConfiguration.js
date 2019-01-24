@@ -12,6 +12,7 @@ import { hslToHex } from "./colorFunctions"
 import ColorPicker from "./colorPicker"
 
 import Button from "./button"
+import RadioButton from "./radioButton"
 
 import ArrowSVG from "../../../static/arrow.svg"
 
@@ -25,7 +26,8 @@ const Description = styled.div`
 `
 
 const Text = styled.div`
-  padding-left: 8%;
+    width: 55%;
+    padding-left: 8%;
 `
 
 const ArrowCSS = css`
@@ -44,23 +46,19 @@ const ShapeConfiguration = ({
 }) =>
     <>
         <Description
-        onClick={toggleParticleConfig} >
-        <Text>Particles</Text>
-        <ArrowSVG
-                    active={showParticleConfig.toString()}
-                    css={ArrowCSS} />
+            onClick={toggleParticleConfig} >
+            <Text>Particles</Text>
+            <RadioButton
+                on={ particles }
+                onClick={ toggleParticles }/>
+            <ArrowSVG
+                active={showParticleConfig.toString()}
+                css={ArrowCSS} />
         </Description>
         { showParticleConfig &&
-            <>
-                <ColorPicker
-                    color={particleColor}
-                    onChange={({hsl}) => setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))}/>
-                <Button
-                    on={particles}
-                    onClick={toggleParticles}>
-                    Particles
-                </Button>
-            </>
+            <ColorPicker
+                color={particleColor}
+                onChange={({hsl}) => setParticleColor(hslToHex(hsl.h, hsl.s, hsl.l))}/>
         }
     </>
 
