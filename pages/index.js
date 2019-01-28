@@ -1,7 +1,9 @@
-import react from 'react'
-import autoBind from 'react-autobind'
-import styled from 'styled-components'
-import Link from 'next/link'
+import React from "react"
+import autoBind from "react-autobind"
+import styled, { css } from "styled-components"
+import Link from "next/link"
+
+import LogoSVG from "../static/C.svg"
 
 import CreateJoinRoom from "../components/CreateJoinRoom"
 
@@ -15,7 +17,7 @@ const Container = styled.div`
     align-items: center;
 `
 
-const Logo = styled.img`
+const LogoCSS = css`
     align-self: flex-start;
 `
 
@@ -24,20 +26,20 @@ const CardLink = styled.a`
     text-decoration: none;
 `
 
-export default class Index extends react.Component {
+export default class Index extends React.Component {
     constructor(props) {
         super(props)
         autoBind(this)
 
         this.state = {
-            roomId: ''
+            roomId: ""
         }
     }
 
     render() {
         return (
             <Container>
-                <Logo src="/static/C.svg" />
+                <LogoSVG css={ LogoCSS } />
                 <CreateJoinRoom
                     roomId={this.state.roomId}
                     onChange={this.handleInput} />
