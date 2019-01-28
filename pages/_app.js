@@ -8,6 +8,8 @@ import withReduxStore from "../store/withReduxStore"
 import { createGlobalStyle } from "styled-components"
 
 const GlobalStyle = createGlobalStyle`
+  @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700");
+
   div#__next, html, body {
     margin: 0;
     height: 100%;
