@@ -148,6 +148,31 @@ const recording = (state = false, action) => {
     }
 }
 
+const showFilterConfig = (state = false, action) => {
+    switch(action.type){
+        case actionTypes.TOGGLE_FILTERCONFIG:
+            return !state
+        default:
+            return state
+    }
+}
+
+const filters = (state = [], action) => {
+    switch(action.type){
+        case actionTypes.TOGGLE_FILTER:
+            const _state = [...state]
+            const index = _state.indexOf(action.filter)
+            if(index >= 0){
+                _state.splice(index, 1)
+            } else {
+                _state.push(action.filter)
+            }
+            return _state
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     showGui,
     showDrawer,
@@ -163,5 +188,7 @@ export default combineReducers({
     fillImage,
     particleColor,
     particles,
-    recording
+    recording,
+    showFilterConfig,
+    filters
 })

@@ -6,13 +6,6 @@ import Particles from "./Particles"
 import Environment from "./Environment"
 import MouseControlls from "./MouseControlls"
 
-const {  } = {
-    ...nativeFilters,
-    ...extraFilters
-}
-
-import AlphaFilter from "./AlphaFilter"
-
 export default class Canvas {
     constructor(pixiContainer) {
         this.app = new Application({
@@ -25,8 +18,6 @@ export default class Canvas {
             forceFXAA: true,
             roundPixels: true
         })
-
-        this.app.stage.filters = [new AlphaFilter(0.02)]
 
         this.pixiContainer = pixiContainer
         this.width = 1920
@@ -70,7 +61,15 @@ export default class Canvas {
         this.environment.render()
     }
 
-    addOwnBrush(ownBrush){
+    set filters(filters) {
+        this.app.stage.filters = filters
+    }
+
+    get filters() {
+        return this.app.stage.filters
+    }
+
+    addOwnBrush(ownBrush) {
         this.ownBrush = ownBrush
         this.mouseControlls.ownBrush = ownBrush
         this.brushes.set(ownBrush.id, ownBrush)

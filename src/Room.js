@@ -168,5 +168,9 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 		if(canvas.particles.particleColor != state.particleColor) {
 			canvas.particles.ParticleColor = state.particleColor
 		}
+
+		if(canvas.filters != state.filters) {
+			canvas.filters = state.filters
+		}
 	}
 })

@@ -14,6 +14,7 @@ import Button from "./button"
 import ShapeSelection from "./shapeSelection"
 import ShapeConfiguration from "./shapeConfiguration"
 import ParticleConfiguration from "./particleConfiguration"
+import FilterConfiguration from "./filterConfiguration"
 
 const Container = styled.div`
 	position: absolute;
@@ -67,6 +68,7 @@ class OptionsDrawer extends Component {
                 <ShapeSelection />
                 <ShapeConfiguration />
                 <ParticleConfiguration />
+                <FilterConfiguration />
                 <Button
                     onClick={this.captureCanvas}>
                     Snapshot
