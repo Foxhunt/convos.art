@@ -77,3 +77,12 @@ export const toggleParticles = () => ({
 export const toggleRecording = () => ({
     type: actionTypes.TOGGLE_RECORDING
 })
+
+export const toggleFilterConfig = () => ({
+    type: actionTypes.TOGGLE_FILTERCONFIG
+})
+
+export const toggleFilter = filter => ({
+    type: actionTypes.TOGGLE_FILTER,
+    filter
+})
