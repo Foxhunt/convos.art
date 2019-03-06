@@ -20,7 +20,7 @@ const GUI = styled.div`
 	max-width: 177.78vh;
 	max-height: 100vh;
 
-	opacity: ${({ show }) => show ? 1 : 0};
+	opacity: ${({ show }) => show ? 0.9 : 0};
 	transition: opacity 0.4s ease-out;
 	will-change: opacity;
 `
