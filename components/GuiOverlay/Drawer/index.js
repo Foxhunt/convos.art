@@ -79,6 +79,12 @@ class OptionsDrawer extends Component {
                     Record
                 </Button>
                 <Button
+                    onClick={() => {
+                        this.props.canvas.clear()
+                    }}>
+                    Clear
+                </Button>
+                <Button
                     on={this.props.inFullScreen}
                     onClick={this.props.toggleFullScreen}>
                     FullScreen

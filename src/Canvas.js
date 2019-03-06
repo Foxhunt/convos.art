@@ -69,6 +69,10 @@ export default class Canvas {
         return this.app.stage.filters
     }
 
+    clear(){
+        this.app.renderer.clear()
+    }
+
     addOwnBrush(ownBrush) {
         this.ownBrush = ownBrush
         this.mouseControlls.ownBrush = ownBrush
