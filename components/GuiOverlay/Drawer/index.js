@@ -6,9 +6,11 @@ import download from 'downloadjs'
 import { connect } from "react-redux"
 import { 
     toggleDrawer,
-    toggleFullScreen,
-    toggleRecording 
+    updateFullScreen,
+    toggleRecording
 } from "../../../store/actions"
+
+import toggleFullScreen from "../../../src/toggleFullScreen"
 
 import Button from "./button"
 import ShapeSelection from "./shapeSelection"
@@ -49,6 +51,16 @@ class OptionsDrawer extends Component {
         this.canvasConnected = false
     }
 
+    componentDidMount() {
+        document.addEventListener("fullscreenchange", this.props.updateFullScreen)
+        window.addEventListener("resize", this.props.updateFullScreen)
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("fullscreenchange", this.props.updateFullScreen)
+        window.removeEventListener("resize", this.props.updateFullScreen)
+    }
+
     componentDidUpdate() {
         if (this.props.canvas && !this.canvasConnected) {
             this.canvasConnected = true
@@ -86,7 +98,7 @@ class OptionsDrawer extends Component {
                 </Button>
                 <Button
                     on={this.props.inFullScreen}
-                    onClick={this.props.toggleFullScreen}>
+                    onClick={toggleFullScreen}>
                     FullScreen
                 </Button>
             </Container>
@@ -116,8 +128,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-	toggleDrawer,
-    toggleFullScreen,
+    toggleDrawer,
+    updateFullScreen,
     toggleRecording
 }
 
