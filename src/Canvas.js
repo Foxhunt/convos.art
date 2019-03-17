@@ -1,6 +1,5 @@
 import p2 from 'p2'
-import { Application, filters as nativeFilters, utils} from "pixi.js"
-import * as extraFilters from "pixi-filters"
+import { Application, utils} from "pixi.js"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
