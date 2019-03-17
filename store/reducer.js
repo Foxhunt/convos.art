@@ -77,7 +77,7 @@ const canvas = (state = null, action) => {
 const inFullScreen = (state = false, action) => {
     switch (action.type) {
         case actionTypes.UPDATE_FULLSCREEN:
-            return document.fullscreenElement || (screen.width === window.innerWidth)
+            return document.fullscreenElement || (screen.width === window.innerWidth && screen.height === window.innerHeight )
         default:
             return state
     }
