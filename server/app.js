@@ -1,13 +1,8 @@
 const app = require('express')()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const next = require('next')
 
-const schemas = require('./schemas')
-
-const dev = process.env.NODE_ENV !== 'production'
-const nextApp = next({ dev })
-const nextHandler = nextApp.getRequestHandler()
+const schemas = require('../lib/schemas')
 
 var rooms = new Map()
 
@@ -136,19 +131,4 @@ function Box(id, x, y, angle, velocity) {
 	this.fillImage = null
 }
 
-nextApp.prepare().then(() => {
-
-	app.get('/room/:roomId', (req, res) => {
-		const queryParams = {roomId: req.params.roomId}
-		nextApp.render(req, res, '/room', queryParams)
-	})
-
-	app.get('*', (req, res) => {
-		return nextHandler(req, res)
-	})
-
-	server.listen(3000, err => {
-		if (err) throw err
-		console.log('> Ready on http://localhost:3000')
-	})
-})
+server.listen()

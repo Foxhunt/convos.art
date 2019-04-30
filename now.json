@@ -3,12 +3,24 @@
     "alias": [
       "convos.art"
     ],
-    "version": 1,
-    "scale": {
-      "bru1": {
-        "min": 0,
-        "max": 1
-      }
-    }
+    "version": 2,
+    "regions": ["all"],
+    "builds": [
+        { "src": "www/package.json", "use": "@now/next" },
+        { "src": "app.js", "use": "@now/node-server" }
+    ],
+    "routes": [
+        {
+          "src": "/api/(.*)",
+          "dest": "app.js"
+        },
+        {
+          "src": "/(.*)",
+          "dest": "/www/$1",
+          "headers": {
+            "x-request-path": "$1"
+          }
+        }
+    ]
   } 
   
