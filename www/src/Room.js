@@ -1,7 +1,3 @@
-import io from 'socket.io-client'
-
-import schemas from 'schemas'
-
 import Brush from './Brush'
 import Canvas from './Canvas'
 
