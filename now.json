@@ -11,13 +11,20 @@
     "routes": [
         {
           "src": "/room/(.*)",
-          "dest": "/www/room?roomId=$1"
+          "dest": "/www/room?roomId=$1",
+          "headers": {
+            "x-request-path": "$1",
+            "s-maxage": "432000",
+            "max-age": "3600"
+          }
         },
         {
           "src": "/(.*)",
           "dest": "/www/$1",
           "headers": {
-            "x-request-path": "$1"
+            "x-request-path": "$1",
+            "s-maxage": "432000",
+            "max-age": "3600"
           }
         }
     ]
