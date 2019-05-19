@@ -6,13 +6,12 @@
     "version": 2,
     "regions": ["all"],
     "builds": [
-        { "src": "www/package.json", "use": "@now/next" },
-        { "src": "app.js", "use": "@now/node-server" }
+        { "src": "www/package.json", "use": "@now/next" }
     ],
     "routes": [
         {
-          "src": "/api/(.*)",
-          "dest": "app.js"
+          "src": "/room/(.*)",
+          "dest": "/www/room?roomId=$1"
         },
         {
           "src": "/(.*)",

@@ -11,61 +11,61 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 	let ownId = null
 	const store = reduxStore
 	
-	const socket = io({ query: { roomId } })
+	//const socket = io({ query: { roomId } })
 	
 	const canvas = new Canvas(pixiContainer)
 
+	const initOwnBrush = () => {
+		//console.log(`connected as ${socket.id}`)
+		//get and set client ID
+		ownId = "me"
+		const fillStyle = store.getState().fillStyle;
+		const strokeStyle = store.getState().strokeStyle;
+		const Shape = store.getState().shapeType;
+		ownBrush = new Brush({
+			id: ownId,
+			own: true,
+			world: canvas.world,
+			pixiApp: canvas.app,
+			//socket,
+			fillStyle,
+			strokeStyle,
+			Shape
+		});
+		// Add a box
+		canvas.addOwnBrush(ownBrush);
+		//Vom Server die bereits verbundenen clients abrufen
+
+		/*
+		socket.emit('init', brushes => {
+			console.log(brushes.length + " Boxen initialisiert");
+			brushes.forEach(({ id, x, y, angle, fillStyle, strokeStyle, shapeType, fillImage, }) => {
+				if (id !== ownId) {
+					const brush = new Brush({ id, x, y, angle, world: canvas.world, pixiApp: canvas.app });
+					brush.Fill = fillStyle;
+					brush.Stroke = strokeStyle;
+					brush.Shape = shapeType;
+					if (fillImage)
+						brush.Image = fillImage;
+					canvas.addBrush(brush);
+				}
+			});
+		}); // ende emit init
+		*/
+
+		subscribeToStore();
+		resolve(canvas);
+	};
 	//Den server nach den bereits vorhandenen clients fragen
 	//wenn die verbindung aufgebaut wurde.
 	//das init event gibt eine callback funktion mit
 	//die vom Server an den Client zurück gegeben wird.
 	//Und beim client ausgeführt wird.
-	socket.on('connect', () => {
-		console.log(`connected as ${socket.id}`)
+	//socket.on('connect', initOwnBrush) // ende onConnect
 
-		//get and set client ID
-		ownId = socket.id
-		const fillStyle = store.getState().fillStyle
-		const strokeStyle = store.getState().strokeStyle
-		const Shape = store.getState().shapeType
-		ownBrush = new Brush({ 
-			id: ownId,
-			own: true,
-			world: canvas.world,
-			pixiApp: canvas.app,
-			socket,
-			fillStyle,
-			strokeStyle,
-			Shape })
+	initOwnBrush()
 
-		// Add a box
-		canvas.addOwnBrush(ownBrush)
-
-		//Vom Server die bereits verbundenen clients abrufen
-		socket.emit('init', brushes => {
-			console.log(brushes.length + " Boxen initialisiert")
-
-			brushes.forEach(
-				({
-					id, x, y, angle, fillStyle,
-					strokeStyle, shapeType, fillImage,
-				}) => {
-					if (id !== ownId) {
-						const brush = new Brush({ id, x, y, angle, world: canvas.world, pixiApp: canvas.app })
-						brush.Fill = fillStyle
-						brush.Stroke = strokeStyle
-						brush.Shape = shapeType
-						if(fillImage)
-							brush.Image = fillImage
-						canvas.addBrush(brush)
-					}
-				})
-		}) // ende emit init
-		subscribeToStore()
-		resolve(canvas)
-	}) // ende onConnect
-
-	
+	/*
 	//Neuen client und seine Box anlegen
 	socket.on('new', payload => canvas.newBrush(payload))
 
@@ -119,6 +119,7 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 			box.Image = imageSrc
 		}
 	})
+	*/
 
 	//Box informationen an server senden
 	function toServer() {
@@ -136,7 +137,7 @@ export default (roomId, pixiContainer, reduxStore) => new Promise(resolve => {
 	}
 
 	//Update loop
-	setInterval(toServer, 50)
+	//setInterval(toServer, 50)
 
 	function subscribeToStore() {
 		store.subscribe(handleStoreChanges)
