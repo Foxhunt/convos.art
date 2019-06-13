@@ -4,7 +4,8 @@ const Button = styled.div`
 	width: 100%;
 	height: 5%;
 
-	padding-left: 8%;
+    padding-left: 8%;
+	padding-right: 8%;
 
     display: flex;
     justify-content: space-between;

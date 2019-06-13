@@ -35,7 +35,7 @@ const StrokeConfig = styled.div`
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
 `
 
 const FillConfig = styled(StrokeConfig)`

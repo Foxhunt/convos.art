@@ -23,11 +23,12 @@ const Description = styled.div`
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #FFFFFF;
+    padding-left: 8%;
+    padding-right: 8%;
 `
 
 const Text = styled.div`
     width: 55%;
-    padding-left: 8%;
 `
 
 const ArrowCSS = css`
