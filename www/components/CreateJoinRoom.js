@@ -18,7 +18,7 @@ export default ({ roomId, onChange }) =>
             value={ roomId }
             onChange={ onChange } />
         <Link
-            href={`/room?roomId=${ roomId }`}
+            href={`/room/[roomId]`}
             as={`/room/${ roomId }`}>
             <button>Create//Join</button>
         </Link>

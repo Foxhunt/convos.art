@@ -10,13 +10,6 @@
     ],
     "routes": [
         {
-          "src": "/room/(.*)",
-          "dest": "/www/room?roomId=$1",
-          "headers": {
-            "cache-control": "max-age=3600, s-maxage=432000"
-          }
-        },
-        {
           "src": "/(.*)",
           "dest": "/www/$1",
           "headers": {
