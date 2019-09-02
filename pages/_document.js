@@ -1,25 +1,57 @@
 import Document, { Head, Main, NextScript } from "next/document"
-import { ServerStyleSheet } from "styled-components"
+import { ServerStyleSheet, createGlobalStyle } from "styled-components"
+
+const GlobalStyle = createGlobalStyle`
+  @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700");
+
+  div#__next, html, body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+  }
+`
 
 export default class MyDocument extends Document {
-  static getInitialProps ({ renderPage }) {
+  static async getInitialProps (ctx) {
     const sheet = new ServerStyleSheet()
-    const page = renderPage(App => props => sheet.collectStyles(<App {...props} />))
-    const styleTags = sheet.getStyleElement()
-    return { ...page, styleTags }
+    const originalRenderPage = ctx.renderPage
+
+    try {
+      ctx.renderPage = () =>
+        originalRenderPage({
+          enhanceApp: App => props => sheet.collectStyles(<App {...props} />)
+        })
+
+      const initialProps = await Document.getInitialProps(ctx)
+      return {
+        ...initialProps,
+        styles: (
+          <>
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+          </>
+        )
+      }
+    } finally {
+      sheet.seal()
+    }
   }
 
   render () {
     return (
       <html>
         <Head>
+        <title>convos</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no, minimal-ui" key="viewport" />
           <meta name="theme-color" content="orange" />
-          {this.props.styleTags}
         </Head>
         <body>
           <Main />
           <NextScript />
+          <GlobalStyle />
         </body>
       </html>
     )
