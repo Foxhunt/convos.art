@@ -1,5 +1,5 @@
 import p2 from 'p2'
-import { Application, utils} from "pixi.js"
+import { Application, utils } from "pixi.js"
 import Brush from './Brush'
 import Particles from "./Particles"
 import Environment from "./Environment"
@@ -15,7 +15,6 @@ export default class Canvas {
             preserveDrawingBuffer: true,
             antialias: true,
             forceFXAA: true,
-            roundPixels: true
         })
 
         this.pixiContainer = pixiContainer
