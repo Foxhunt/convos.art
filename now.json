@@ -4,16 +4,14 @@
       "convos.art"
     ],
     "version": 2,
-    "regions": ["all"],
+    "regions": ["bru1"],
     "builds": [
-        { "src": "www/package.json", "use": "@now/next" }
+        { "src": "package.json", "use": "@now/next" }
     ],
     "routes": [
         {
           "src": "/(.*)",
-          "dest": "/www/$1",
           "headers": {
-            "x-request-path": "$1",
             "cache-control": "max-age=3600, s-maxage=432000"
           }
         }

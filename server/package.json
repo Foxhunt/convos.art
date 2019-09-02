@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "express": "^4.16.4",
-    "schemas": "file:../lib/schemas",
-    "socket.io": "^2.2.0"
-  }
-}

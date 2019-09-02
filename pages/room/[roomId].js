@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { withRouter } from 'next/router'
 
 import { connect } from "react-redux"
 import { touchCanvas, releaseCanvas, setCanvas } from "../../store/actions"
@@ -39,7 +38,7 @@ function Room(props){
         async function setupRoom() {
             const { default: room } = await import("../../src/Room")
             const canvas = await room(
-                props.router.query.roomId,
+                props.roomId,
                 pixiContainer.current,
                 props.reduxStore
             )
@@ -59,10 +58,14 @@ function Room(props){
     )
 }
 
+Room.getInitialProps = ({ query }) => {
+    return { roomId: query.roomId }
+}
+
 const mapDispatchToProps = {
     touchCanvas,
     releaseCanvas,
     setCanvas
 }
 
-export default withRouter(connect(undefined, mapDispatchToProps)(Room))
+export default connect(undefined, mapDispatchToProps)(Room)

@@ -1,7 +1,0 @@
-{
-  "name": "schemas",
-  "version": "1.0.0",
-  "dependencies": {
-    "schemapack": "^1.4.2"
-  }
-}
