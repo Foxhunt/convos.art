@@ -9,25 +9,25 @@
     "url": "https://github.com/Foxhunt/Convos.git"
   },
   "dependencies": {
-    "@svgr/webpack": "^4.3.0",
-    "cross-env": "^5.2.0",
+    "@svgr/webpack": "^4.3.2",
+    "cross-env": "^5.2.1",
     "downloadjs": "^1.4.7",
-    "next": "^8.1.1-canary.52",
+    "next": "^8.1.1-canary.70",
     "p2": "^0.7.1",
     "pixi-filters": "^2.7.1",
     "pixi.js": "^4.8.8",
-    "react": "^16.8.6",
+    "react": "^16.9.0",
     "react-autobind": "^1.0.6",
     "react-color": "^2.17.3",
-    "react-dom": "^16.8.6",
-    "react-redux": "^7.1.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.1.1",
     "react-webcam": "^1.1.1",
-    "redux": "^4.0.1",
+    "redux": "^4.0.4",
     "socket.io-client": "^2.2.0",
-    "styled-components": "^4.3.1"
+    "styled-components": "^4.3.2"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.10.0",
+    "babel-plugin-styled-components": "^1.10.6",
     "redux-logger": "^3.0.6"
   }
 }
