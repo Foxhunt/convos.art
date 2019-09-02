@@ -1,4 +1,4 @@
-import App, { Container } from "next/app"
+import App from "next/app"
 import React from "react"
 import Head from "next/head"
 
@@ -34,7 +34,7 @@ class MyApp extends App {
   render() {
     const { Component, pageProps, reduxStore } = this.props
     return (
-      <Container>
+      <>
         <GlobalStyle />
         <Head>
           <title>convos</title>
@@ -42,7 +42,7 @@ class MyApp extends App {
         <Provider store={reduxStore} >
           <Component {...pageProps} reduxStore={ reduxStore } />
         </Provider>
-      </Container>
+      </>
     )
   }
 }

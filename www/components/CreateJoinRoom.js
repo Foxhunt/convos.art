@@ -18,7 +18,6 @@ export default ({ roomId, onChange }) =>
             value={ roomId }
             onChange={ onChange } />
         <Link
-            prefetch
             href={`/room?roomId=${ roomId }`}
             as={`/room/${ roomId }`}>
             <button>Create//Join</button>

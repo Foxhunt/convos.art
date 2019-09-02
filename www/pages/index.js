@@ -1,6 +1,5 @@
-import React from "react"
-import autoBind from "react-autobind"
-import styled, { css } from "styled-components"
+import { useState } from "react"
+import styled from "styled-components"
 import Link from "next/link"
 
 import LogoSVG from "../static/C.svg"
@@ -17,7 +16,7 @@ const Container = styled.div`
     align-items: center;
 `
 
-const LogoCSS = css`
+const Logo = styled(LogoSVG)`
     align-self: flex-start;
 `
 
@@ -26,35 +25,19 @@ const CardLink = styled.a`
     text-decoration: none;
 `
 
-export default class Index extends React.Component {
-    constructor(props) {
-        super(props)
-        autoBind(this)
+export default function Index() {
+    const [roomId, setRoomId] = useState("")
 
-        this.state = {
-            roomId: ""
-        }
-    }
-
-    render() {
-        return (
-            <Container>
-                <LogoSVG css={ LogoCSS } />
-                <CreateJoinRoom
-                    roomId={this.state.roomId}
-                    onChange={this.handleInput} />
-                <Link href="http://marco.mojica.de" passHref>
-                    <CardLink>
-                        Marco Mojica
-                    </CardLink>
-                </Link>
-            </Container>
-        )
-    }
-
-    handleInput(event) {
-        this.setState({
-            roomId: event.target.value.toLowerCase()
-        })
-    }
+    return (
+        <Container>
+            <Logo />
+            <CreateJoinRoom
+                roomId={roomId}
+                onChange={event => 
+                    setRoomId(event.target.value.toLowerCase())} />
+            <CardLink href="http://marco.mojica.de/">
+                Marco Mojica
+            </CardLink>
+        </Container>
+    )
 }
