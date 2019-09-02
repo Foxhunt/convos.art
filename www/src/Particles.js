@@ -1,6 +1,5 @@
 import { Body, Particle, vec2 } from 'p2'
-import { particles, Graphics, Sprite } from "pixi.js"
-const { ParticleContainer } = particles
+import { ParticleContainer, Graphics, Sprite, SCALE_MODES } from "pixi.js"
 
 import { BRUSH, PARTICLES } from './CollisionGroups'
 
@@ -9,18 +8,18 @@ export default class Particles {
         this.canvas = canvas
         this.world = canvas.world
         this.particles = []
-        this.particleColor = "#ff00aa"
+        this.particleColor = "#000000"
         this.maxParticles = 1000
         this.maxAge = 5000
         this.enabled = true
 
         this.pointerPosition = null
 
-        this.graphic = new Graphics()
+        this.particleGraphic = new Graphics()
             .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
-            .drawCircle(0, 0, 2)
-
-        this.particleTexture = this.graphic.generateCanvasTexture()
+            .drawCircle(0, 0, 3)
+        
+        this.particleTexture = this.canvas.app.renderer.generateTexture(this.particleGraphic, SCALE_MODES.NEAREST)
 
         this.particleContainer = new ParticleContainer(this.maxParticles, {alpha:true})
         this.canvas.app.stage.addChild(this.particleContainer)
@@ -28,11 +27,12 @@ export default class Particles {
 
     set ParticleColor(color){
         this.particleColor = color
-        this.graphic
+        this.particleGraphic
+            .clear()
             .beginFill(parseInt(this.particleColor.replace(/^#/, ''), 16), 1)
-            .drawCircle(0, 0, 2)
+            .drawCircle(0, 0, 3)
 
-        this.particleTexture.baseTexture = this.graphic.generateCanvasTexture().baseTexture
+        this.particleTexture.baseTexture = this.canvas.app.renderer.generateTexture(this.particleGraphic, SCALE_MODES.NEAREST)
     }
 
     render() {
