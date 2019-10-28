@@ -11,10 +11,9 @@ import {
 import { hslToHex } from "./colorFunctions"
 import ColorPicker from "./colorPicker"
 
-import Button from "./button"
 import RadioButton from "./radioButton"
 
-import ArrowSVG from "../../../static/arrow.svg"
+import ArrowSVG from "../../../assets/svg/arrow.svg"
 
 const Description = styled.div`
     height: 5%;

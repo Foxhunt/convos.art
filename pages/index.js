@@ -1,8 +1,7 @@
 import { useState } from "react"
 import styled from "styled-components"
-import Link from "next/link"
 
-import LogoSVG from "../static/C.svg"
+import LogoSVG from "../assets/svg/C.svg"
 
 import CreateJoinRoom from "../components/CreateJoinRoom"
 

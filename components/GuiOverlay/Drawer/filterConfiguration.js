@@ -8,7 +8,7 @@ import {
  } from "../../../store/actions"
 
 import Button from "./button"
-import ArrowSVG from "../../../static/arrow.svg"
+import ArrowSVG from "../../../assets/svg/arrow.svg"
 
 const Description = styled.div`
     height: 5%;

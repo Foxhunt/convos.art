@@ -14,9 +14,9 @@ import {
 import { hslToHex } from "./colorFunctions"
 import ColorPicker from "./colorPicker"
 
-import EllipseStrokeSVG from "../../../static/Ellipse_stroke.svg"
-import EllipseFillSVG from "../../../static/Ellipse_fill.svg"
-import ArrowSVG from "../../../static/arrow.svg"
+import EllipseStrokeSVG from "../../../assets/svg/Ellipse_stroke.svg"
+import EllipseFillSVG from "../../../assets/svg/Ellipse_fill.svg"
+import ArrowSVG from "../../../assets/svg/arrow.svg"
 
 import ImgaeUpload from "./imageUpload"
 import Button from "./button"

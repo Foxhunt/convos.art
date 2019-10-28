@@ -1,8 +1,8 @@
 import React from "react"
 import styled, { css } from "styled-components"
-import EllipseSVG from "../../../static/Ellipse.svg"
-import RectangleSVG from "../../../static/Rectangle.svg"
-import Rectangle2SVG from "../../../static/Rectangle 2.svg"
+import EllipseSVG from "../../../assets/svg/Ellipse.svg"
+import RectangleSVG from "../../../assets/svg/Rectangle.svg"
+import Rectangle2SVG from "../../../assets/svg/Rectangle 2.svg"
 
 import { connect } from "react-redux"
 import { 
